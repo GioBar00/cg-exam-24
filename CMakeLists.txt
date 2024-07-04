@@ -3,7 +3,7 @@ project(cg-exam-24)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(${PROJECT_NAME} src/CG.cpp)
+add_executable(${PROJECT_NAME} src/App.cpp)
 
 # Add GLFW3 precompiled library
 find_package(glfw3 REQUIRED)

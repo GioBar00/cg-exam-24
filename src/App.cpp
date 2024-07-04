@@ -15,7 +15,7 @@ struct Vertex {
 };
 
 
-class CG : public BaseProject {
+class App : public BaseProject {
 protected:
 
     /* Descriptor set layouts. */
@@ -133,7 +133,7 @@ protected:
 
 
 int main() {
-    CG app;
+    App app;
 
     try {
         app.run();

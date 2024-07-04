@@ -18,12 +18,17 @@ struct Instance {
 struct PipelineRef {
     std::string *id;
     Pipeline *P;
-    VertexDescriptor *VD;
-
+    // FIXME: maybe unnecessary since present in the pipeline
+    [[maybe_unused]] VertexDescriptor *VD;
     void init(const char *_id, Pipeline *_P, VertexDescriptor *_VD) {
         id = new std::string(_id);
         P = _P;
         VD = _VD;
+    }
+
+    void init(const char *_id, Pipeline *_P) {
+        id = new std::string(_id);
+        P = _P;
     }
 };
 

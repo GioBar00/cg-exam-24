@@ -3,14 +3,14 @@
 
 /* Uniform buffers. */
 struct Uniform {
-	alignas(16)	glm::mat4 mvpMat;
+	alignas(16) glm::mat4 mvpMat;
 };
 
 
 /* Vertex formats. */
 struct Vertex {
-	glm::vec3	pos;
-	glm::vec2	UV;
+	glm::vec3 pos;
+	glm::vec2 UV;
 };
 
 
@@ -36,9 +36,6 @@ class CG : public BaseProject {
 
 
 		// Application config.
-		glm::vec3 CamPos = glm::vec3(0.0, 0.1, 5.0);
-		glm::mat4 ViewMatrix;
-
 		float Ar;
 
 		void setWindowParameters() override {
@@ -70,18 +67,16 @@ class CG : public BaseProject {
 				}
 			);
 
-			P.init(this, &VD, "shaders/ShaderVert.spv", "shaders/ShaderFrag.spv", {&DSL});
+			P.init(this, &VD, "shaders/AxisVert.spv", "shaders/AxisFrag.spv", {&DSL});
 
-			M.init(this, &VD, "models/Cube.obj", OBJ);
+			// M.init(this, &VD, "models/axis.obj", OBJ);
+			M.init(this, &VD, "models/dungeon/barrel.001_Mesh.4453.mgcg", MGCG);
 
-			T.init(this, "textures/Checker.png");
+			T.init(this, "textures/dungeon/Textures_Dungeon.png");
 
 			DPSZs.uniformBlocksInPool = 1;
 			DPSZs.texturesInPool = 1;
 			DPSZs.setsInPool = 1;
-
-
-			ViewMatrix = glm::translate(glm::mat4(1), -CamPos);
 		}
 
 		void pipelinesAndDescriptorSetsInit() override {
@@ -118,7 +113,6 @@ class CG : public BaseProject {
 			}
 
 
-			// Test.
 			const float FOVy = glm::radians(90.0f);
 			const float nearPlane = 0.1f;
 			const float farPlane = 100.0f;
@@ -126,10 +120,10 @@ class CG : public BaseProject {
 			glm::mat4 Prj = glm::perspective(FOVy, Ar, nearPlane, farPlane);
 			Prj[1][1] *= -1;
 			glm::vec3 camTarget = glm::vec3(0, 0, 0);
-			glm::vec3 camPos = camTarget + glm::vec3(6, 3, 10) / 2.0f;
+			glm::vec3 camPos = camTarget + glm::vec3(3, 2, 5) / 4.0f; // Green y, blue x, red z (inverted).
 			glm::mat4 View = glm::lookAt(camPos, camTarget, glm::vec3(0, 1, 0));
 
-			glm::mat4 World = glm::translate(glm::mat4(1), glm::vec3(-3, 0, 0));
+			glm::mat4 World = glm::translate(glm::mat4(1), glm::vec3(0, 0, 0));
 			Uniform ubo{};
 			ubo.mvpMat = Prj * View * World;
 			DS.map(currentImage, &ubo, 0);

@@ -43,20 +43,22 @@
 #define SINFL_IMPLEMENTATION
 #include <sinfl.h>
 
-// For compile compatibility issues
-#define M_E			2.7182818284590452354	/* e */
-#define M_LOG2E		1.4426950408889634074	/* log_2 e */
-#define M_LOG10E	0.43429448190325182765	/* log_10 e */
-#define M_LN2		0.69314718055994530942	/* log_e 2 */
-#define M_LN10		2.30258509299404568402	/* log_e 10 */
-#define M_PI		3.14159265358979323846	/* pi */
-#define M_PI_2		1.57079632679489661923	/* pi/2 */
-#define M_PI_4		0.78539816339744830962	/* pi/4 */
-#define M_1_PI		0.31830988618379067154	/* 1/pi */
-#define M_2_PI		0.63661977236758134308	/* 2/pi */
-#define M_2_SQRTPI	1.12837916709551257390	/* 2/sqrt(pi) */
-#define M_SQRT2		1.41421356237309504880	/* sqrt(2) */
-#define M_SQRT1_2	0.70710678118654752440	/* 1/sqrt(2) */
+
+// For compile compatibility issues. (Already present in <math.h>)
+
+//#define M_E			2.7182818284590452354	/* e */
+//#define M_LOG2E		1.4426950408889634074	/* log_2 e */
+//#define M_LOG10E	0.43429448190325182765	/* log_10 e */
+//#define M_LN2		0.69314718055994530942	/* log_e 2 */
+//#define M_LN10		2.30258509299404568402	/* log_e 10 */
+//#define M_PI		3.14159265358979323846	/* pi */
+//#define M_PI_2		1.57079632679489661923	/* pi/2 */
+//#define M_PI_4		0.78539816339744830962	/* pi/4 */
+//#define M_1_PI		0.31830988618379067154	/* 1/pi */
+//#define M_2_PI		0.63661977236758134308	/* 2/pi */
+//#define M_2_SQRTPI	1.12837916709551257390	/* 2/sqrt(pi) */
+//#define M_SQRT2		1.41421356237309504880	/* sqrt(2) */
+//#define M_SQRT1_2	0.70710678118654752440	/* 1/sqrt(2) */
 
 
 const int MAX_FRAMES_IN_FLIGHT = 2;
@@ -139,7 +141,7 @@ ErrorCodes[] = {
 	{ VK_SUBOPTIMAL_KHR, "Suboptimal" },
 	{ VK_ERROR_OUT_OF_DATE_KHR, "Error Out of Date" },
 	{ VK_ERROR_INCOMPATIBLE_DISPLAY_KHR, "Incompatible Display" },
-	{ VK_ERROR_VALIDATION_FAILED_EXT, "Valuidation Failed" },
+	{ VK_ERROR_VALIDATION_FAILED_EXT, "Validation Failed" },
 	{ VK_ERROR_INVALID_SHADER_NV, "Invalid Shader" },
 	{ VK_ERROR_OUT_OF_POOL_MEMORY_KHR, "Out of Pool Memory" },
 	{ VK_ERROR_INVALID_EXTERNAL_HANDLE, "Invalid External Handle" },
@@ -147,10 +149,10 @@ ErrorCodes[] = {
 };
 void PrintVkError(VkResult result) {
 	const int numErrorCodes = sizeof(ErrorCodes) / sizeof(struct errorcode);
-	std::string meaning = "";
-	for (int i = 0; i < numErrorCodes; i++) {
-		if (result == ErrorCodes[i].resultCode) {
-			meaning = ErrorCodes[i].meaning;
+	std::string meaning;
+	for (auto & ErrorCode : ErrorCodes) {
+		if (result == ErrorCode.resultCode) {
+			meaning = ErrorCode.meaning;
 			break;
 		}
 	}
@@ -165,7 +167,7 @@ std::vector<char> readFile(const std::string& filename) {
 		throw std::runtime_error("failed to open file!");
 	}
 
-	size_t fileSize = (size_t)file.tellg();
+	auto fileSize = file.tellg();
 	std::vector<char> buffer(fileSize);
 	//std::cout << filename << " -> " << fileSize << " B\n";	 
 	file.seekg(0);
@@ -536,7 +538,7 @@ protected:
 		return extensions;
 	}
 
-	bool checkIfItHasExtension(const char* ext) {
+	static bool checkIfItHasExtension(const char* ext) {
 		uint32_t extCount;
 		vkEnumerateInstanceExtensionProperties(nullptr, &extCount, nullptr);
 
@@ -554,7 +556,7 @@ protected:
 		return found;
 	}
 
-	bool checkIfItHasDeviceExtension(VkPhysicalDevice device, const char* ext) {
+	static bool checkIfItHasDeviceExtension(VkPhysicalDevice device, const char* ext) {
 		uint32_t extensionCount;
 		vkEnumerateDeviceExtensionProperties(device, nullptr,
 			&extensionCount, nullptr);
@@ -573,7 +575,7 @@ protected:
 		return found;
 	}
 
-	bool checkValidationLayerSupport() {
+	static bool checkValidationLayerSupport() {
 		uint32_t layerCount;
 		vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
 
@@ -599,7 +601,7 @@ protected:
 		return true;
 	}
 
-	void populateDebugMessengerCreateInfo(
+	static void populateDebugMessengerCreateInfo(
 		VkDebugUtilsMessengerCreateInfoEXT& createInfo) {
 		createInfo = {};
 		createInfo.sType =
@@ -680,20 +682,20 @@ protected:
 
 		std::cout << "Physical devices found: " << deviceCount << "\n";
 
-		for (const auto& device : devices) {
-			if (checkIfItHasDeviceExtension(device, "VK_KHR_portability_subset")) {
+		for (const auto& dev : devices) {
+			if (checkIfItHasDeviceExtension(dev, "VK_KHR_portability_subset")) {
 				deviceExtensions.push_back("VK_KHR_portability_subset");
 			}
 
-			bool suitable = isDeviceSuitable(device, devRep);
+			bool suitable = isDeviceSuitable(dev, devRep);
 			if (suitable) {
-				physicalDevice = device;
+				physicalDevice = dev;
 				msaaSamples = getMaxUsableSampleCount();
 				std::cout << "\n\nMaximum samples for anti-aliasing: " << msaaSamples << "\n\n\n";
 				break;
 			}
 			else {
-				std::cout << "Device " << device << " is not suitable\n";
+				std::cout << "Device " << dev << " is not suitable\n";
 				devRep.print();
 			}
 		}
@@ -703,22 +705,21 @@ protected:
 		}
 	}
 
-	bool isDeviceSuitable(VkPhysicalDevice device, deviceReport& devRep) {
-		QueueFamilyIndices indices = findQueueFamilies(device);
+	bool isDeviceSuitable(VkPhysicalDevice dev, deviceReport& devRep) {
+		QueueFamilyIndices indices = findQueueFamilies(dev);
 
-		devRep.extensionsSupported = checkDeviceExtensionSupport(device, devRep);
+		devRep.extensionsSupported = checkDeviceExtensionSupport(dev, devRep);
 
 		devRep.swapChainAdequate = false;
 		if (devRep.extensionsSupported) {
-			SwapChainSupportDetails swapChainSupport = querySwapChainSupport(device);
+			SwapChainSupportDetails swapChainSupport = querySwapChainSupport(dev);
 			devRep.swapChainFormatSupport = swapChainSupport.formats.empty();
 			devRep.swapChainPresentModeSupport = swapChainSupport.presentModes.empty();
-			devRep.swapChainAdequate = !devRep.swapChainPresentModeSupport &&
-				!devRep.swapChainPresentModeSupport;
+			devRep.swapChainAdequate = !devRep.swapChainPresentModeSupport;
 		}
 
 		VkPhysicalDeviceFeatures supportedFeatures;
-		vkGetPhysicalDeviceFeatures(device, &supportedFeatures);
+		vkGetPhysicalDeviceFeatures(dev, &supportedFeatures);
 
 		devRep.completeQueueFamily = indices.isComplete();
 		devRep.anisotropySupport = supportedFeatures.samplerAnisotropy;
@@ -727,16 +728,16 @@ protected:
 			devRep.anisotropySupport;
 	}
 
-	QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device) {
+	QueueFamilyIndices findQueueFamilies(VkPhysicalDevice dev) {
 		QueueFamilyIndices indices;
 
 		uint32_t queueFamilyCount = 0;
-		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount,
-			nullptr);
+		vkGetPhysicalDeviceQueueFamilyProperties(dev, &queueFamilyCount,
+                                                 nullptr);
 
 		std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
-		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount,
-			queueFamilies.data());
+		vkGetPhysicalDeviceQueueFamilyProperties(dev, &queueFamilyCount,
+                                                 queueFamilies.data());
 
 		int i = 0;
 		for (const auto& queueFamily : queueFamilies) {
@@ -745,8 +746,8 @@ protected:
 			}
 
 			VkBool32 presentSupport = false;
-			vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface,
-				&presentSupport);
+			vkGetPhysicalDeviceSurfaceSupportKHR(dev, i, surface,
+                                                 &presentSupport);
 			if (presentSupport) {
 				indices.presentFamily = i;
 			}
@@ -760,7 +761,7 @@ protected:
 		return indices;
 	}
 
-	bool checkDeviceExtensionSupport(VkPhysicalDevice device, deviceReport& devRep) {
+	static bool checkDeviceExtensionSupport(VkPhysicalDevice device, deviceReport& devRep) {
 		uint32_t extensionCount;
 		vkEnumerateDeviceExtensionProperties(device, nullptr,
 			&extensionCount, nullptr);
@@ -780,30 +781,30 @@ protected:
 		return devRep.requiredExtensions.empty();
 	}
 
-	SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device) {
+	SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice dev) {
 		SwapChainSupportDetails details;
 
-		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface,
-			&details.capabilities);
+		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(dev, surface,
+                                                  &details.capabilities);
 
 		uint32_t formatCount;
-		vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount,
-			nullptr);
+		vkGetPhysicalDeviceSurfaceFormatsKHR(dev, surface, &formatCount,
+                                             nullptr);
 
 		if (formatCount != 0) {
 			details.formats.resize(formatCount);
-			vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface,
-				&formatCount, details.formats.data());
+			vkGetPhysicalDeviceSurfaceFormatsKHR(dev, surface,
+                                                 &formatCount, details.formats.data());
 		}
 
 		uint32_t presentModeCount;
-		vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface,
-			&presentModeCount, nullptr);
+		vkGetPhysicalDeviceSurfacePresentModesKHR(dev, surface,
+                                                  &presentModeCount, nullptr);
 
 		if (presentModeCount != 0) {
 			details.presentModes.resize(presentModeCount);
-			vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface,
-				&presentModeCount, details.presentModes.data());
+			vkGetPhysicalDeviceSurfacePresentModesKHR(dev, surface,
+                                                      &presentModeCount, details.presentModes.data());
 		}
 
 		return details;
@@ -938,7 +939,7 @@ protected:
 		swapChainExtent = extent;
 	}
 
-	VkSurfaceFormatKHR chooseSwapSurfaceFormat(
+	static VkSurfaceFormatKHR chooseSwapSurfaceFormat(
 		const std::vector<VkSurfaceFormatKHR>& availableFormats)
 	{
 		for (const auto& availableFormat : availableFormats) {
@@ -951,7 +952,7 @@ protected:
 		return availableFormats[0];
 	}
 
-	VkPresentModeKHR chooseSwapPresentMode(
+	static VkPresentModeKHR chooseSwapPresentMode(
 		const std::vector<VkPresentModeKHR>& availablePresentModes) {
 		for (const auto& availablePresentMode : availablePresentModes) {
 			if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
@@ -1201,7 +1202,7 @@ protected:
 		throw std::runtime_error("failed to find supported format!");
 	}
 
-	bool hasStencilComponent(VkFormat format) {
+	static bool hasStencilComponent(VkFormat format) {
 		return format == VK_FORMAT_D32_SFLOAT_S8_UINT ||
 			format == VK_FORMAT_D24_UNORM_S8_UINT;
 	}

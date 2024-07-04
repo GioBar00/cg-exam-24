@@ -6,8 +6,6 @@ set(CMAKE_CXX_STANDARD 17)
 add_executable(${PROJECT_NAME} src/CG.cpp)
 
 # Add GLFW3 precompiled library
-#add_library(glfw SHARED IMPORTED)
-#set_target_properties(glfw PROPERTIES IMPORTED_LOCATION "/usr/local/lib/libglfw.3.dylib")
 find_package(glfw3 REQUIRED)
 
 # Headers (+ glm)

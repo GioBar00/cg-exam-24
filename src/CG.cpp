@@ -41,7 +41,7 @@ class CG : public BaseProject {
 
 		float Ar;
 
-		void setWindowParameters() {
+		void setWindowParameters() override {
 			windowWidth = 800;
 			windowHeight = 600;
 			windowTitle = "CG24 @ PoliMi";
@@ -51,12 +51,12 @@ class CG : public BaseProject {
 			Ar = (float)windowWidth / (float)windowHeight;
 		}
 
-		void onWindowResize(int w, int h) {
+		void onWindowResize(int w, int h) override {
 			Ar = (float)w / (float)h;
 		}
 
 
-		void localInit() {
+		void localInit() override {
 			DSL.init(this, {
 				{0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS, sizeof(Uniform), 1},
 				{1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0, 1}
@@ -84,19 +84,19 @@ class CG : public BaseProject {
 			ViewMatrix = glm::translate(glm::mat4(1), -CamPos);
 		}
 
-		void pipelinesAndDescriptorSetsInit() {
+		void pipelinesAndDescriptorSetsInit() override {
 			P.create();
 
 			DS.init(this, &DSL, {&T});
 		}
 
-		void pipelinesAndDescriptorSetsCleanup() {
+		void pipelinesAndDescriptorSetsCleanup() override {
 			P.cleanup();
 
 			DS.cleanup();
 		}
 
-		void localCleanup() {
+		void localCleanup() override {
 			M.cleanup();
 			T.cleanup();
 
@@ -105,14 +105,14 @@ class CG : public BaseProject {
 			P.destroy();
 		}
 
-		void populateCommandBuffer(VkCommandBuffer commandBuffer, int currentImage) {
+		void populateCommandBuffer(VkCommandBuffer commandBuffer, int currentImage) override {
 			P.bind(commandBuffer);
 			M.bind(commandBuffer);
 			DS.bind(commandBuffer, P, 0, currentImage);
 			vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(M.indices.size()), 1, 0, 0, 0);
 		}
 
-		void updateUniformBuffer(uint32_t currentImage) {
+		void updateUniformBuffer(uint32_t currentImage) override {
 			if (glfwGetKey(window, GLFW_KEY_ESCAPE)) {
 				glfwSetWindowShouldClose(window, GL_TRUE);
 			}
@@ -130,7 +130,7 @@ class CG : public BaseProject {
 			glm::mat4 View = glm::lookAt(camPos, camTarget, glm::vec3(0, 1, 0));
 
 			glm::mat4 World = glm::translate(glm::mat4(1), glm::vec3(-3, 0, 0));
-			Uniform ubo;
+			Uniform ubo{};
 			ubo.mvpMat = Prj * View * World;
 			DS.map(currentImage, &ubo, 0);
 		}

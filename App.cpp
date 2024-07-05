@@ -1,7 +1,6 @@
 #include "modules/Starter.hpp"
+#include "modules/AppCommon.hpp"
 #include "modules/Scene.hpp"
-#include "modules/Enums.hpp"
-
 
 /* Uniform buffers. */
 // TODO: Add a uniform buffers
@@ -53,7 +52,6 @@ protected:
 
 
     // Application config.
-    float Ar;
     SceneId currSceneId;
 
     void setWindowParameters() override {
@@ -73,7 +71,7 @@ protected:
 
     void localInit() override {
         // Set scenes map to nullptr for each sceneId
-        for (const auto &sceneId : sceneIds) {
+        for (const auto &sceneId: sceneIds) {
             scenes[sceneId] = nullptr;
         }
 
@@ -96,20 +94,17 @@ protected:
 //        P.init(this, &VD, "shaders/Axis.vert.spv", "shaders/Axis.frag.spv", {&DSL});
 
         // TODO: Define all Vertex Descriptor Ref per Scene
-        VertexDescriptorRef VDR1{};
-        //VDR1.init("VD", &VD);
         std::vector<VertexDescriptorRef> SL1VDRs = {
-                VDR1,
+//                {"VD", &VD},
         };
         // ...
         // TODO: Define Pipeline Ref per Scene
-        PipelineRef PR1{};
-        //PR1.init("P", &P);
         std::vector<PipelineRef> SL1PRs = {
-                PR1,
+//                {"P", &P}
         };
         // ...
 
+        // TODO: Add all SceneVDRs and ScenePRs to the maps
         SceneVDRs[SceneId::SCENE_LEVEL_1] = SL1VDRs;
         ScenePRs[SceneId::SCENE_LEVEL_1] = SL1PRs;
 //        SceneVDRs[SceneId::SCENE_LEVEL_2] = SL2VDRs;
@@ -121,14 +116,6 @@ protected:
         changeScene(currSceneId);
     }
 
-    void changeScene(SceneId newSceneId) {
-        if (scenes[currSceneId] != nullptr) {
-            scenes[currSceneId]->pipelinesAndDescriptorSetsCleanup();
-        }
-        currSceneId = newSceneId;
-        scenes[currSceneId]->init(this, SceneVDRs.find(newSceneId)->second, ScenePRs.find(newSceneId)->second, sceneFiles.find(currSceneId)->second);
-    }
-
     void pipelinesAndDescriptorSetsInit() override {
         scenes[currSceneId]->pipelinesAndDescriptorSetsInit();
     }
@@ -138,7 +125,12 @@ protected:
     }
 
     void localCleanup() override {
-        scenes[currSceneId]->localCleanup();
+        for (const auto &sceneId: sceneIds) {
+            if (scenes[sceneId] != nullptr) {
+                scenes[sceneId]->localCleanup();
+                free(scenes[sceneId]);
+            }
+        }
     }
 
     void populateCommandBuffer(VkCommandBuffer commandBuffer, int currentImage) override {
@@ -165,7 +157,27 @@ protected:
         Uniform ubo{};
         ubo.mvpMat = Prj * View * World;
         DS.map(currentImage, &ubo, 0);*/
+
+        float deltaT;
+        auto m = glm::vec3(0.0f), r = glm::vec3(0.0f);
+        bool fire;
+
+        getSixAxis(deltaT, m, r, fire);
+
+        scenes[currSceneId]->SC->updateUniformBuffer(deltaT, m, r, fire);
     }
+
+    void changeScene(SceneId newSceneId) {
+        if (scenes[currSceneId] != nullptr) {
+            scenes[currSceneId]->pipelinesAndDescriptorSetsCleanup();
+        }
+
+        scenes[newSceneId] = getNewSceneById(newSceneId);
+        scenes[newSceneId]->init(this, SceneVDRs.find(newSceneId)->second, ScenePRs.find(newSceneId)->second,
+                                 sceneFiles.find(newSceneId)->second);
+        currSceneId = newSceneId;
+    }
+
 };
 
 

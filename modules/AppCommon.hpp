@@ -26,5 +26,3 @@ const SceneIdMap_t sceneFiles = {
 //      {SCENE_LEVEL_2, "Level 2"},
 //      {SCENE_GAME_OVER, "Game Over"}
 };
-
-/* VERTEX DESCRIPTOR DEFINITIONS */

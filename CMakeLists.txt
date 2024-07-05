@@ -4,13 +4,13 @@ project(cg-exam-24)
 set(CMAKE_CXX_STANDARD 20)
 
 # Headers (+ glm)
-include_directories(src/headers)
+include_directories(headers/)
 # Add GLFW3 precompiled library
 find_package(glfw3 REQUIRED)
 # Vulkan
 find_package(Vulkan REQUIRED)
 
-add_executable(${PROJECT_NAME} src/App.cpp)
+add_executable(${PROJECT_NAME} App.cpp)
 target_link_libraries(${PROJECT_NAME} glfw Vulkan::Vulkan)
 
 # Find GLSLC
@@ -25,8 +25,6 @@ else ()
 
     # Compile shaders
     function(compile_shader GLSL_FILE)
-        #cmake_path(GET GLSL_FILE FILENAME SHADER)
-        #message(STATUS "Command: ${GLSLC_EXECUTABLE} ${SHADER_PATH} -o ${SPIRV}")
         add_custom_command(
                 OUTPUT ${GLSL_FILE}.spv
                 COMMAND ${GLSLC_EXECUTABLE} ${GLSL_FILE} -o ${GLSL_FILE}.spv
@@ -34,23 +32,25 @@ else ()
         )
         target_sources(${PROJECT_NAME} PRIVATE ${GLSL_FILE}.spv)
     endfunction()
-    #file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/shaders)
-    file(GLOB SHADERS "src/shaders/*.vert" "src/shaders/*.frag")
+    message(STATUS "Compiling shaders")
+    file(GLOB SHADERS "shaders/*.vert" "shaders/*.frag")
     foreach(SHADER ${SHADERS})
         compile_shader(${SHADER})
     endforeach()
+    message(STATUS "Shaders compiled")
 endif ()
 
+message(STATUS "Copying textures, models and shaders")
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/textures
+        ${CMAKE_CURRENT_SOURCE_DIR}/textures
         ${CMAKE_CURRENT_BINARY_DIR}/textures
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/models
+        ${CMAKE_CURRENT_SOURCE_DIR}/models
         ${CMAKE_CURRENT_BINARY_DIR}/models
         COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/shaders
         COMMAND ${CMAKE_COMMAND} -E copy
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/shaders/*.spv
+        ${CMAKE_CURRENT_SOURCE_DIR}/shaders/*.spv
         ${CMAKE_CURRENT_BINARY_DIR}/shaders/
 )
 

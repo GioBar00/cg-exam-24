@@ -1,8 +1,8 @@
 // This has been adapted from the Vulkan tutorial
-
 #include <iostream>
 #include <stdexcept>
 #include <cstdlib>
+#include <utility>
 #include <vector>
 #include <cstring>
 #include <optional>
@@ -87,7 +87,7 @@ struct QueueFamilyIndices {
 };
 
 struct SwapChainSupportDetails {
-    VkSurfaceCapabilitiesKHR capabilities;
+    VkSurfaceCapabilitiesKHR capabilities{};
     std::vector<VkSurfaceFormatKHR> formats;
     std::vector<VkPresentModeKHR> presentModes;
 };
@@ -183,8 +183,6 @@ std::vector<char> readFile(const std::string &filename) {
     return buffer;
 }
 
-class BaseProject;
-
 struct VertexBindingDescriptorElement {
     uint32_t binding;
     uint32_t stride;
@@ -208,6 +206,8 @@ struct VertexComponent {
     bool hasIt;
     uint32_t offset;
 };
+
+class BaseProject;
 
 struct VertexDescriptor {
     BaseProject *BP;
@@ -249,15 +249,15 @@ public:
     std::vector<unsigned char> vertices{};
     std::vector<uint32_t> indices{};
 
-    void loadModelOBJ(std::string file);
+    void loadModelOBJ(const std::string& file);
 
-    void loadModelGLTF(std::string file, bool encoded);
+    void loadModelGLTF(const std::string& file, bool encoded);
 
     void createIndexBuffer();
 
     void createVertexBuffer();
 
-    void init(BaseProject *bp, VertexDescriptor *VD, std::string file, ModelType MT);
+    void init(BaseProject *bp, VertexDescriptor *VD, const std::string& file, ModelType MT);
 
     void initMesh(BaseProject *bp, VertexDescriptor *VD);
 
@@ -292,9 +292,9 @@ struct Texture {
 
     void init(BaseProject *bp, std::string file, VkFormat Fmt, bool initSampler);
 
-    void initCubic(BaseProject *bp, std::vector<std::string>, VkFormat Fmt);
+    void initCubic(BaseProject *bp, const std::vector<std::string>&, VkFormat Fmt);
 
-    void cleanup();
+    void cleanup() const;
 };
 
 struct DescriptorSetLayoutBinding {
@@ -314,7 +314,7 @@ struct DescriptorSetLayout {
 
     void init(BaseProject *bp, std::vector<DescriptorSetLayoutBinding> B);
 
-    void cleanup();
+    void cleanup() const;
 };
 
 struct Pipeline {
@@ -342,13 +342,13 @@ struct Pipeline {
 
     void create();
 
-    void destroy();
+    void destroy() const;
 
-    void bind(VkCommandBuffer commandBuffer);
+    void bind(VkCommandBuffer commandBuffer) const;
 
-    VkShaderModule createShaderModule(const std::vector<char> &code);
+    VkShaderModule createShaderModule(const std::vector<char> &code) const;
 
-    void cleanup();
+    void cleanup() const;
 };
 
 struct DescriptorSet {
@@ -405,11 +405,32 @@ public:
         cleanup();
     }
 
-    PoolSizes DPSZs;
+    void requestSetsInPool(int n) {
+        if (DPSZs.setsInPool < n) {
+            DPSZs.setsInPool = n;
+        }
+    }
+
+    void requestUniformBlocksInPool(int n) {
+        if (DPSZs.uniformBlocksInPool < n) {
+            DPSZs.uniformBlocksInPool = n;
+        }
+    }
+
+    void requestTexturesInPool(int n) {
+        if (DPSZs.texturesInPool < n) {
+            DPSZs.texturesInPool = n;
+        }
+    }
+
+    float getAr() {
+        return Ar;
+    }
 
 protected:
     uint32_t windowWidth;
     uint32_t windowHeight;
+    float Ar;
     bool windowResizable;
     std::string windowTitle;
     VkClearColorValue initialBackgroundColor;
@@ -445,6 +466,8 @@ protected:
     VkImage colorImage;
     VkDeviceMemory colorImageMemory;
     VkImageView colorImageView;
+
+    PoolSizes DPSZs;
 
     std::vector<VkFramebuffer> swapChainFramebuffers;
     size_t currentFrame = 0;
@@ -1822,7 +1845,7 @@ protected:
 
 
     // Control Wrapper
-    void handleGamePad(int id, glm::vec3 &m, glm::vec3 &r, bool &fire) {
+    static void handleGamePad(int id, glm::vec3 &m, glm::vec3 &r, bool &fire) {
         const float deadZone = 0.1f;
 
         if (glfwJoystickIsGamepad(id)) {
@@ -1931,38 +1954,38 @@ protected:
     // Public part of the base class
 public:
     // Debug commands
-    void printFloat(const char *Name, float v) {
+    static void printFloat(const char *Name, float v) {
         std::cout << "float " << Name << " = " << v << ";\n";
     }
 
-    void printVec2(const char *Name, glm::vec2 v) {
+    static void printVec2(const char *Name, glm::vec2 v) {
         std::cout << "glm::vec3 " << Name << " = glm::vec3(" << v[0] << ", " << v[1] << ");\n";
     }
 
-    void printVec3(const char *Name, glm::vec3 v) {
+    static void printVec3(const char *Name, glm::vec3 v) {
         std::cout << "glm::vec3 " << Name << " = glm::vec3(" << v[0] << ", " << v[1] << ", " << v[2] << ");\n";
     }
 
-    void printVec4(const char *Name, glm::vec4 v) {
+    static void printVec4(const char *Name, glm::vec4 v) {
         std::cout << "glm::vec4 " << Name << " = glm::vec4(" << v[0] << ", " << v[1] << ", " << v[2] << ", " << v[3]
                   << ");\n";
     }
 
-    void printMat3(const char *Name, glm::mat3 v) {
+    static void printMat3(const char *Name, glm::mat3 v) {
         std::cout << "glm::mat3 " << Name << " = glm::mat3(";
         for (int i = 0; i < 9; i++) {
             std::cout << v[i / 3][i % 3] << ((i < 8) ? ", " : ");\n");
         }
     }
 
-    void printMat4(const char *Name, glm::mat4 v) {
+    static void printMat4(const char *Name, glm::mat4 v) {
         std::cout << "glm::mat4 " << Name << " = glm::mat4(";
         for (int i = 0; i < 16; i++) {
             std::cout << v[i / 4][i % 4] << ((i < 15) ? ", " : ");\n");
         }
     }
 
-    void printQuat(const char *Name, glm::quat q) {
+    static void printQuat(const char *Name, glm::quat q) {
         std::cout << "glm::vec3 " << Name << " = glm::vec3(" << q[0] << ", " << q[1] << ", " << q[2] << ", " << q[3]
                   << ");\n";
     }
@@ -2012,14 +2035,14 @@ private:
         return cmdBuffer;
     }
 
-    inline VkFenceCreateInfo vks_initializers_fenceCreateInfo(VkFenceCreateFlags flags = 0) {
+    static inline VkFenceCreateInfo vks_initializers_fenceCreateInfo(VkFenceCreateFlags flags = 0) {
         VkFenceCreateInfo fenceCreateInfo{};
         fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
         fenceCreateInfo.flags = flags;
         return fenceCreateInfo;
     }
 
-    inline VkSubmitInfo vks_initializers_submitInfo() {
+    static inline VkSubmitInfo vks_initializers_submitInfo() {
         VkSubmitInfo submitInfo{};
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
         return submitInfo;
@@ -2072,19 +2095,19 @@ private:
         }
     }
 
-    inline VkMemoryAllocateInfo vks_initializers_memoryAllocateInfo() {
+    static inline VkMemoryAllocateInfo vks_initializers_memoryAllocateInfo() {
         VkMemoryAllocateInfo memAllocInfo{};
         memAllocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
         return memAllocInfo;
     }
 
-    inline VkImageCreateInfo vks_initializers_imageCreateInfo() {
+    static inline VkImageCreateInfo vks_initializers_imageCreateInfo() {
         VkImageCreateInfo imageCreateInfo{};
         imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
         return imageCreateInfo;
     }
 
-    inline VkImageMemoryBarrier vks_initializers_imageMemoryBarrier() {
+    static inline VkImageMemoryBarrier vks_initializers_imageMemoryBarrier() {
         VkImageMemoryBarrier imageMemoryBarrier{};
         imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
         imageMemoryBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
@@ -2353,7 +2376,7 @@ public:
 
         int j = 0;
         for (uint32_t y = 0; y < height; y++) {
-            unsigned int *row = (unsigned int *) data;
+            auto *row = (unsigned int *) data;
             for (uint32_t x = 0; x < width; x++) {
                 if (colorSwizzle) {
                     pixelArray[j++] = ((char *) row)[2];
@@ -2505,7 +2528,7 @@ std::vector<VkVertexInputAttributeDescription> VertexDescriptor::getAttributeDes
 }
 
 
-void Model::loadModelOBJ(std::string file) {
+void Model::loadModelOBJ(const std::string& file) {
     tinyobj::attrib_t attrib;
     std::vector<tinyobj::shape_t> shapes;
     std::vector<tinyobj::material_t> materials;
@@ -2531,7 +2554,7 @@ void Model::loadModelOBJ(std::string file) {
                     attrib.vertices[3 * index.vertex_index + 2]
             };
             if (VD->Position.hasIt) {
-                glm::vec3 *o = (glm::vec3 *) ((char *) (&vertex[0]) + VD->Position.offset);
+                auto *o = (glm::vec3 *) ((char *) (&vertex[0]) + VD->Position.offset);
                 *o = pos;
             }
 
@@ -2541,7 +2564,7 @@ void Model::loadModelOBJ(std::string file) {
                     attrib.colors[3 * index.vertex_index + 2]
             };
             if (VD->Color.hasIt) {
-                glm::vec3 *o = (glm::vec3 *) ((char *) (&vertex[0]) + VD->Color.offset);
+                auto *o = (glm::vec3 *) ((char *) (&vertex[0]) + VD->Color.offset);
                 *o = color;
             }
 
@@ -2550,7 +2573,7 @@ void Model::loadModelOBJ(std::string file) {
                     1 - attrib.texcoords[2 * index.texcoord_index + 1]
             };
             if (VD->UV.hasIt) {
-                glm::vec2 *o = (glm::vec2 *) ((char *) (&vertex[0]) + VD->UV.offset);
+                auto *o = (glm::vec2 *) ((char *) (&vertex[0]) + VD->UV.offset);
                 *o = texCoord;
             }
 
@@ -2560,7 +2583,7 @@ void Model::loadModelOBJ(std::string file) {
                     attrib.normals[3 * index.normal_index + 2]
             };
             if (VD->Normal.hasIt) {
-                glm::vec3 *o = (glm::vec3 *) ((char *) (&vertex[0]) + VD->Normal.offset);
+                auto *o = (glm::vec3 *) ((char *) (&vertex[0]) + VD->Normal.offset);
                 *o = norm;
             }
 
@@ -2573,7 +2596,7 @@ void Model::loadModelOBJ(std::string file) {
 
 }
 
-void Model::loadModelGLTF(std::string file, bool encoded) {
+void Model::loadModelGLTF(const std::string& file, bool encoded) {
     tinygltf::Model model;
     tinygltf::TinyGLTF loader;
     std::string warn, err;
@@ -2615,7 +2638,7 @@ void Model::loadModelGLTF(std::string file, bool encoded) {
         }
     } else {
         if (!loader.LoadASCIIFromFile(&model, &warn, &err,
-                                      file.c_str())) {
+                                      file)) {
             throw std::runtime_error(warn + err);
         }
     }
@@ -2716,7 +2739,7 @@ void Model::loadModelGLTF(std::string file, bool encoded) {
                             bufferPos[3 * i + 2]
                     };
                     //std::cout << "Pos: " <<	VD->Position.offset << "\n";
-                    glm::vec3 *o = (glm::vec3 *) ((char *) (&vertex[0]) + VD->Position.offset);
+                    auto *o = (glm::vec3 *) ((char *) (&vertex[0]) + VD->Position.offset);
                     //std::cout << "at: " << o << "\n";
                     *o = pos;
                     //std::cout << "Copied: " << o->x << "\n";
@@ -2728,7 +2751,7 @@ void Model::loadModelGLTF(std::string file, bool encoded) {
                             bufferNormals[3 * i + 2]
                     };
                     //std::cout << "Nor: " <<	VD->Normal.offset << "\n";
-                    glm::vec3 *o = (glm::vec3 *) ((char *) (&vertex[0]) + VD->Normal.offset);
+                    auto *o = (glm::vec3 *) ((char *) (&vertex[0]) + VD->Normal.offset);
                     *o = normal;
                 }
 
@@ -2740,7 +2763,7 @@ void Model::loadModelGLTF(std::string file, bool encoded) {
                             bufferTangents[4 * i + 3]
                     };
                     //std::cout << "Tan: " <<	VD->Tangent.offset << "\n";
-                    glm::vec4 *o = (glm::vec4 *) ((char *) (&vertex[0]) + VD->Tangent.offset);
+                    auto *o = (glm::vec4 *) ((char *) (&vertex[0]) + VD->Tangent.offset);
                     *o = tangent;
                 }
 
@@ -2750,7 +2773,7 @@ void Model::loadModelGLTF(std::string file, bool encoded) {
                             bufferTexCoords[2 * i + 1]
                     };
                     //std::cout << "UV : " <<	VD->UV.offset << "\n";
-                    glm::vec2 *o = (glm::vec2 *) ((char *) (&vertex[0]) + VD->UV.offset);
+                    auto *o = (glm::vec2 *) ((char *) (&vertex[0]) + VD->UV.offset);
                     *o = texCoord;
                 }
 
@@ -2765,7 +2788,7 @@ void Model::loadModelGLTF(std::string file, bool encoded) {
 
             switch (accessor.componentType) {
                 case TINYGLTF_PARAMETER_TYPE_UNSIGNED_SHORT: {
-                    const uint16_t *bufferIndex = reinterpret_cast<const uint16_t *>(&(buffer.data[accessor.byteOffset +
+                    const auto *bufferIndex = reinterpret_cast<const uint16_t *>(&(buffer.data[accessor.byteOffset +
                                                                                                    bufferView.byteOffset]));
                     for (int i = 0; i < accessor.count; i++) {
                         indices.push_back(bufferIndex[i]);
@@ -2773,7 +2796,7 @@ void Model::loadModelGLTF(std::string file, bool encoded) {
                 }
                     break;
                 case TINYGLTF_PARAMETER_TYPE_UNSIGNED_INT: {
-                    const uint32_t *bufferIndex = reinterpret_cast<const uint32_t *>(&(buffer.data[accessor.byteOffset +
+                    const auto *bufferIndex = reinterpret_cast<const uint32_t *>(&(buffer.data[accessor.byteOffset +
                                                                                                    bufferView.byteOffset]));
                     for (int i = 0; i < accessor.count; i++) {
                         indices.push_back(bufferIndex[i]);
@@ -2797,7 +2820,7 @@ void Model::loadModelGLTF(std::string file, bool encoded) {
     glm::vec3 T;
     glm::vec3 S;
     glm::quat Q;
-    if (model.nodes[0].translation.size() > 0) {
+    if (!model.nodes[0].translation.empty()) {
         //std::cout << "node " << i << " has T\n";
         T = glm::vec3(model.nodes[0].translation[0],
                       model.nodes[0].translation[1],
@@ -2805,7 +2828,7 @@ void Model::loadModelGLTF(std::string file, bool encoded) {
     } else {
         T = glm::vec3(0);
     }
-    if (model.nodes[0].rotation.size() > 0) {
+    if (!model.nodes[0].rotation.empty()) {
         //std::cout << "node " << i << " has Q\n";
         Q = glm::quat(model.nodes[0].rotation[3],
                       model.nodes[0].rotation[0],
@@ -2814,7 +2837,7 @@ void Model::loadModelGLTF(std::string file, bool encoded) {
     } else {
         Q = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
     }
-    if (model.nodes[0].scale.size() > 0) {
+    if (!model.nodes[0].scale.empty()) {
         //std::cout << "node " << i << " has S\n";
         S = glm::vec3(model.nodes[0].scale[0],
                       model.nodes[0].scale[1],
@@ -2870,7 +2893,7 @@ void Model::initMesh(BaseProject *bp, VertexDescriptor *vd) {
     Wm = glm::mat4(1);
 }
 
-void Model::init(BaseProject *bp, VertexDescriptor *vd, std::string file, ModelType MT) {
+void Model::init(BaseProject *bp, VertexDescriptor *vd, const std::string& file, ModelType MT) {
     BP = bp;
     VD = vd;
     Wm = glm::mat4(1);
@@ -3022,7 +3045,7 @@ void Texture::createTextureSampler(
 void Texture::init(BaseProject *bp, std::string file, VkFormat Fmt = VK_FORMAT_R8G8B8A8_SRGB, bool initSampler = true) {
     BP = bp;
     imgs = 1;
-    createTextureImage({file}, Fmt);
+    createTextureImage({std::move(file)}, Fmt);
     createTextureImageView(Fmt);
     if (initSampler) {
         createTextureSampler();
@@ -3030,7 +3053,7 @@ void Texture::init(BaseProject *bp, std::string file, VkFormat Fmt = VK_FORMAT_R
 }
 
 
-void Texture::initCubic(BaseProject *bp, std::vector<std::string> files, VkFormat Fmt = VK_FORMAT_R8G8B8A8_SRGB) {
+void Texture::initCubic(BaseProject *bp, const std::vector<std::string>& files, VkFormat Fmt = VK_FORMAT_R8G8B8A8_SRGB) {
     if (files.size() != 6) {
         std::cout << "\nError! Cube map without 6 files - " << files.size() << "\n";
         exit(0);
@@ -3043,7 +3066,7 @@ void Texture::initCubic(BaseProject *bp, std::vector<std::string> files, VkForma
 }
 
 
-void Texture::cleanup() {
+void Texture::cleanup() const {
     vkDestroySampler(BP->device, textureSampler, nullptr);
     vkDestroyImageView(BP->device, textureImageView, nullptr);
     vkDestroyImage(BP->device, textureImage, nullptr);
@@ -3262,19 +3285,19 @@ void Pipeline::create() {
 
 }
 
-void Pipeline::destroy() {
+void Pipeline::destroy() const {
     vkDestroyShaderModule(BP->device, fragShaderModule, nullptr);
     vkDestroyShaderModule(BP->device, vertShaderModule, nullptr);
 }
 
-void Pipeline::bind(VkCommandBuffer commandBuffer) {
+void Pipeline::bind(VkCommandBuffer commandBuffer) const {
     vkCmdBindPipeline(commandBuffer,
                       VK_PIPELINE_BIND_POINT_GRAPHICS,
                       graphicsPipeline);
 
 }
 
-VkShaderModule Pipeline::createShaderModule(const std::vector<char> &code) {
+VkShaderModule Pipeline::createShaderModule(const std::vector<char> &code) const {
     VkShaderModuleCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
     createInfo.codeSize = code.size();
@@ -3292,7 +3315,7 @@ VkShaderModule Pipeline::createShaderModule(const std::vector<char> &code) {
     return shaderModule;
 }
 
-void Pipeline::cleanup() {
+void Pipeline::cleanup() const {
     vkDestroyPipeline(BP->device, graphicsPipeline, nullptr);
     vkDestroyPipelineLayout(BP->device, pipelineLayout, nullptr);
 }
@@ -3328,7 +3351,7 @@ void DescriptorSetLayout::init(BaseProject *bp, std::vector<DescriptorSetLayoutB
     }
 }
 
-void DescriptorSetLayout::cleanup() {
+void DescriptorSetLayout::cleanup() const {
     vkDestroyDescriptorSetLayout(BP->device, descriptorSetLayout, nullptr);
 }
 

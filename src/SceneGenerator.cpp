@@ -1,8 +1,8 @@
 #include "modules/Starter.hpp"
 #include "modules/Scene.hpp"
 
-#define OBJS 16
-#define MY_OBJS 5
+#define OBJS 32
+#define MY_OBJS 27
 #define UNIT 3.1f
 
 
@@ -11,6 +11,12 @@ struct Uniform {
     alignas(16) glm::mat4 mvpMat;
 };
 
+/*struct LightUniform {
+    alignas(16) glm::vec3 lightDir;
+    alignas(16) glm::vec4 lightColor;
+    alignas(16) glm::vec3 eyePos;
+};*/
+
 
 /* Vertex formats. */
 struct Vertex {
@@ -18,26 +24,32 @@ struct Vertex {
     glm::vec2 UV;
 };
 
+/*struct LightVertex {
+    glm::vec3 pos;
+    glm::vec3 norm;
+    glm::vec2 UV;
+};*/
+
 
 class CG : public BaseProject {
 protected:
 
     /* Descriptor set layouts. */
-    DescriptorSetLayout DSL;
+    DescriptorSetLayout DSL, LightDSL;
 
 
     /* Vertex descriptors. */
-    VertexDescriptor VD;
+    VertexDescriptor VD, LightVD;
 
 
     /* Pipelines. */
-    Pipeline P;
+    Pipeline P, LightP;
 
 
     /* Models, textures, descriptor sets. */
     Model Ms[OBJS];
     Texture T;
-    DescriptorSet Ds[OBJS];
+    DescriptorSet Ds[OBJS], LightDS;
 
 
     // Application configs.
@@ -71,6 +83,10 @@ protected:
                 {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         VK_SHADER_STAGE_ALL_GRAPHICS, sizeof(Uniform), 1},
                 {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0,               1}
         });
+        /*LightDSL.init(this, {
+			{0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, sizeof(LightUniform), 1},
+			{1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0, 1}
+		});*/
 
         VD.init(this, {
                         {0, sizeof(Vertex), VK_VERTEX_INPUT_RATE_VERTEX}
@@ -79,21 +95,31 @@ protected:
                         {0, 1, VK_FORMAT_R32G32_SFLOAT,    offsetof(Vertex, UV),  sizeof(glm::vec2), UV}
                 }
         );
+        /*LightVD.init(this, {
+				{0, sizeof(LightVertex), VK_VERTEX_INPUT_RATE_VERTEX}
+			}, {
+				{0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(LightVertex, pos), sizeof(glm::vec3), POSITION},
+				{0, 1, VK_FORMAT_R32G32B32_SFLOAT, offsetof(LightVertex, norm), sizeof(glm::vec3), NORMAL},
+				{0, 2, VK_FORMAT_R32G32_SFLOAT, offsetof(LightVertex, UV), sizeof(glm::vec2), UV}
+			}
+		);*/
 
         P.init(this, &VD, "shaders/AxisVert.spv", "shaders/AxisFrag.spv", {&DSL});
+        //LightP.init(this, &LightVD, "shaders/LightVert.spv", "shaders/LightFrag.spv", {&LightDSL});
 
         Ms[0].init(this, &VD, "models/axis.obj", OBJ);
         Ms[1].init(this, &VD, "models/dungeon/cast_Mesh.6268.mgcg", MGCG);
-        Ms[2].init(this, &VD, "models/dungeon/tunnel.003_Mesh.4991.mgcg", MGCG);
-        Ms[3].init(this, &VD, "models/dungeon/tunnel_Mesh.4672.mgcg", MGCG);
-        Ms[4].init(this, &VD, "models/dungeon/tunnel.028_Mesh.7989.mgcg", MGCG);
+        static const std::string GROUND = "models/dungeon/tunnel.003_Mesh.4991.mgcg", WALL_LINE = "models/dungeon/tunnel_Mesh.4672.mgcg", WALL_ANGLE = "models/dungeon/tunnel.028_Mesh.7989.mgcg";
+        for (int i = 2; i < 2 + 9; i++) Ms[i].init(this, &VD, GROUND, MGCG);
+        for (int i = 11; i < 11 + 12; i++) Ms[i].init(this, &VD, WALL_LINE, MGCG);
+        for (int i = 23; i < 23 + 4; i++) Ms[i].init(this, &VD, WALL_ANGLE, MGCG);
         for (int i = MY_OBJS; i < OBJS; i++) Ms[i].init(this, &VD, "models/axis.obj", OBJ);
 
         T.init(this, "textures/dungeon/Textures_Dungeon.png");
 
-        DPSZs.uniformBlocksInPool = OBJS;
-        DPSZs.texturesInPool = OBJS;
-        DPSZs.setsInPool = OBJS;
+        DPSZs.uniformBlocksInPool = MY_OBJS + 1;
+        DPSZs.texturesInPool = MY_OBJS;
+        DPSZs.setsInPool = MY_OBJS + 1;
 
 
         Prj = glm::perspective(FOVy, Ar, nearPlane, farPlane);
@@ -109,30 +135,35 @@ protected:
 
     void pipelinesAndDescriptorSetsInit() override {
         P.create();
+        //LightP.create();
 
-        for (int i = 0; i < OBJS; i++)
+        for (int i = 0; i < MY_OBJS; i++)
             Ds[i].init(this, &DSL, {&T});
+        //LightDS.init(this, &LightDSL, {});
     }
 
     void pipelinesAndDescriptorSetsCleanup() override {
         P.cleanup();
 
-        for (int i = 0; i < OBJS; i++)
+        for (int i = 0; i < MY_OBJS; i++)
             Ds[i].cleanup();
+        //LightDS.cleanup();
     }
 
     void localCleanup() override {
-        for (int i = 0; i < OBJS; i++)
+        for (int i = 0; i < MY_OBJS; i++)
             Ms[i].cleanup();
         T.cleanup();
 
         DSL.cleanup();
+        //LightDSL.cleanup();
 
         P.destroy();
+        //LightP.destroy();
     }
 
     void populateCommandBuffer(VkCommandBuffer commandBuffer, int currentImage) override {
-        for (int i = 0; i < OBJS; i++) {
+        for (int i = 0; i < MY_OBJS; i++) {
             P.bind(commandBuffer);
             Ms[i].bind(commandBuffer);
             Ds[i].bind(commandBuffer, P, 0, currentImage);
@@ -162,9 +193,19 @@ protected:
         glm::mat4 Worlds[MY_OBJS], BaseT = glm::mat4(1);
         Worlds[0] = glm::translate(BaseT, glm::vec3(0, 0, 0)); // Axis.
         Worlds[1] = glm::translate(BaseT, glm::vec3(0, 1, 0)); // Character.
-        Worlds[2] = glm::scale(glm::translate(BaseT, glm::vec3(0, 0, 0)), glm::vec3(0.5f)); // Ground. (3x3 after scaling.)
-        Worlds[3] = glm::scale(glm::rotate(glm::translate(glm::mat4(1), glm::vec3(-UNIT, 0, 0)), glm::radians(90.0f), glm::vec3(0, 1, 0)), glm::vec3(0.5f, 1, 1));
-        Worlds[4] = glm::translate(BaseT, glm::vec3(-UNIT, 0, -UNIT));
+        for (int i = -1; i <= +1; i++) // z.
+            for (int j = -1; j <= +1; j++) // x.
+                Worlds[2 + (3 * (i + 1) + (j + 1))] = glm::scale(glm::translate(BaseT, glm::vec3(+j * UNIT / 1.5f, 0, +i * UNIT / 1.5f)), glm::vec3(0.5f)); // Ground. (3x3 after scaling.)
+        for (int i = 0; i <= 3; i++) {
+            float dirX = glm::cos(glm::radians(+(i + 1) * 90.0f)), dirZ = -glm::sin(glm::radians(+(i + 1) * 90.0f));
+            glm::vec3 pivot = glm::vec3(dirX * (UNIT + UNIT / 1.5f), 0, dirZ * (UNIT + UNIT / 1.5f)); // FIX: Different units between ground-wall.
+            for (int j = -1; j <= +1; j++) {
+                Worlds[11 + (3 * i + (j + 1))] = glm::scale(glm::rotate(glm::translate(glm::mat4(1), pivot + glm::vec3(j * dirZ * UNIT / 1.5f, 0, j * dirX * UNIT / 1.5f)), glm::radians(+i * 90.0f), glm::vec3(0, 1, 0)), glm::vec3(0.5f, 1, 1));
+            }
+        }
+        for (int i = 0; i <= 1; i++)
+            for (int j = 0; j <= 1; j++)
+                Worlds[23 + (2 * i + j)] = glm::rotate(glm::translate(BaseT, glm::vec3(+(2 * j - 1) * (UNIT + UNIT / 1.5f), 0, +(2 * i - 1) * (UNIT + UNIT / 1.5f))), glm::radians(-(i == 1 ? 2 + int(!bool(j)) : j) * 90.0f), glm::vec3(0, 1, 0));
         Uniform ubos[MY_OBJS];
         for (int i = 0; i < MY_OBJS; i++) {
             ubos[i].mvpMat = Prj * View * Worlds[i];

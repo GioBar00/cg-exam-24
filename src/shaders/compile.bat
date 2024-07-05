@@ -1,3 +1,2 @@
-glslc Axis.vert -o AxisVert.spv
-
-glslc Axis.frag -o AxisFrag.spv
+glslc Toon.vert -o ToonVert.spv
+glslc Toon.frag -o ToonFrag.spv

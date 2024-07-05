@@ -1,9 +1,10 @@
 #include "modules/Starter.hpp"
 #include "modules/Scene.hpp"
 
-#define OBJS 32
-#define MY_OBJS 27
+#define OBJS 48
+#define MY_OBJS 30
 #define UNIT 3.1f
+#define OFFSET 0.1f
 
 
 /* Uniform buffers. */
@@ -11,11 +12,17 @@ struct Uniform {
     alignas(16) glm::mat4 mvpMat;
 };
 
-/*struct LightUniform {
+struct ToonUniform {
+    alignas(16) glm::mat4 mvpMat;
+    alignas(16) glm::mat4 mMat;
+    alignas(16) glm::mat4 nMat;
+};
+
+struct LightUniform {
     alignas(16) glm::vec3 lightDir;
-    alignas(16) glm::vec4 lightColor;
+    alignas(16) glm::vec4 lightCol;
     alignas(16) glm::vec3 eyePos;
-};*/
+};
 
 
 /* Vertex formats. */
@@ -24,32 +31,32 @@ struct Vertex {
     glm::vec2 UV;
 };
 
-/*struct LightVertex {
+struct ToonVertex {
     glm::vec3 pos;
     glm::vec3 norm;
     glm::vec2 UV;
-};*/
+};
 
 
 class CG : public BaseProject {
 protected:
 
     /* Descriptor set layouts. */
-    DescriptorSetLayout DSL, LightDSL;
+    DescriptorSetLayout DSL, ToonDSL, LightDSL;
 
 
     /* Vertex descriptors. */
-    VertexDescriptor VD, LightVD;
+    VertexDescriptor VD, ToonVD;
 
 
     /* Pipelines. */
-    Pipeline P, LightP;
+    Pipeline P, IlluminationP;
 
 
     /* Models, textures, descriptor sets. */
     Model Ms[OBJS];
     Texture T;
-    DescriptorSet Ds[OBJS], LightDS;
+    DescriptorSet Ds[OBJS], ToonDs[OBJS], LightDS;
 
 
     // Application configs.
@@ -80,32 +87,35 @@ protected:
 
     void localInit() override {
         DSL.init(this, {
-                {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         VK_SHADER_STAGE_ALL_GRAPHICS, sizeof(Uniform), 1},
-                {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0,               1}
+            {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,          VK_SHADER_STAGE_ALL_GRAPHICS,   sizeof(Uniform),    1},
+            {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,  VK_SHADER_STAGE_FRAGMENT_BIT,   0,                  1}
         });
-        /*LightDSL.init(this, {
-			{0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, sizeof(LightUniform), 1},
-			{1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0, 1}
+        /*ToonDSL.init(this, {
+            {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,          VK_SHADER_STAGE_ALL_GRAPHICS,   sizeof(Uniform),    1},
+            {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,  VK_SHADER_STAGE_FRAGMENT_BIT,   0,                  1}
+        });
+        LightDSL.init(this, {
+            {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,          VK_SHADER_STAGE_VERTEX_BIT,     sizeof(LightUniform),   1}
 		});*/
 
         VD.init(this, {
-                        {0, sizeof(Vertex), VK_VERTEX_INPUT_RATE_VERTEX}
-                }, {
-                        {0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, pos), sizeof(glm::vec3), POSITION},
-                        {0, 1, VK_FORMAT_R32G32_SFLOAT,    offsetof(Vertex, UV),  sizeof(glm::vec2), UV}
-                }
+                {0, sizeof(Vertex), VK_VERTEX_INPUT_RATE_VERTEX}
+            }, {
+                {0, 0, VK_FORMAT_R32G32B32_SFLOAT,  offsetof(Vertex, pos),  sizeof(glm::vec3),  POSITION},
+                {0, 1, VK_FORMAT_R32G32_SFLOAT,     offsetof(Vertex, UV),   sizeof(glm::vec2),  UV}
+            }
         );
-        /*LightVD.init(this, {
-				{0, sizeof(LightVertex), VK_VERTEX_INPUT_RATE_VERTEX}
-			}, {
-				{0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(LightVertex, pos), sizeof(glm::vec3), POSITION},
-				{0, 1, VK_FORMAT_R32G32B32_SFLOAT, offsetof(LightVertex, norm), sizeof(glm::vec3), NORMAL},
-				{0, 2, VK_FORMAT_R32G32_SFLOAT, offsetof(LightVertex, UV), sizeof(glm::vec2), UV}
-			}
-		);*/
+        /*ToonVD.init(this, {
+                {0, sizeof(ToonVertex), VK_VERTEX_INPUT_RATE_VERTEX}
+            }, {
+                {0, 0, VK_FORMAT_R32G32B32_SFLOAT,  offsetof(ToonVertex, pos),  sizeof(glm::vec3),  POSITION},
+                {0, 1, VK_FORMAT_R32G32B32_SFLOAT,  offsetof(ToonVertex, norm), sizeof(glm::vec2),  NORMAL},
+                {0, 2, VK_FORMAT_R32G32_SFLOAT,     offsetof(ToonVertex, UV),   sizeof(glm::vec2),  UV}
+            }
+        );*/
 
         P.init(this, &VD, "shaders/AxisVert.spv", "shaders/AxisFrag.spv", {&DSL});
-        //LightP.init(this, &LightVD, "shaders/LightVert.spv", "shaders/LightFrag.spv", {&LightDSL});
+        //IlluminationP.init(this, &ToonVD, "shaders/ToonVert.spv", "shaders/ToonFrag.spv", {&LightDSL, &ToonDSL});
 
         Ms[0].init(this, &VD, "models/axis.obj", OBJ);
         Ms[1].init(this, &VD, "models/dungeon/cast_Mesh.6268.mgcg", MGCG);
@@ -113,6 +123,9 @@ protected:
         for (int i = 2; i < 2 + 9; i++) Ms[i].init(this, &VD, GROUND, MGCG);
         for (int i = 11; i < 11 + 12; i++) Ms[i].init(this, &VD, WALL_LINE, MGCG);
         for (int i = 23; i < 23 + 4; i++) Ms[i].init(this, &VD, WALL_ANGLE, MGCG);
+        Ms[27].init(this, &VD, "models/dungeon/light.002_Mesh.6811.mgcg", MGCG);
+        Ms[28].init(this, &VD, "models/dungeon/light.009_Mesh.6851.mgcg", MGCG);
+        Ms[29].init(this, &VD, "models/dungeon/light.013_Mesh.7136.mgcg", MGCG);
         for (int i = MY_OBJS; i < OBJS; i++) Ms[i].init(this, &VD, "models/axis.obj", OBJ);
 
         T.init(this, "textures/dungeon/Textures_Dungeon.png");
@@ -135,10 +148,11 @@ protected:
 
     void pipelinesAndDescriptorSetsInit() override {
         P.create();
-        //LightP.create();
+        //IlluminationP.create();
 
         for (int i = 0; i < MY_OBJS; i++)
             Ds[i].init(this, &DSL, {&T});
+            //ToonDs[i].init(this, &ToonDSL, {&T});
         //LightDS.init(this, &LightDSL, {});
     }
 
@@ -147,6 +161,7 @@ protected:
 
         for (int i = 0; i < MY_OBJS; i++)
             Ds[i].cleanup();
+            //ToonDs[i].cleanup();
         //LightDS.cleanup();
     }
 
@@ -156,10 +171,11 @@ protected:
         T.cleanup();
 
         DSL.cleanup();
+        //ToonDSL.cleanup();
         //LightDSL.cleanup();
 
         P.destroy();
-        //LightP.destroy();
+        //IlluminationP.destroy();
     }
 
     void populateCommandBuffer(VkCommandBuffer commandBuffer, int currentImage) override {
@@ -167,6 +183,8 @@ protected:
             P.bind(commandBuffer);
             Ms[i].bind(commandBuffer);
             Ds[i].bind(commandBuffer, P, 0, currentImage);
+            //LightDS.bind(commandBuffer, P, 0, currentImage);
+            //ToonDs[i].bind(commandBuffer, P, 1, currentImage);
             vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(Ms[i].indices.size()), 1, 0, 0, 0);
         }
     }
@@ -206,11 +224,78 @@ protected:
         for (int i = 0; i <= 1; i++)
             for (int j = 0; j <= 1; j++)
                 Worlds[23 + (2 * i + j)] = glm::rotate(glm::translate(BaseT, glm::vec3(+(2 * j - 1) * (UNIT + UNIT / 1.5f), 0, +(2 * i - 1) * (UNIT + UNIT / 1.5f))), glm::radians(-(i == 1 ? 2 + int(!bool(j)) : j) * 90.0f), glm::vec3(0, 1, 0));
+        Worlds[27] = glm::rotate(glm::translate(BaseT, glm::vec3(-(UNIT - 5 * OFFSET + UNIT / 1.5f), UNIT / 2.0f, 0)), glm::radians(+90.0f), glm::vec3(0, 1, 0));
+        Worlds[28] = glm::rotate(glm::translate(BaseT, glm::vec3(+(UNIT - 7.75 * OFFSET + UNIT / 1.5f), UNIT / 2.0f, 0)), glm::radians(-90.0f), glm::vec3(0, 1, 0));
+        Worlds[29] = glm::translate(BaseT, glm::vec3(0, UNIT / 2.0f, -(UNIT - 9 * OFFSET + UNIT / 1.5f)));
         Uniform ubos[MY_OBJS];
+        //ToonUniform ubos[MY_OBJS];
+        //LightUniforms lubo;
         for (int i = 0; i < MY_OBJS; i++) {
             ubos[i].mvpMat = Prj * View * Worlds[i];
+            //ubos[i].mMat = Worlds[i];
+            //ubos[i].nMat = glm::inverse(glm::transpose(Worlds[i]));
             Ds[i].map(currentImage, &ubos[i], 0);
+            //lubo.lightDir = glm::vec3(0, 7, 0);
+            //lubo.lightCol = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+            //lubo.eyePos = glm::vec3(glm::inverse(View) * glm::vec4(0, 0, 0, 1));
+            //LightDS.map(currentImage, lubo, 0);
         }
+
+
+
+
+
+        /*
+        Ms[0].init(this, &VD, "models/axis.obj", OBJ);
+        Ms[1].init(this, &VD, "models/dungeon/cast_Mesh.6268.mgcg", MGCG);
+        //Ms[2].init(this, &VD, "models/dungeon/floor_Mesh.7127.mgcg", MGCG);
+        Ms[2].init(this, &VD, "models/dungeon/tunnel.003_Mesh.4991.mgcg", MGCG);
+        //Ms[3].init(this, &VD, "models/dungeon/tunnel.028_Mesh.7989.mgcg", MGCG);
+        //Ms[4].init(this, &VD, "models/dungeon/tunnel_Mesh.4672.mgcg", MGCG);
+        Ms[3].init(this, &VD, "models/dungeon/tunnel_Mesh.4672.mgcg", MGCG);
+        Ms[4].init(this, &VD, "models/dungeon/tunnel.028_Mesh.7989.mgcg", MGCG);
+        for (int i = MY_OBJS; i < OBJS; i++) Ms[i].init(this, &VD, "models/axis.obj", OBJ);
+        //"models/dungeon/light.002_Mesh.6811.mgcg"
+        //"models/dungeon/light.009_Mesh.6851.mgcg"
+        //"models/dungeon/light.013_Mesh.7136.mgcg"
+        //"models/dungeon/light.017_Mesh.470.mgcg"
+        */
+
+
+
+        /*
+        * NOTES:
+        *   "models/dungeon/floor_Mesh.7127.mgcg": glm::scale(glm::translate(glm::mat4(1), glm::vec3(0, 0, 2.54f)), glm::vec3(0.62f));
+        *   "models/dungeon/floor.001_Mesh.6812.mgcg": glm::translate(glm::mat4(1), glm::vec3(2.54f, 0, 0));
+        *   "models/dungeon/tunnel.003_Mesh.4991.mgcg": glm::scale(glm::translate(glm::mat4(1), glm::vec3(0, 0, 0)), glm::vec3(0.62f));
+        * 
+        *   "models/dungeon/stone.001_Mesh.7905.mgcg": glm::translate(glm::mat4(1), glm::vec3(0, 0, 2.54f));
+        *   "models/dungeon/stone.002_Mesh.5119.mgcg": glm::translate(glm::mat4(1), glm::vec3(0, 0, 2.54f));
+        *   "models/dungeon/stone.003_Mesh.7901.mgcg": glm::translate(glm::mat4(1), glm::vec3(0, 0, 2.54f));
+        * 
+        *   "models/dungeon/tunnel.028_Mesh.7989.mgcg": glm::scale(glm::translate(glm::mat4(1), glm::vec3(0, 0, 0)), glm::vec3(0.62f));
+        *   "models/dungeon/tunnel_Mesh.4672.mgcg": glm::scale(glm::translate(glm::mat4(1), glm::vec3(0, 0, 0)), glm::vec3(0.62f));
+        */
+
+
+        /*glm::mat4 Worlds[MY_OBJS];
+        Worlds[0] = glm::translate(glm::mat4(1), glm::vec3(0, 0, 0)); // Axis.
+        Worlds[1] = glm::scale(glm::translate(glm::mat4(1), glm::vec3(0, 1, 0)), glm::vec3(1.0f)); // Character.
+        Worlds[2] = glm::scale(glm::translate(glm::mat4(1), glm::vec3(0, 0, 0)), glm::vec3(0.62f)); // Ground.
+        //Worlds[3] = glm::scale(glm::translate(glm::mat4(1), glm::vec3(0, 0, -2.54f)), glm::vec3(0.62f));
+        Worlds[3] = glm::translate(glm::mat4(1), glm::vec3(0, 0, -3.0f));
+        //Worlds[4] = glm::scale(glm::rotate(glm::mat4(1), glm::radians(90.0f), glm::vec3(0, 1, 0)), glm::vec3(0.62f));
+        Worlds[4] = glm::scale(glm::rotate(glm::mat4(1), glm::radians(90.0f), glm::vec3(0, 1, 0)), glm::vec3(0.62f, 1, 1));*/
+
+        /*
+        glm::mat4 Worlds[MY_OBJS];
+        Worlds[0] = glm::translate(glm::mat4(1), glm::vec3(0, 0, 0)); // Axis.
+        Worlds[1] = glm::scale(glm::translate(glm::mat4(1), glm::vec3(0, 1, 0)), glm::vec3(1.0f)); // Character.
+        Worlds[2] = glm::scale(glm::translate(glm::mat4(1), glm::vec3(0, 0, 0)), glm::vec3(0.5f)); // Ground. (3x3 after scale.)
+        Worlds[3] = glm::translate(glm::mat4(1), glm::vec3(-2.0f, 0, -2.0f));
+        Worlds[4] = glm::scale(glm::rotate(glm::translate(glm::mat4(1), glm::vec3(-2.0f, 0, 0)), glm::radians(90.0f), glm::vec3(0, 1, 0)), glm::vec3(0.5f, 1, 1));
+        Worlds[5] = glm::rotate(glm::translate(glm::scale(glm::mat4(1), glm::vec3(0.5f, 1, 1)), glm::vec3(0, 0, -2.f)), glm::radians(0.0f), glm::vec3(0, 1, 0));
+        */
     }
 };
 

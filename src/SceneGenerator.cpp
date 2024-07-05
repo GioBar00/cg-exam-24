@@ -8,10 +8,6 @@
 
 
 /* Uniform buffers. */
-struct Uniform {
-    alignas(16) glm::mat4 mvpMat;
-};
-
 struct ToonUniform {
     alignas(16) glm::mat4 mvpMat;
     alignas(16) glm::mat4 mMat;
@@ -26,11 +22,6 @@ struct LightUniform {
 
 
 /* Vertex formats. */
-struct Vertex {
-    glm::vec3 pos;
-    glm::vec2 UV;
-};
-
 struct ToonVertex {
     glm::vec3 pos;
     glm::vec3 norm;
@@ -42,21 +33,21 @@ class CG : public BaseProject {
 protected:
 
     /* Descriptor set layouts. */
-    DescriptorSetLayout DSL, ToonDSL, LightDSL;
+    DescriptorSetLayout ToonDSL, LightDSL;
 
 
     /* Vertex descriptors. */
-    VertexDescriptor VD, ToonVD;
+    VertexDescriptor ToonVD;
 
 
     /* Pipelines. */
-    Pipeline P, IlluminationP;
+    Pipeline IlluminationP;
 
 
     /* Models, textures, descriptor sets. */
     Model Ms[OBJS];
     Texture T;
-    DescriptorSet Ds[OBJS], ToonDs[OBJS], LightDS;
+    DescriptorSet ToonDs[OBJS], LightDS;
 
 
     // Application configs.
@@ -86,47 +77,37 @@ protected:
 
 
     void localInit() override {
-        DSL.init(this, {
-            {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,          VK_SHADER_STAGE_ALL_GRAPHICS,   sizeof(Uniform),    1},
-            {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,  VK_SHADER_STAGE_FRAGMENT_BIT,   0,                  1}
-        });
-        /*ToonDSL.init(this, {
-            {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,          VK_SHADER_STAGE_ALL_GRAPHICS,   sizeof(Uniform),    1},
-            {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,  VK_SHADER_STAGE_FRAGMENT_BIT,   0,                  1}
+        ToonDSL.init(this, {
+            {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,          VK_SHADER_STAGE_ALL_GRAPHICS,   sizeof(ToonUniform),    1},
+            {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,  VK_SHADER_STAGE_FRAGMENT_BIT,   0,                      1}
         });
         LightDSL.init(this, {
-            {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,          VK_SHADER_STAGE_VERTEX_BIT,     sizeof(LightUniform),   1}
-		});*/
+            {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,          VK_SHADER_STAGE_FRAGMENT_BIT,   sizeof(LightUniform),   1}
+		});
 
-        VD.init(this, {
-                {0, sizeof(Vertex), VK_VERTEX_INPUT_RATE_VERTEX}
-            }, {
-                {0, 0, VK_FORMAT_R32G32B32_SFLOAT,  offsetof(Vertex, pos),  sizeof(glm::vec3),  POSITION},
-                {0, 1, VK_FORMAT_R32G32_SFLOAT,     offsetof(Vertex, UV),   sizeof(glm::vec2),  UV}
-            }
-        );
-        /*ToonVD.init(this, {
+        ToonVD.init(this, {
                 {0, sizeof(ToonVertex), VK_VERTEX_INPUT_RATE_VERTEX}
             }, {
                 {0, 0, VK_FORMAT_R32G32B32_SFLOAT,  offsetof(ToonVertex, pos),  sizeof(glm::vec3),  POSITION},
-                {0, 1, VK_FORMAT_R32G32B32_SFLOAT,  offsetof(ToonVertex, norm), sizeof(glm::vec2),  NORMAL},
+                {0, 1, VK_FORMAT_R32G32B32_SFLOAT,  offsetof(ToonVertex, norm), sizeof(glm::vec3),  NORMAL},
                 {0, 2, VK_FORMAT_R32G32_SFLOAT,     offsetof(ToonVertex, UV),   sizeof(glm::vec2),  UV}
             }
-        );*/
+        );
 
-        P.init(this, &VD, "shaders/AxisVert.spv", "shaders/AxisFrag.spv", {&DSL});
-        //IlluminationP.init(this, &ToonVD, "shaders/ToonVert.spv", "shaders/ToonFrag.spv", {&LightDSL, &ToonDSL});
+        IlluminationP.init(this, &ToonVD, "shaders/brdf/ToonVert.spv", "shaders/brdf/ToonFrag.spv", {&LightDSL, &ToonDSL});
+        //IlluminationP.init(this, &ToonVD, "shaders/brdf/PhongVert.spv", "shaders/brdf/PhongFrag.spv", {&LightDSL, &ToonDSL});
+        //IlluminationP.init(this, &ToonVD, "shaders/brdf/BlinnVert.spv", "shaders/brdf/BlinnFrag.spv", {&LightDSL, &ToonDSL});
 
-        Ms[0].init(this, &VD, "models/axis.obj", OBJ);
-        Ms[1].init(this, &VD, "models/dungeon/cast_Mesh.6268.mgcg", MGCG);
+        Ms[0].init(this, &ToonVD, "models/axis.obj", OBJ);
+        Ms[1].init(this, &ToonVD, "models/dungeon/cast_Mesh.6268.mgcg", MGCG);
         static const std::string GROUND = "models/dungeon/tunnel.003_Mesh.4991.mgcg", WALL_LINE = "models/dungeon/tunnel_Mesh.4672.mgcg", WALL_ANGLE = "models/dungeon/tunnel.028_Mesh.7989.mgcg";
-        for (int i = 2; i < 2 + 9; i++) Ms[i].init(this, &VD, GROUND, MGCG);
-        for (int i = 11; i < 11 + 12; i++) Ms[i].init(this, &VD, WALL_LINE, MGCG);
-        for (int i = 23; i < 23 + 4; i++) Ms[i].init(this, &VD, WALL_ANGLE, MGCG);
-        Ms[27].init(this, &VD, "models/dungeon/light.002_Mesh.6811.mgcg", MGCG);
-        Ms[28].init(this, &VD, "models/dungeon/light.009_Mesh.6851.mgcg", MGCG);
-        Ms[29].init(this, &VD, "models/dungeon/light.013_Mesh.7136.mgcg", MGCG);
-        for (int i = MY_OBJS; i < OBJS; i++) Ms[i].init(this, &VD, "models/axis.obj", OBJ);
+        for (int i = 2; i < 2 + 9; i++) Ms[i].init(this, &ToonVD, GROUND, MGCG);
+        for (int i = 11; i < 11 + 12; i++) Ms[i].init(this, &ToonVD, WALL_LINE, MGCG);
+        for (int i = 23; i < 23 + 4; i++) Ms[i].init(this, &ToonVD, WALL_ANGLE, MGCG);
+        Ms[27].init(this, &ToonVD, "models/dungeon/light.002_Mesh.6811.mgcg", MGCG);
+        Ms[28].init(this, &ToonVD, "models/dungeon/light.009_Mesh.6851.mgcg", MGCG);
+        Ms[29].init(this, &ToonVD, "models/dungeon/light.013_Mesh.7136.mgcg", MGCG);
+        for (int i = MY_OBJS; i < OBJS; i++) Ms[i].init(this, &ToonVD, "models/axis.obj", OBJ);
 
         T.init(this, "textures/dungeon/Textures_Dungeon.png");
 
@@ -147,22 +128,19 @@ protected:
     }
 
     void pipelinesAndDescriptorSetsInit() override {
-        P.create();
-        //IlluminationP.create();
+        IlluminationP.create();
 
         for (int i = 0; i < MY_OBJS; i++)
-            Ds[i].init(this, &DSL, {&T});
-            //ToonDs[i].init(this, &ToonDSL, {&T});
-        //LightDS.init(this, &LightDSL, {});
+            ToonDs[i].init(this, &ToonDSL, {&T});
+        LightDS.init(this, &LightDSL, {});
     }
 
     void pipelinesAndDescriptorSetsCleanup() override {
-        P.cleanup();
+        IlluminationP.cleanup();
 
         for (int i = 0; i < MY_OBJS; i++)
-            Ds[i].cleanup();
-            //ToonDs[i].cleanup();
-        //LightDS.cleanup();
+            ToonDs[i].cleanup();
+        LightDS.cleanup();
     }
 
     void localCleanup() override {
@@ -170,21 +148,18 @@ protected:
             Ms[i].cleanup();
         T.cleanup();
 
-        DSL.cleanup();
-        //ToonDSL.cleanup();
-        //LightDSL.cleanup();
+        ToonDSL.cleanup();
+        LightDSL.cleanup();
 
-        P.destroy();
-        //IlluminationP.destroy();
+        IlluminationP.destroy();
     }
 
     void populateCommandBuffer(VkCommandBuffer commandBuffer, int currentImage) override {
         for (int i = 0; i < MY_OBJS; i++) {
-            P.bind(commandBuffer);
+            IlluminationP.bind(commandBuffer);
             Ms[i].bind(commandBuffer);
-            Ds[i].bind(commandBuffer, P, 0, currentImage);
-            //LightDS.bind(commandBuffer, P, 0, currentImage);
-            //ToonDs[i].bind(commandBuffer, P, 1, currentImage);
+            LightDS.bind(commandBuffer, IlluminationP, 0, currentImage);
+            ToonDs[i].bind(commandBuffer, IlluminationP, 1, currentImage);
             vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(Ms[i].indices.size()), 1, 0, 0, 0);
         }
     }
@@ -227,75 +202,18 @@ protected:
         Worlds[27] = glm::rotate(glm::translate(BaseT, glm::vec3(-(UNIT - 5 * OFFSET + UNIT / 1.5f), UNIT / 2.0f, 0)), glm::radians(+90.0f), glm::vec3(0, 1, 0));
         Worlds[28] = glm::rotate(glm::translate(BaseT, glm::vec3(+(UNIT - 7.75 * OFFSET + UNIT / 1.5f), UNIT / 2.0f, 0)), glm::radians(-90.0f), glm::vec3(0, 1, 0));
         Worlds[29] = glm::translate(BaseT, glm::vec3(0, UNIT / 2.0f, -(UNIT - 9 * OFFSET + UNIT / 1.5f)));
-        Uniform ubos[MY_OBJS];
-        //ToonUniform ubos[MY_OBJS];
-        //LightUniforms lubo;
+        ToonUniform ubos[MY_OBJS];
         for (int i = 0; i < MY_OBJS; i++) {
             ubos[i].mvpMat = Prj * View * Worlds[i];
-            //ubos[i].mMat = Worlds[i];
-            //ubos[i].nMat = glm::inverse(glm::transpose(Worlds[i]));
-            Ds[i].map(currentImage, &ubos[i], 0);
-            //lubo.lightDir = glm::vec3(0, 7, 0);
-            //lubo.lightCol = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-            //lubo.eyePos = glm::vec3(glm::inverse(View) * glm::vec4(0, 0, 0, 1));
-            //LightDS.map(currentImage, lubo, 0);
+            ubos[i].mMat = Worlds[i];
+            ubos[i].nMat = glm::inverse(glm::transpose(Worlds[i]));
+            ToonDs[i].map(currentImage, &ubos[i], 0);
         }
-
-
-
-
-
-        /*
-        Ms[0].init(this, &VD, "models/axis.obj", OBJ);
-        Ms[1].init(this, &VD, "models/dungeon/cast_Mesh.6268.mgcg", MGCG);
-        //Ms[2].init(this, &VD, "models/dungeon/floor_Mesh.7127.mgcg", MGCG);
-        Ms[2].init(this, &VD, "models/dungeon/tunnel.003_Mesh.4991.mgcg", MGCG);
-        //Ms[3].init(this, &VD, "models/dungeon/tunnel.028_Mesh.7989.mgcg", MGCG);
-        //Ms[4].init(this, &VD, "models/dungeon/tunnel_Mesh.4672.mgcg", MGCG);
-        Ms[3].init(this, &VD, "models/dungeon/tunnel_Mesh.4672.mgcg", MGCG);
-        Ms[4].init(this, &VD, "models/dungeon/tunnel.028_Mesh.7989.mgcg", MGCG);
-        for (int i = MY_OBJS; i < OBJS; i++) Ms[i].init(this, &VD, "models/axis.obj", OBJ);
-        //"models/dungeon/light.002_Mesh.6811.mgcg"
-        //"models/dungeon/light.009_Mesh.6851.mgcg"
-        //"models/dungeon/light.013_Mesh.7136.mgcg"
-        //"models/dungeon/light.017_Mesh.470.mgcg"
-        */
-
-
-
-        /*
-        * NOTES:
-        *   "models/dungeon/floor_Mesh.7127.mgcg": glm::scale(glm::translate(glm::mat4(1), glm::vec3(0, 0, 2.54f)), glm::vec3(0.62f));
-        *   "models/dungeon/floor.001_Mesh.6812.mgcg": glm::translate(glm::mat4(1), glm::vec3(2.54f, 0, 0));
-        *   "models/dungeon/tunnel.003_Mesh.4991.mgcg": glm::scale(glm::translate(glm::mat4(1), glm::vec3(0, 0, 0)), glm::vec3(0.62f));
-        * 
-        *   "models/dungeon/stone.001_Mesh.7905.mgcg": glm::translate(glm::mat4(1), glm::vec3(0, 0, 2.54f));
-        *   "models/dungeon/stone.002_Mesh.5119.mgcg": glm::translate(glm::mat4(1), glm::vec3(0, 0, 2.54f));
-        *   "models/dungeon/stone.003_Mesh.7901.mgcg": glm::translate(glm::mat4(1), glm::vec3(0, 0, 2.54f));
-        * 
-        *   "models/dungeon/tunnel.028_Mesh.7989.mgcg": glm::scale(glm::translate(glm::mat4(1), glm::vec3(0, 0, 0)), glm::vec3(0.62f));
-        *   "models/dungeon/tunnel_Mesh.4672.mgcg": glm::scale(glm::translate(glm::mat4(1), glm::vec3(0, 0, 0)), glm::vec3(0.62f));
-        */
-
-
-        /*glm::mat4 Worlds[MY_OBJS];
-        Worlds[0] = glm::translate(glm::mat4(1), glm::vec3(0, 0, 0)); // Axis.
-        Worlds[1] = glm::scale(glm::translate(glm::mat4(1), glm::vec3(0, 1, 0)), glm::vec3(1.0f)); // Character.
-        Worlds[2] = glm::scale(glm::translate(glm::mat4(1), glm::vec3(0, 0, 0)), glm::vec3(0.62f)); // Ground.
-        //Worlds[3] = glm::scale(glm::translate(glm::mat4(1), glm::vec3(0, 0, -2.54f)), glm::vec3(0.62f));
-        Worlds[3] = glm::translate(glm::mat4(1), glm::vec3(0, 0, -3.0f));
-        //Worlds[4] = glm::scale(glm::rotate(glm::mat4(1), glm::radians(90.0f), glm::vec3(0, 1, 0)), glm::vec3(0.62f));
-        Worlds[4] = glm::scale(glm::rotate(glm::mat4(1), glm::radians(90.0f), glm::vec3(0, 1, 0)), glm::vec3(0.62f, 1, 1));*/
-
-        /*
-        glm::mat4 Worlds[MY_OBJS];
-        Worlds[0] = glm::translate(glm::mat4(1), glm::vec3(0, 0, 0)); // Axis.
-        Worlds[1] = glm::scale(glm::translate(glm::mat4(1), glm::vec3(0, 1, 0)), glm::vec3(1.0f)); // Character.
-        Worlds[2] = glm::scale(glm::translate(glm::mat4(1), glm::vec3(0, 0, 0)), glm::vec3(0.5f)); // Ground. (3x3 after scale.)
-        Worlds[3] = glm::translate(glm::mat4(1), glm::vec3(-2.0f, 0, -2.0f));
-        Worlds[4] = glm::scale(glm::rotate(glm::translate(glm::mat4(1), glm::vec3(-2.0f, 0, 0)), glm::radians(90.0f), glm::vec3(0, 1, 0)), glm::vec3(0.5f, 1, 1));
-        Worlds[5] = glm::rotate(glm::translate(glm::scale(glm::mat4(1), glm::vec3(0.5f, 1, 1)), glm::vec3(0, 0, -2.f)), glm::radians(0.0f), glm::vec3(0, 1, 0));
-        */
+        LightUniform lubo;
+        lubo.lightDir = glm::vec3(0, -1, 0);
+        lubo.lightCol = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+        lubo.eyePos = glm::vec3(glm::inverse(View) * glm::vec4(0, 0, 0, 1));
+        LightDS.map(currentImage, &lubo, 0);
     }
 };
 

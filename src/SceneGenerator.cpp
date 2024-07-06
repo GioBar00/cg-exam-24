@@ -8,24 +8,28 @@
 
 
 /* Uniform buffers. */
-struct ToonUniform {
-    alignas(16) glm::mat4 mvpMat;
-    alignas(16) glm::mat4 mMat;
-    alignas(16) glm::mat4 nMat;
+struct ObjectUniform {
+    alignas(16) glm::mat4   mvpMat;
+    alignas(16) glm::mat4   mMat;
+    alignas(16) glm::mat4   nMat;
 };
 
 struct LightUniform {
-    alignas(16) glm::vec3 lightDir;
-    alignas(16) glm::vec4 lightCol;
-    alignas(16) glm::vec3 eyePos;
+    alignas(16) glm::vec3   lightPos;
+    alignas(16) glm::vec3   lightDir;
+    alignas(16) glm::vec4   lightCol;
+    alignas(4)  float       cosIn;
+    alignas(4)  float       cosOut;
+    alignas(4)  int         TYPE; // 0 := DIRECT, 1 := POINT, 2 = SPOT.
+    alignas(16) glm::vec3   eyePos;
 };
 
 
 /* Vertex formats. */
 struct ToonVertex {
-    glm::vec3 pos;
-    glm::vec3 norm;
-    glm::vec2 UV;
+    glm::vec3   pos;
+    glm::vec3   norm;
+    glm::vec2   UV;
 };
 
 
@@ -78,7 +82,7 @@ protected:
 
     void localInit() override {
         ToonDSL.init(this, {
-            {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,          VK_SHADER_STAGE_ALL_GRAPHICS,   sizeof(ToonUniform),    1},
+            {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,          VK_SHADER_STAGE_ALL_GRAPHICS,   sizeof(ObjectUniform),  1},
             {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,  VK_SHADER_STAGE_FRAGMENT_BIT,   0,                      1}
         });
         LightDSL.init(this, {
@@ -111,9 +115,9 @@ protected:
 
         T.init(this, "textures/dungeon/Textures_Dungeon.png");
 
-        DPSZs.uniformBlocksInPool = MY_OBJS + 1;
-        DPSZs.texturesInPool = MY_OBJS;
-        DPSZs.setsInPool = MY_OBJS + 1;
+        DPSZs.uniformBlocksInPool = OBJS + 1;
+        DPSZs.texturesInPool = OBJS;
+        DPSZs.setsInPool = OBJS + 1;
 
 
         Prj = glm::perspective(FOVy, Ar, nearPlane, farPlane);
@@ -130,7 +134,7 @@ protected:
     void pipelinesAndDescriptorSetsInit() override {
         IlluminationP.create();
 
-        for (int i = 0; i < MY_OBJS; i++)
+        for (int i = 0; i < OBJS; i++)
             ToonDs[i].init(this, &ToonDSL, {&T});
         LightDS.init(this, &LightDSL, {});
     }
@@ -138,13 +142,13 @@ protected:
     void pipelinesAndDescriptorSetsCleanup() override {
         IlluminationP.cleanup();
 
-        for (int i = 0; i < MY_OBJS; i++)
+        for (int i = 0; i < OBJS; i++)
             ToonDs[i].cleanup();
         LightDS.cleanup();
     }
 
     void localCleanup() override {
-        for (int i = 0; i < MY_OBJS; i++)
+        for (int i = 0; i < OBJS; i++)
             Ms[i].cleanup();
         T.cleanup();
 
@@ -202,7 +206,7 @@ protected:
         Worlds[27] = glm::rotate(glm::translate(BaseT, glm::vec3(-(UNIT - 5 * OFFSET + UNIT / 1.5f), UNIT / 2.0f, 0)), glm::radians(+90.0f), glm::vec3(0, 1, 0));
         Worlds[28] = glm::rotate(glm::translate(BaseT, glm::vec3(+(UNIT - 7.75 * OFFSET + UNIT / 1.5f), UNIT / 2.0f, 0)), glm::radians(-90.0f), glm::vec3(0, 1, 0));
         Worlds[29] = glm::translate(BaseT, glm::vec3(0, UNIT / 2.0f, -(UNIT - 9 * OFFSET + UNIT / 1.5f)));
-        ToonUniform ubos[MY_OBJS];
+        ObjectUniform ubos[MY_OBJS];
         for (int i = 0; i < MY_OBJS; i++) {
             ubos[i].mvpMat = Prj * View * Worlds[i];
             ubos[i].mMat = Worlds[i];
@@ -210,8 +214,12 @@ protected:
             ToonDs[i].map(currentImage, &ubos[i], 0);
         }
         LightUniform lubo;
+        lubo.lightPos = glm::vec3(0, +4, 0);
         lubo.lightDir = glm::vec3(0, -1, 0);
-        lubo.lightCol = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+        lubo.lightCol = glm::vec4(1.0f, 0.5f, 0.0f, 1.0f);
+        lubo.cosIn = glm::cos(glm::radians(60.0f));
+        lubo.cosOut = glm::cos(glm::radians(150.0f));
+        lubo.TYPE = 1;
         lubo.eyePos = glm::vec3(glm::inverse(View) * glm::vec4(0, 0, 0, 1));
         LightDS.map(currentImage, &lubo, 0);
     }

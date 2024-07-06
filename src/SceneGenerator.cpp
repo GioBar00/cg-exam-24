@@ -4,7 +4,7 @@
 #define OBJS 48
 #define MY_OBJS 30
 #define LIGHTS 16
-#define MY_LIGHTS 2
+#define MY_LIGHTS 3
 #define UNIT 3.1f
 #define OFFSET 0.1f
 
@@ -17,7 +17,8 @@ struct ObjectUniform {
 };
 
 struct LightUniform {
-    //alignas(16) uint32_t    TYPE[LIGHTS]; // 0 := DIRECT, 1 := POINT, 2 = SPOT.
+    // FIX: Array of uint32_t, instead of glm::vec3, with switch statement inside fragment shader.
+    alignas(16) glm::vec3   TYPE[LIGHTS]; // i := DIRECT, j := POINT, k = SPOT.
     alignas(16) glm::vec3   lightPos[LIGHTS];
     alignas(16) glm::vec3   lightDir[LIGHTS];
     alignas(16) glm::vec4   lightCol[LIGHTS];
@@ -217,12 +218,15 @@ protected:
             ToonDs[i].map(currentImage, &ubos[i], 0);
         }
         LightUniform lubo;
-        //lubo.TYPE[0] = 1;
+        lubo.TYPE[0] = glm::vec3(0, 1, 0);
         lubo.lightPos[0] = glm::vec3(-(UNIT - 5 * OFFSET + UNIT / 1.5f), UNIT / 2.0f, 0);
         lubo.lightCol[0] = glm::vec4(1.0f, 0.5f, 0.0f, 1.0f);
-        //lubo.TYPE[1] = 1;
+        lubo.TYPE[1] = glm::vec3(0, 1, 0);
         lubo.lightPos[1] = glm::vec3(+(UNIT - 7.75 * OFFSET + UNIT / 1.5f), UNIT / 2.0f, 0);
         lubo.lightCol[1] = glm::vec4(0.0f, 0.5f, 1.0f, 1.0f);
+        lubo.TYPE[2] = glm::vec3(0, 1, 0);
+        lubo.lightPos[2] = glm::vec3(0, UNIT / 2.0f, -(UNIT - 9 * OFFSET + UNIT / 1.5f));
+        lubo.lightCol[2] = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
         lubo.NUMBER = MY_LIGHTS;
         lubo.eyePos = glm::vec3(glm::inverse(View) * glm::vec4(0, 0, 0, 1));
         LightDS.map(currentImage, &lubo, 0);

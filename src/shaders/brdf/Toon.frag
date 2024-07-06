@@ -6,7 +6,7 @@ layout(location = 2) in vec2 fragUV;
 
 layout(location = 0) out vec4 outColor;
 layout(set = 1, binding = 1) uniform sampler2D tex;const int MAX_LIGHTS = 16;layout(set = 0, binding = 0) uniform LightUBO {
-	//uint TYPE[MAX_LIGHTS];
+	vec3 TYPE[MAX_LIGHTS];
 	vec3 lightPos[MAX_LIGHTS];
 	vec3 lightDir[MAX_LIGHTS];
 	vec4 lightCol[MAX_LIGHTS];
@@ -42,17 +42,5 @@ void main() {
 	vec3 EyeDir = normalize(lubo.eyePos - fragPos);
 	vec3 Norm = normalize(fragNorm);
 	vec3 Albedo = texture(tex, fragUV).rgb;	vec3 L, lightCol, Eq = vec3(0.0f);
-	for (int i = 0; i < lubo.NUMBER; i++) {		/*switch (lubo.TYPE[i]) {
-			case 0:
-				L = directDir(i);
-				lightCol = directCol(i);
-				break;
-			case 1:
-				L = pointDir(i, fragPos);
-				lightCol = pointCol(i, fragPos);
-				break;
-			case 2:
-				L = spotDir(i, fragPos);
-				lightCol = spotCol(i, fragPos);
-				break;
-		}*/		L = pointDir(i, fragPos);		lightCol = pointCol(i, fragPos);		Eq += BRDF(EyeDir, Norm, L, Albedo, vec3(1.0f)) * lightCol.rgb;	}	vec3 Ambient = vec3(0.1f);	outColor = vec4(Eq + Ambient * Albedo, 1.0f);}
+	uint maskD, maskP, maskS;
+	for (int i = 0; i < lubo.NUMBER; i++) {		maskD = uint(lubo.TYPE[i].x); maskP = uint(lubo.TYPE[i].y); maskS = uint(lubo.TYPE[i].z);		if (maskD == 1) {			L = directDir(i);			lightCol = directCol(i);		} else if (maskP == 1) {			L = pointDir(i, fragPos);			lightCol = pointCol(i, fragPos);		} else if (maskS == 1) {			L = spotDir(i, fragPos);			lightCol = spotCol(i, fragPos);		}		Eq += BRDF(EyeDir, Norm, L, Albedo, vec3(1.0f)) * lightCol.rgb;	}	vec3 Ambient = vec3(0.1f);	outColor = vec4(Eq + Ambient * Albedo, 1.0f);}

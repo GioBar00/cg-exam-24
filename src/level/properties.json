@@ -1,0 +1,131 @@
+{
+    "structure": {
+        "SPAWN": [
+            {
+                "model": "cast_Mesh.6268",
+                "transform": [
+                    { "translate": [ 0, 1, 0 ] }
+                ]
+            },
+            {
+                "model": "tunnel.003_Mesh.4991",
+                "transform": [
+                    { "translate": [ 0.6666, 0, 0.6666 ] }, // Multiply by unit.
+                    { "scale": [ 0.5, 0.5, 0.5 ] }
+                ]
+            }
+        ],
+        "GROUND": {
+            "variant": false,
+            "model": "tunnel.003_Mesh.4991",
+            "transform": [
+                { "translate": [ 0.6666, 0, 0.6666 ] }, // Multiplication factor.
+                { "scale": [ 0.5, 0.5, 0.5 ] }
+            ]
+        },
+        "WALL_LINE": {
+            "variant": true,
+            "model": "tunnel_Mesh.4672",
+            "transform": [
+                {
+                    "id": 0,
+                    "operations": [
+                        { "translate": [ 0, 0, -1.6666 ] }, // Multiply.
+                        { "rotate": 0 },
+                        { "scale": [ 0.5, 1, 1 ] }
+                    ]
+                },
+                {
+                    "id": 1,
+                    "operations": [
+                        { "translate": [ -1.6666, 0, 0 ] }, // Multiply.
+                        { "rotate": 90 },
+                        { "scale": [ 0.5, 1, 1 ] }
+                    ]
+                },
+                {
+                    "id": 2,
+                    "operations": [
+                        { "translate": [ 0, 0, 1.6666 ] }, // Multiply.
+                        { "rotate": 180 },
+                        { "scale": [ 0.5, 1, 1 ] }
+                    ]
+                },
+                {
+                    "id": 3,
+                    "operations": [
+                        { "translate": [ 1.6666, 0, 0 ] }, // Multiply.
+                        { "rotate": 270 },
+                        { "scale": [ 0.5, 1, 1 ] }
+                    ]
+                }
+            ]
+        },
+        "WALL_ANGLE": {
+            "variant": true,
+            "model": "tunnel.028_Mesh.7989",
+            "transform": [
+                {
+                    "id": 0,
+                    "operations": [
+                        { "translate": [ -1.6666, 0, -1.6666 ] }, // Multiply.
+                        { "rotate": 0 }
+                    ]
+                },
+                {
+                    "id": 1,
+                    "operations": [
+                        { "translate": [ 1.6666, 0, -1.6666 ] }, // Multiply.
+                        { "rotate": 90 }
+                    ]
+                },
+                {
+                    "id": 2,
+                    "operations": [
+                        { "translate": [ 1.6666, 0, 1.6666 ] }, // Multiply.
+                        { "rotate": 180 }
+                    ]
+                },
+                {
+                    "id": 3,
+                    "operations": [
+                        { "translate": [ -1.6666, 0, 1.6666 ] }, // Multiply.
+                        { "rotate": 270 }
+                    ]
+                }
+            ]
+        }
+    },
+    "light": {
+        "TORCH": {
+            "model": "light.002_Mesh.6811",
+            "transform": [
+                { "translate": [ 1.6666, 0.5, 1.6666 ] }, // Unit multiplication factor. (To be masked.)
+                { "translate": [ -5, 0, 0 ] } // Offset multiplication factor. (To be masked.)
+            ],
+            "type": "POINT",
+            "color": [ 1, 0.5, 0 ]
+        },
+        "LAMP_0": {
+            "model": "light.009_Mesh.6851",
+            "transform": [
+                { "translate": [ 1.6666, 0.5, 1.6666 ] }, // Mask multiply. (Unit.)
+                { "translate": [ -7.75, 0, 0 ] } // Mask multiply. (Offset.)
+            ],
+            "type": "POINT",
+            "color": [ 0, 0.5, 1 ]
+        },
+        "LAMP_1": {
+            "model": "light.013_Mesh.7136",
+            "transform": [
+                { "translate": [ 1.6666, 0.5, 1.6666 ] }, // Mask multiply. (Unit.)
+                { "translate": [ -9, 0, 0 ] } // Mask multiply. (Offset.)
+            ],
+            "type": "POINT",
+            "color": [ 0, 1, 0 ]
+        }
+    },
+    "addons": {
+        // TODO.
+    }
+}

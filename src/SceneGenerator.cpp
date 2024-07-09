@@ -2,13 +2,16 @@
 using json = nlohmann::json;
 using namespace std;
 
-#define UNIT 3.1f
-#define OFFSET 0.1f
+#define FILE_PATH string("level/module/")
+#define JSON_PATH "level/properties.json"
+#define RETURN_PATH "level/out.json"
 
 enum {
     NO_ID = -1,
     LIGHT_MODE = -2
 };
+
+const float UNIT = 3.1f, OFFSET = 0.1f;
 
 vector<vector<string>> loadMap(string file, tuple<uint16_t, uint16_t>* O) {
     std::ifstream f(file);
@@ -27,7 +30,7 @@ vector<vector<string>> loadMap(string file, tuple<uint16_t, uint16_t>* O) {
 }
 
 void parseConfig(json* data) {
-    std::ifstream f("level/properties.json");
+    std::ifstream f(JSON_PATH);
     try {
         *data = json::parse(f);
     }
@@ -99,15 +102,15 @@ void saveEntry(vector<json>* js, json root, glm::mat4 T, tuple<uint16_t, uint16_
     (*js).push_back(j);
 }
 
-void applyConfig(vector<vector<string>> LEVEL, vector<vector<string>> LIGHT, json data, tuple<uint16_t, uint16_t> O) {
-    std::ofstream f("level/out.json", std::ofstream::trunc);
+void applyConfig(vector<vector<string>> LEVEL, vector<vector<string>> LIGHT, int mod, json data, tuple<uint16_t, uint16_t> O, bool reset) {
     vector<json> objs;
     json structure = data["structure"], light = data["light"];
     string test;
     glm::mat4 M;
     float inherit;
-    for (uint16_t i = 0; i < LEVEL.size(); i++) {
-        for (uint16_t j = 0; j < LEVEL[0].size(); j++) {
+    uint16_t rows = LEVEL.size(), columns = LEVEL[0].size();
+    for (uint16_t i = 0; i < rows; i++) {
+        for (uint16_t j = 0; j < columns; j++) {
             test = LEVEL[i][j];
             if (test == "S") {
                 M = transform(structure["SPAWN"][0], "SPAWN", NO_ID, tuple(0, 0), nullptr);
@@ -116,16 +119,16 @@ void applyConfig(vector<vector<string>> LEVEL, vector<vector<string>> LIGHT, jso
                 saveEntry(&objs, structure["SPAWN"][1], M, tuple(i, j), NO_ID, (float)NULL);
             }
             else if (test == "G") {
-                M = transform(structure, "GROUND", NO_ID, tuple(i - get<0>(O), j - get<1>(O)), nullptr);
+                M = transform(structure, "GROUND", NO_ID, tuple(mod * rows + i - get<0>(O), mod * columns + j - get<1>(O)), nullptr);
                 saveEntry(&objs, structure["GROUND"], M, tuple(i, j), NO_ID, (float)NULL);
             }
             else if (test[0] == 'W') {
                 if (test[1] == 'L') {
-                    M = transform(structure, "WALL_LINE", test[2] - '0', tuple(i - get<0>(O), j - get<1>(O)), &inherit);
+                    M = transform(structure, "WALL_LINE", test[2] - '0', tuple(mod * rows + i - get<0>(O), mod * columns + j - get<1>(O)), &inherit);
                     saveEntry(&objs, structure["WALL_LINE"], M, tuple(i, j), test[2] - '0', (float)NULL);
                 }
                 else if (test[1] == 'A') {
-                    M = transform(structure, "WALL_ANGLE", test[2] - '0', tuple(i - get<0>(O), j - get<1>(O)), &inherit);
+                    M = transform(structure, "WALL_ANGLE", test[2] - '0', tuple(mod * rows + i - get<0>(O), mod * columns + j - get<1>(O)), &inherit);
                     saveEntry(&objs, structure["WALL_ANGLE"], M, tuple(i, j), test[2] - '0', (float)NULL);
                 }
             }
@@ -136,19 +139,41 @@ void applyConfig(vector<vector<string>> LEVEL, vector<vector<string>> LIGHT, jso
                 saveEntry(&objs, light["LAMP_" + string(1, test[1])], M, tuple(i, j), LIGHT_MODE, inherit);
         }
     }
-    json out = json::object();
-    out["objs"] = objs;
-    f << out.dump(4) << endl;
-    f.close();
+    json out;
+    if (reset) {
+        out = json::object();
+        out["objs"] = objs;
+    }
+    else {
+        std::ifstream fin(RETURN_PATH);
+        out = json::parse(fin);
+        fin.close();
+        for (auto x : objs)
+            out["objs"].push_back(x);
+    }
+    std::ofstream fout(RETURN_PATH, std::ofstream::trunc);
+    fout << out.dump(4) << endl;
+    fout.close();
 }
 
 void main() {
     tuple<uint16_t, uint16_t> O;
-    vector<vector<string>> LEVEL = loadMap("level/ROOM-00.txt", &O), LIGHT = loadMap("level/LIGHT-00.txt", nullptr);
+    vector<vector<string>> LEVEL = loadMap(FILE_PATH + "ROOM-00.txt", &O), LIGHT = loadMap(FILE_PATH + "LIGHT-00.txt", nullptr);
 
     json data = NULL;
     parseConfig(&data);
 
-    applyConfig(LEVEL, LIGHT, data, O);
+    applyConfig(LEVEL, LIGHT, 0, data, O, true);
     // TODO: "on"/"off" flag at "light"?
+
+    uint8_t ROOMS = 1;
+    string k;
+    for (uint8_t n = 1; n <= ROOMS; n++) {
+        k = std::to_string(n);
+        if (n < 10)
+            k = string(1, '0') + k;
+        LEVEL = loadMap(FILE_PATH + "ROOM-" + k + ".txt", nullptr);
+        LIGHT = loadMap(FILE_PATH + "LIGHT-" + k + ".txt", nullptr);
+        applyConfig(LEVEL, LIGHT, n, data, O, false);
+    }
 }

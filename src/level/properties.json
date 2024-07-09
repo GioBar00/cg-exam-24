@@ -4,13 +4,13 @@
             {
                 "model": "cast_Mesh.6268",
                 "transform": [
-                    { "translate": [ 0, 1, 0 ] }
+                    { "translate": [ 0.0, 1.0, 0.0 ] }
                 ]
             },
             {
                 "model": "tunnel.003_Mesh.4991",
                 "transform": [
-                    { "translate": [ 0, 0, 0 ] },
+                    { "translate": [ 0.0, 0.0, 0.0 ] },
                     { "scale": [ 0.5, 0.5, 0.5 ] }
                 ]
             }
@@ -19,7 +19,7 @@
             "variant": false,
             "model": "tunnel.003_Mesh.4991",
             "transform": [
-                { "translate": [ 0.6666, 0, 0.6666 ] },
+                { "translate": [ 0.6666, 0.0, 0.6666 ] },
                 { "scale": [ 0.5, 0.5, 0.5 ] }
             ]
         },
@@ -30,33 +30,33 @@
                 {
                     "id": 0,
                     "operations": [
-                        { "translate": [ 0, 0, -1.6666 ] },
-                        { "rotate": 0 },
-                        { "scale": [ 0.5, 1, 1 ] }
+                        { "translate": [ 0.0, 0.0, -1.6666 ] },
+                        { "rotate": 0.0 },
+                        { "scale": [ 0.5, 1.0, 1.0 ] }
                     ]
                 },
                 {
                     "id": 1,
                     "operations": [
-                        { "translate": [ -1.6666, 0, 0 ] },
-                        { "rotate": 90 },
-                        { "scale": [ 0.5, 1, 1 ] }
+                        { "translate": [ -1.6666, 0.0, 0.0 ] },
+                        { "rotate": 90.0 },
+                        { "scale": [ 0.5, 1.0, 1.0 ] }
                     ]
                 },
                 {
                     "id": 2,
                     "operations": [
-                        { "translate": [ 0, 0, 1.6666 ] },
-                        { "rotate": 180 },
-                        { "scale": [ 0.5, 1, 1 ] }
+                        { "translate": [ 0.0, 0.0, 1.6666 ] },
+                        { "rotate": 180.0 },
+                        { "scale": [ 0.5, 1.0, 1.0 ] }
                     ]
                 },
                 {
                     "id": 3,
                     "operations": [
-                        { "translate": [ 1.6666, 0, 0 ] },
-                        { "rotate": 270 },
-                        { "scale": [ 0.5, 1, 1 ] }
+                        { "translate": [ 1.6666, 0.0, 0.0 ] },
+                        { "rotate": 270.0 },
+                        { "scale": [ 0.5, 1.0, 1.0 ] }
                     ]
                 }
             ]
@@ -68,29 +68,29 @@
                 {
                     "id": 0,
                     "operations": [
-                        { "translate": [ -1.6666, 0, -1.6666 ] },
-                        { "rotate": 0 }
+                        { "translate": [ -1.6666, 0.0, -1.6666 ] },
+                        { "rotate": 0.0 }
                     ]
                 },
                 {
                     "id": 1,
                     "operations": [
-                        { "translate": [ 1.6666, 0, -1.6666 ] },
-                        { "rotate": 90 }
+                        { "translate": [ 1.6666, 0.0, -1.6666 ] },
+                        { "rotate": 90.0 }
                     ]
                 },
                 {
                     "id": 2,
                     "operations": [
-                        { "translate": [ 1.6666, 0, 1.6666 ] },
-                        { "rotate": 180 }
+                        { "translate": [ 1.6666, 0.0, 1.6666 ] },
+                        { "rotate": 180.0 }
                     ]
                 },
                 {
                     "id": 3,
                     "operations": [
-                        { "translate": [ -1.6666, 0, 1.6666 ] },
-                        { "rotate": 270 }
+                        { "translate": [ -1.6666, 0.0, 1.6666 ] },
+                        { "rotate": 270.0 }
                     ]
                 }
             ]
@@ -101,30 +101,30 @@
             "model": "light.002_Mesh.6811",
             "transform": [
                 { "translate": [ 1.6666, 0.5, 1.6666 ], "unit": "U" },
-                { "translate": [ -5, 0, 0 ], "unit": "ALT" }
+                { "translate": [ -5.0, 0.0, 0.0 ], "unit": "ALT" }
             ],
             "type": "POINT",
-            "color": [ 1, 0.5, 0 ],
+            "color": [ 1.0, 0.5, 0.0 ],
             "action": true
         },
         "LAMP_0": {
             "model": "light.009_Mesh.6851",
             "transform": [
                 { "translate": [ 1.6666, 0.5, 1.6666 ], "unit": "U" },
-                { "translate": [ -7.75, 0, 0 ], "unit": "ALT" }
+                { "translate": [ -7.75, 0.0, 0.0 ], "unit": "ALT" }
             ],
             "type": "POINT",
-            "color": [ 0, 0.5, 1 ],
+            "color": [ 0.0, 0.5, 1.0 ],
             "action": false
         },
         "LAMP_1": {
             "model": "light.013_Mesh.7136",
             "transform": [
                 { "translate": [ 1.6666, 0.5, 1.6666 ], "unit": "U" },
-                { "translate": [ -9, 0, 0 ], "unit": "ALT" }
+                { "translate": [ -9.0, 0.0, 0.0 ], "unit": "ALT" }
             ],
             "type": "POINT",
-            "color": [ 0, 1, 0 ],
+            "color": [ 0.0, 1.0, 0.0 ],
             "action": false
         }
     },

@@ -104,7 +104,8 @@
                 { "translate": [ -5, 0, 0 ] }
             ],
             "type": "POINT",
-            "color": [ 1, 0.5, 0 ]
+            "color": [ 1, 0.5, 0 ],
+            "action": true
         },
         "LAMP_0": {
             "model": "light.009_Mesh.6851",
@@ -113,7 +114,8 @@
                 { "translate": [ -7.75, 0, 0 ] }
             ],
             "type": "POINT",
-            "color": [ 0, 0.5, 1 ]
+            "color": [ 0, 0.5, 1 ],
+            "action": false
         },
         "LAMP_1": {
             "model": "light.013_Mesh.7136",
@@ -122,7 +124,8 @@
                 { "translate": [ -9, 0, 0 ] }
             ],
             "type": "POINT",
-            "color": [ 0, 1, 0 ]
+            "color": [ 0, 1, 0 ],
+            "action": false
         }
     },
     "addons": {

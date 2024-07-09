@@ -6,30 +6,30 @@ using namespace std;
 #define OFFSET 0.1f
 
 vector<vector<string>> loadMap(string file, tuple<uint16_t, uint16_t>* O) {
-    std::ifstream lf(file);
+    std::ifstream f(file);
     uint16_t rows, columns;
-    lf >> rows >> columns;
-    vector<vector<string>> LEVEL(rows, std::vector<std::string>(columns, ".")); // Map.
+    f >> rows >> columns;
+    vector<vector<string>> LEVEL(rows, std::vector<std::string>(columns, "."));
     for (uint16_t i = 0; i < rows; i++) {
         for (uint16_t j = 0; j < columns; j++) {
-            lf >> LEVEL[i][j];
+            f >> LEVEL[i][j];
             if (LEVEL[i][j] == "S")
                 *O = std::tuple(i, j); // Spawn origin.
         }
     }
-    lf.close();
+    f.close();
     return LEVEL;
 }
 
 void parseConfig(json* data) {
-    std::ifstream pf("level/properties.json");
+    std::ifstream f("level/properties.json");
     try {
-        *data = json::parse(pf);
+        *data = json::parse(f);
     }
     catch (const json::parse_error& e) {
         std::cout << e.what() << std::endl;
     }
-    pf.close();
+    f.close();
 }
 
 glm::mat4 transform(json root, string type, int id, tuple<uint16_t, uint16_t> dist) {
@@ -43,7 +43,7 @@ glm::mat4 transform(json root, string type, int id, tuple<uint16_t, uint16_t> di
         t = x.begin().key();
         if (t == "translate") {
             array<float, 3> v = x[t].get<array<float, 3>>();
-            T = glm::translate(T, glm::vec3(get<0>(dist) * UNIT * v[0], UNIT * v[1], get<1>(dist) * UNIT * v[2]));
+            T = glm::translate(T, UNIT * glm::vec3(get<0>(dist) * v[0], v[1], get<1>(dist) * v[2]));
             // TODO: Handle multiplication by OFFSET.
         }
         else if (t == "rotate") {
@@ -58,34 +58,61 @@ glm::mat4 transform(json root, string type, int id, tuple<uint16_t, uint16_t> di
     return T;
 }
 
-vector<vector<glm::mat4>> applyConfig(vector<vector<string>> LEVEL, json data, tuple<uint16_t, uint16_t> O) {
-    uint16_t rows = LEVEL.size(), columns = LEVEL[0].size();
+void saveEntry(vector<json>* js, json root, glm::mat4 T, tuple<uint16_t, uint16_t> coords, int id) {
+    json j;
+    j["model"] = root["model"];
+    vector<float> vec;
+    for (uint8_t i = 0; i < 4; i++)
+        for (uint8_t j = 0; j < 4; j++)
+            vec.push_back(T[j][i]);
+    j["transform"] = vec;
+    j["coordinates"] = { get<0>(coords), get<1>(coords) };
+    if (id != -1) {
+        json tmp = root["transform"][id]["operations"];
+        for (auto x : tmp.get<vector<json>>())
+            if (x.begin().key() == "rotate") {
+                j["orientation"] = x.begin().value();
+                break;
+            }
+    }
+    else
+        j["orientation"] = 0;
+    (*js).push_back(j);
+}
+
+void applyConfig(vector<vector<string>> LEVEL, json data, tuple<uint16_t, uint16_t> O) {
+    std::ofstream f("level/out.json", std::ofstream::trunc);
+    vector<json> objs;
     json structure = data["structure"], light = data["light"];
     string test;
-    vector<vector<glm::mat4>> ans;
-    ans.resize(rows);
-    for (uint16_t i = 0; i < rows; i++) {
-        ans[i].resize(columns);
-        for (uint16_t j = 0; j < columns; j++) {
+    glm::mat4 M;
+    for (uint16_t i = 0; i < LEVEL.size(); i++) {
+        for (uint16_t j = 0; j < LEVEL[0].size(); j++) {
             test = LEVEL[i][j];
             if (test == "S") {
                 //transform(structure, "SPAWN", -1);
                 continue; // TODO.
             }
             else if (test == "G") {
-                ans[i][j] = transform(structure, "GROUND", -1, tuple(i - get<0>(O), j - get<1>(O)));
+                M = transform(structure, "GROUND", -1, tuple(i - get<0>(O), j - get<1>(O)));
+                saveEntry(&objs, structure["GROUND"], M, tuple(i, j), -1);
             }
             else if (test[0] == 'W') {
                 if (test[1] == 'L') {
-                    ans[i][j] = transform(structure, "WALL_LINE", test[2] - '0', tuple(i - get<0>(O), j - get<1>(O)));
+                    M = transform(structure, "WALL_LINE", test[2] - '0', tuple(i - get<0>(O), j - get<1>(O)));
+                    saveEntry(&objs, structure["WALL_LINE"], M, tuple(i, j), test[2] - '0');
                 }
                 else if (test[1] == 'A') {
-                    ans[i][j] = transform(structure, "WALL_ANGLE", test[2] - '0', tuple(i - get<0>(O), j - get<1>(O)));
+                    M = transform(structure, "WALL_ANGLE", test[2] - '0', tuple(i - get<0>(O), j - get<1>(O)));
+                    saveEntry(&objs, structure["WALL_ANGLE"], M, tuple(i, j), test[2] - '0');
                 }
             }
         }
     }
-    return ans;
+    json out = json::object();
+    out["objs"] = objs;
+    f << out.dump(4) << endl;
+    f.close();
 }
 
 void main() {
@@ -95,11 +122,6 @@ void main() {
     json data = nullptr;
     parseConfig(&data);
 
-    vector<vector<glm::mat4>> transforms = applyConfig(LEVEL, data, O);
-    for (uint8_t i = 0; i < 4; i++) {
-        for (uint8_t j = 0; j < 4; j++) {
-            cout << transforms[8][6][j][i] << ' ';
-        }
-        cout << endl;
-    }
+    applyConfig(LEVEL, data, O);
+    // TODO: "on"/"off" flag at "light"?
 }

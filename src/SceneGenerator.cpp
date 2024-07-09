@@ -5,6 +5,11 @@ using namespace std;
 #define UNIT 3.1f
 #define OFFSET 0.1f
 
+enum {
+    NO_ID = -1,
+    LIGHT_MODE = -2
+};
+
 vector<vector<string>> loadMap(string file, tuple<uint16_t, uint16_t>* O) {
     std::ifstream f(file);
     uint16_t rows, columns;
@@ -32,7 +37,7 @@ void parseConfig(json* data) {
     f.close();
 }
 
-glm::mat4 transform(json root, string type, int id, tuple<uint16_t, uint16_t> dist) {
+glm::mat4 transform(json root, string type, int id, tuple<uint16_t, uint16_t> dist, float* rot) {
     json branch = root[type], ops = branch["transform"], flag = branch["variant"];
     if (flag.get<bool>())
         ops = ops[id]["operations"];
@@ -43,12 +48,15 @@ glm::mat4 transform(json root, string type, int id, tuple<uint16_t, uint16_t> di
         t = x.begin().key();
         if (t == "translate") {
             array<float, 3> v = x[t].get<array<float, 3>>();
-            T = glm::translate(T, UNIT * glm::vec3(get<0>(dist) * v[0], v[1], get<1>(dist) * v[2]));
-            // TODO: Handle multiplication by OFFSET.
+            if (x["unit"] == nullptr || x["unit"] == "U")
+                T = glm::translate(T, UNIT * glm::vec3(get<0>(dist) * v[0], v[1], get<1>(dist) * v[2]));
+            else if (x["unit"] == "ALT")
+                T = glm::translate(T, OFFSET * glm::vec3(v[0], v[1], v[2]));
         }
         else if (t == "rotate") {
             float ang = x[t].get<float>();
             T = glm::rotate(T, glm::radians(ang), glm::vec3(0, 1, 0));
+            *rot = ang;
         }
         else if (t == "scale") {
             array<float, 3> v = x[t].get<array<float, 3>>();
@@ -58,7 +66,7 @@ glm::mat4 transform(json root, string type, int id, tuple<uint16_t, uint16_t> di
     return T;
 }
 
-void saveEntry(vector<json>* js, json root, glm::mat4 T, tuple<uint16_t, uint16_t> coords, int id) {
+void saveEntry(vector<json>* js, json root, glm::mat4 T, tuple<uint16_t, uint16_t> coords, int id, float orient) {
     json j;
     j["model"] = root["model"];
     vector<float> vec;
@@ -67,25 +75,32 @@ void saveEntry(vector<json>* js, json root, glm::mat4 T, tuple<uint16_t, uint16_
             vec.push_back(T[j][i]);
     j["transform"] = vec;
     j["coordinates"] = { get<0>(coords), get<1>(coords) };
-    if (id != -1) {
-        json tmp = root["transform"][id]["operations"];
-        for (auto x : tmp.get<vector<json>>())
-            if (x.begin().key() == "rotate") {
-                j["orientation"] = x.begin().value();
-                break;
-            }
+    switch (id) {
+        case NO_ID:
+            j["orientation"] = 0;
+            break;
+        case LIGHT_MODE:
+            j["orientation"] = orient;
+            break;
+        default:
+            json tmp = root["transform"][id]["operations"];
+            for (auto x : tmp.get<vector<json>>())
+                if (x.begin().key() == "rotate") {
+                    j["orientation"] = x.begin().value();
+                    break;
+                }
+            break;
     }
-    else
-        j["orientation"] = 0;
     (*js).push_back(j);
 }
 
-void applyConfig(vector<vector<string>> LEVEL, json data, tuple<uint16_t, uint16_t> O) {
+void applyConfig(vector<vector<string>> LEVEL, vector<vector<string>> LIGHT, json data, tuple<uint16_t, uint16_t> O) {
     std::ofstream f("level/out.json", std::ofstream::trunc);
     vector<json> objs;
     json structure = data["structure"], light = data["light"];
     string test;
     glm::mat4 M;
+    float inherit;
     for (uint16_t i = 0; i < LEVEL.size(); i++) {
         for (uint16_t j = 0; j < LEVEL[0].size(); j++) {
             test = LEVEL[i][j];
@@ -94,19 +109,24 @@ void applyConfig(vector<vector<string>> LEVEL, json data, tuple<uint16_t, uint16
                 continue; // TODO.
             }
             else if (test == "G") {
-                M = transform(structure, "GROUND", -1, tuple(i - get<0>(O), j - get<1>(O)));
-                saveEntry(&objs, structure["GROUND"], M, tuple(i, j), -1);
+                M = transform(structure, "GROUND", NO_ID, tuple(i - get<0>(O), j - get<1>(O)), &inherit);
+                saveEntry(&objs, structure["GROUND"], M, tuple(i, j), NO_ID, (float)NULL);
             }
             else if (test[0] == 'W') {
                 if (test[1] == 'L') {
-                    M = transform(structure, "WALL_LINE", test[2] - '0', tuple(i - get<0>(O), j - get<1>(O)));
-                    saveEntry(&objs, structure["WALL_LINE"], M, tuple(i, j), test[2] - '0');
+                    M = transform(structure, "WALL_LINE", test[2] - '0', tuple(i - get<0>(O), j - get<1>(O)), &inherit);
+                    saveEntry(&objs, structure["WALL_LINE"], M, tuple(i, j), test[2] - '0', (float)NULL);
                 }
                 else if (test[1] == 'A') {
-                    M = transform(structure, "WALL_ANGLE", test[2] - '0', tuple(i - get<0>(O), j - get<1>(O)));
-                    saveEntry(&objs, structure["WALL_ANGLE"], M, tuple(i, j), test[2] - '0');
+                    M = transform(structure, "WALL_ANGLE", test[2] - '0', tuple(i - get<0>(O), j - get<1>(O)), &inherit);
+                    saveEntry(&objs, structure["WALL_ANGLE"], M, tuple(i, j), test[2] - '0', (float)NULL);
                 }
             }
+            test = LIGHT[i][j];
+            if (test == "T")
+                saveEntry(&objs, light["TORCH"], M, tuple(i, j), LIGHT_MODE, inherit);
+            else if (test[0] == 'L')
+                saveEntry(&objs, light["LAMP_" + string(1, test[1])], M, tuple(i, j), LIGHT_MODE, inherit);
         }
     }
     json out = json::object();
@@ -117,11 +137,11 @@ void applyConfig(vector<vector<string>> LEVEL, json data, tuple<uint16_t, uint16
 
 void main() {
     tuple<uint16_t, uint16_t> O;
-    vector<vector<string>> LEVEL = loadMap("level/ROOM-00.txt", &O);
+    vector<vector<string>> LEVEL = loadMap("level/ROOM-00.txt", &O), LIGHT = loadMap("level/LIGHT-00.txt", nullptr);
 
-    json data = nullptr;
+    json data = NULL;
     parseConfig(&data);
 
-    applyConfig(LEVEL, data, O);
+    applyConfig(LEVEL, LIGHT, data, O);
     // TODO: "on"/"off" flag at "light"?
 }

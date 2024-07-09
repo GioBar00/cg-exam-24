@@ -100,8 +100,8 @@
         "TORCH": {
             "model": "light.002_Mesh.6811",
             "transform": [
-                { "translate": [ 1.6666, 0.5, 1.6666 ] },
-                { "translate": [ -5, 0, 0 ] }
+                { "translate": [ 1.6666, 0.5, 1.6666 ], "unit": "U" },
+                { "translate": [ -5, 0, 0 ], "unit": "ALT" }
             ],
             "type": "POINT",
             "color": [ 1, 0.5, 0 ],
@@ -110,8 +110,8 @@
         "LAMP_0": {
             "model": "light.009_Mesh.6851",
             "transform": [
-                { "translate": [ 1.6666, 0.5, 1.6666 ] },
-                { "translate": [ -7.75, 0, 0 ] }
+                { "translate": [ 1.6666, 0.5, 1.6666 ], "unit": "U" },
+                { "translate": [ -7.75, 0, 0 ], "unit": "ALT" }
             ],
             "type": "POINT",
             "color": [ 0, 0.5, 1 ],
@@ -120,8 +120,8 @@
         "LAMP_1": {
             "model": "light.013_Mesh.7136",
             "transform": [
-                { "translate": [ 1.6666, 0.5, 1.6666 ] },
-                { "translate": [ -9, 0, 0 ] }
+                { "translate": [ 1.6666, 0.5, 1.6666 ], "unit": "U" },
+                { "translate": [ -9, 0, 0 ], "unit": "ALT" }
             ],
             "type": "POINT",
             "color": [ 0, 1, 0 ],

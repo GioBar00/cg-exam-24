@@ -38,8 +38,13 @@ void parseConfig(json* data) {
 }
 
 glm::mat4 transform(json root, string type, int id, tuple<uint16_t, uint16_t> dist, float* rot) {
-    json branch = root[type], ops = branch["transform"], flag = branch["variant"];
-    if (flag.get<bool>())
+    json branch;
+    if (type == "SPAWN")
+        branch = root;
+    else
+        branch = root[type];
+    json ops = branch["transform"], flag = branch["variant"];
+    if (flag != nullptr && flag.get<bool>())
         ops = ops[id]["operations"];
     vector<json> lst = ops.get<vector<json>>();
     glm::mat4 T = glm::mat4(1);
@@ -105,11 +110,13 @@ void applyConfig(vector<vector<string>> LEVEL, vector<vector<string>> LIGHT, jso
         for (uint16_t j = 0; j < LEVEL[0].size(); j++) {
             test = LEVEL[i][j];
             if (test == "S") {
-                //transform(structure, "SPAWN", -1);
-                continue; // TODO.
+                M = transform(structure["SPAWN"][0], "SPAWN", NO_ID, tuple(0, 0), nullptr);
+                saveEntry(&objs, structure["SPAWN"][0], M, tuple(i, j), NO_ID, (float)NULL);
+                M = transform(structure["SPAWN"][1], "SPAWN", NO_ID, tuple(0, 0), nullptr);
+                saveEntry(&objs, structure["SPAWN"][1], M, tuple(i, j), NO_ID, (float)NULL);
             }
             else if (test == "G") {
-                M = transform(structure, "GROUND", NO_ID, tuple(i - get<0>(O), j - get<1>(O)), &inherit);
+                M = transform(structure, "GROUND", NO_ID, tuple(i - get<0>(O), j - get<1>(O)), nullptr);
                 saveEntry(&objs, structure["GROUND"], M, tuple(i, j), NO_ID, (float)NULL);
             }
             else if (test[0] == 'W') {

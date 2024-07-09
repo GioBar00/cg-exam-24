@@ -10,7 +10,7 @@
             {
                 "model": "tunnel.003_Mesh.4991",
                 "transform": [
-                    { "translate": [ 0.6666, 0, 0.6666 ] },
+                    { "translate": [ 0, 0, 0 ] },
                     { "scale": [ 0.5, 0.5, 0.5 ] }
                 ]
             }

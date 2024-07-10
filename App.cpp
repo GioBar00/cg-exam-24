@@ -176,6 +176,8 @@ protected:
         scenes[newSceneId]->init(this, SceneVDRs.find(newSceneId)->second, ScenePRs.find(newSceneId)->second,
                                  sceneFiles.find(newSceneId)->second);
         currSceneId = newSceneId;
+        // FIXME: maybe this is called twice
+        //scenes[currSceneId]->pipelinesAndDescriptorSetsInit();
     }
 
 };

@@ -363,16 +363,23 @@ public:
     void updateUniformBuffer(float deltaT, glm::vec3 m, glm::vec3 r, bool fire) override {
         // TODO: Implement the LevelSceneController
         // Calculate Orthogonal Projection Matrix
-        float zoom = 1.f;
+        static float zoom = 1.f;
         const float halfWidth = 10.0f / zoom;
         const float nearPlane = -100.f;
         const float farPlane = 100.0f;
 
         float Ar = scene->BP->getAr();
         glm::mat4 Prj = glm::scale(glm::mat4(1.0), glm::vec3(1, -1, 1)) *
-                        glm::ortho(-halfWidth, halfWidth, -halfWidth / Ar, halfWidth / Ar, nearPlane, farPlane) *
-                        glm::rotate(glm::mat4(1.0f), glm::radians(35.264f), glm::vec3(1.0f, 0.0f, 0.0f)) *
-                        glm::rotate(glm::mat4(1.0f), glm::radians(-45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+                        glm::ortho(-halfWidth, halfWidth, -halfWidth / Ar, halfWidth / Ar, nearPlane, farPlane);
+
+        static float rot = 0;
+        glm::mat4 View = glm::rotate(glm::mat4(1.0f), glm::radians(35.264f), glm::vec3(1.0f, 0.0f, 0.0f)) *
+                         glm::rotate(glm::mat4(1.0f), glm::radians(-45.0f), glm::vec3(0.0f, 1.0f, 0.0f)) *
+                         glm::rotate(glm::mat4(1.0f), glm::radians(90.f * rot), glm::vec3(0.0f, 1.0f, 0.0f));
+        // TODO: add translation of player
+
+
+        glm::mat4 PrV = Prj * View;
     }
 };
 

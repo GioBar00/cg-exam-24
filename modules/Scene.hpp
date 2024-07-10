@@ -1,3 +1,4 @@
+#include "modules/AppCommon.hpp"
 
 /* SCENES */
 struct PipelineInstances;

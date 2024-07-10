@@ -1,48 +1,51 @@
 #include "modules/Starter.hpp"
-#include "modules/AppCommon.hpp"
 #include "modules/Scene.hpp"
 
+
+#define MAX_LIGHTS 256
+
+
 /* Uniform buffers. */
-// TODO: Add a uniform buffers
-//struct UniformBufferObject {
-//    alignas(16) glm::mat4 mvpMat;
-//    alignas(16) glm::mat4 mMat;
-//    alignas(16) glm::mat4 nMat;
-//};
-//
-//struct GlobalUniformBufferObject {
-//    alignas(16) glm::vec3 lightDir;
-//    alignas(16) glm::vec4 lightColor;
-//    alignas(16) glm::vec3 eyePos;
-//};
+struct ObjectUniform {
+    alignas(16) glm::mat4   mvpMat;
+    alignas(16) glm::mat4   mMat;
+    alignas(16) glm::mat4   nMat;
+};
+
+struct LightUniform {
+    // FIX: Array of uint32_t, instead of glm::vec3, with switch statement inside fragment shader.
+    alignas(16) glm::vec3   TYPE[MAX_LIGHTS]; // i := DIRECT, j := POINT, k = SPOT.
+    alignas(16) glm::vec3   lightPos[MAX_LIGHTS];
+    alignas(16) glm::vec3   lightDir[MAX_LIGHTS];
+    alignas(16) glm::vec4   lightCol[MAX_LIGHTS];
+    alignas(4)  float       cosIn;
+    alignas(4)  float       cosOut;
+    alignas(4)  uint32_t    NUMBER;
+    alignas(16) glm::vec3   eyePos;
+};
 
 
 /* Vertex formats. */
-// TODO: Add a vertex formats
-//struct VertexNormMap {
-//    glm::vec3 pos;
-//    glm::vec3 normal;
-//    glm::vec4 tangent;
-//    glm::vec2 texCoord;
-//};
+struct ToonVertex {
+    glm::vec3   pos;
+    glm::vec3   norm;
+    glm::vec2   UV;
+};
 
 
 class App : public BaseProject {
 protected:
 
     /* Descriptor set layouts. */
-    // TODO: Add a descriptor set layouts
-//    DescriptorSetLayout DSL;
+    DescriptorSetLayout ToonDSL, LightDSL;
 
 
     /* Vertex descriptors. */
-    // TODO: Add a vertex descriptors
-//    VertexDescriptor VD;
+    VertexDescriptor ToonVD;
 
 
     /* Pipelines. */
-    // TODO: Add a pipelines
-//    Pipeline P;
+    Pipeline IlluminationP;
 
 
     /* Scenes */
@@ -75,34 +78,36 @@ protected:
             scenes[sceneId] = nullptr;
         }
 
-        // TODO: Init all Descriptor set layouts
-//        DSL.init(this, {
-//                {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         VK_SHADER_STAGE_ALL_GRAPHICS, sizeof(Uniform), 1},
-//                {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0,               1}
-//        });
 
-        // TODO: Init all Vertex descriptors
-//        VD.init(this, {
-//                        {0, sizeof(Vertex), VK_VERTEX_INPUT_RATE_VERTEX}
-//                }, {
-//                        {0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, pos), sizeof(glm::vec3), POSITION},
-//                        {0, 1, VK_FORMAT_R32G32_SFLOAT,    offsetof(Vertex, UV),  sizeof(glm::vec2), UV}
-//                }
-//        );
+        ToonDSL.init(this, {
+            {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,          VK_SHADER_STAGE_ALL_GRAPHICS,   sizeof(ObjectUniform),  1},
+            {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,  VK_SHADER_STAGE_FRAGMENT_BIT,   0,                      1}
+        });
+        LightDSL.init(this, {
+            {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,          VK_SHADER_STAGE_FRAGMENT_BIT,   sizeof(LightUniform),   1}
+		});
 
-        // TODO: Init all Pipelines
-//        P.init(this, &VD, "shaders/Axis.vert.spv", "shaders/Axis.frag.spv", {&DSL});
+        ToonVD.init(this, {
+                {0, sizeof(ToonVertex), VK_VERTEX_INPUT_RATE_VERTEX}
+            }, {
+                {0, 0, VK_FORMAT_R32G32B32_SFLOAT,  offsetof(ToonVertex, pos),  sizeof(glm::vec3),  POSITION},
+                {0, 1, VK_FORMAT_R32G32B32_SFLOAT,  offsetof(ToonVertex, norm), sizeof(glm::vec3),  NORMAL},
+                {0, 2, VK_FORMAT_R32G32_SFLOAT,     offsetof(ToonVertex, UV),   sizeof(glm::vec2),  UV}
+            }
+        );
 
-        // TODO: Define all Vertex Descriptor Ref per Scene
-        std::vector<VertexDescriptorRef> SL1VDRs = {
-//                {"VD", &VD},
-        };
-        // ...
-        // TODO: Define Pipeline Ref per Scene
-        std::vector<PipelineRef> SL1PRs = {
-//                {"P", &P}
-        };
-        // ...
+        IlluminationP.init(this, &ToonVD, "shaders/brdf/Toon.vert.spv", "shaders/brdf/Toon.frag.spv", {&LightDSL, &ToonDSL});
+
+
+        // Define vertex descriptor references per scene.
+        VertexDescriptorRef ToonVDR;
+        ToonVDR.init("ToonVD", &ToonVD);
+        std::vector<VertexDescriptorRef> SL1VDRs = { ToonVDR };
+
+        // Define pipeline references per scene.
+        PipelineRef IlluminationPR;
+        IlluminationPR.init("illumination", &IlluminationP);
+        std::vector<PipelineRef> SL1PRs = { IlluminationPR };
 
         // TODO: Add all SceneVDRs and ScenePRs to the maps
         SceneVDRs[SceneId::SCENE_LEVEL_1] = SL1VDRs;

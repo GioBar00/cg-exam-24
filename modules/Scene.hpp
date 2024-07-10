@@ -1,3 +1,4 @@
+#include <utility>
 
 /* SCENES */
 struct PipelineInstances;
@@ -42,7 +43,26 @@ struct PipelineInstances {
     PipelineRef *P;
 };
 
-class SceneController;
+struct ObjectInstance {
+    std::string I_id;
+    SceneObjectType type;
+};
+
+class Scene;
+
+class SceneController {
+protected:
+    Scene *scene{};
+public:
+    Scene *getScene() {
+        return scene;
+    }
+
+    virtual void localCleanup() = 0;
+
+    virtual void updateUniformBuffer(uint32_t currentImage, float deltaT, glm::vec3 m, glm::vec3 r, bool fire) = 0;
+};
+
 class Scene {
 public:
 
@@ -137,6 +157,8 @@ public:
             free(PI[i].I);
         }
         free(PI);
+        SC->localCleanup();
+        free(SC);
     }
 
     void populateCommandBuffer(VkCommandBuffer commandBuffer, int currentImage) const {
@@ -161,6 +183,7 @@ public:
 };
 
 class LevelSceneController;
+
 class LevelScene : public Scene {
 public:
     LevelSceneController *SC{};
@@ -324,6 +347,7 @@ public:
 };
 
 class MainMenuSceneController;
+
 class MainMenuScene : public Scene {
 public:
     MainMenuSceneController *SC{};
@@ -341,27 +365,49 @@ public:
 };
 
 /* SCENE CONTROLLERS */
-class SceneController {
-protected:
-    Scene *scene{};
-public:
-    Scene *getScene() {
-        return scene;
+class LevelSceneController : public SceneController {
+    LevelScene *scene{};
+    std::map<std::pair<int, int>, std::vector<ObjectInstance *>> myMap;
+    // Player attributes
+    std::pair<int, int> initialPlayerCoords;
+    Direction playerDirection = NORTH;
+
+    void updateUniformBuffersToon(uint32_t currentImage, Instance *I, glm::mat4 ViewPrj, glm::mat4 baseTr,
+                                  const std::vector<void *> &gubs) {
+        // UniformBufferObject ubo{};
+
+        // ubo.mMat = baseTr * scene->M[I->Mid]->Wm * I->Wm;
+        // ubo.mvpMat = ViewPrj * ubo.mMat;
+        // ubo.nMat = glm::inverse(glm::transpose(ubo.mMat));
+
+        // SC.I[i]->DS[0]->map(currentImage, &ubo, sizeof(ubo), 0);
+        // SC.I[i]->DS[0]->map(currentImage, &gubo, sizeof(gubo), 2);
+
     }
 
-    virtual void updateUniformBuffer(float deltaT, glm::vec3 m, glm::vec3 r, bool fire) = 0;
-};
-
-class LevelSceneController : public SceneController {
-protected:
-    LevelScene *scene{};
 public:
     void setScene(LevelScene *sc) {
         scene = sc;
     }
 
-    void updateUniformBuffer(float deltaT, glm::vec3 m, glm::vec3 r, bool fire) override {
-        // TODO: Implement the LevelSceneController
+    void addObjectToMap(std::pair<int, int> coords, ObjectInstance *obj) {
+        myMap[coords].push_back(obj);
+        if (obj->type == SceneObjectType::SO_PLAYER)
+            initialPlayerCoords = coords;
+    }
+
+    void localCleanup() override {
+        for (auto &pair: myMap) {
+            for (auto &obj: pair.second) {
+                delete obj;
+            }
+        }
+    }
+
+    void updateUniformBuffer(uint32_t currentImage, float deltaT, glm::vec3 m, glm::vec3 r, bool fire) override {
+        static bool isMoving = false;
+
+        // TODO: Add damping to zoom
         // Calculate Orthogonal Projection Matrix
         static float zoom = 1.f;
         const float halfWidth = 10.0f / zoom;
@@ -372,6 +418,7 @@ public:
         glm::mat4 Prj = glm::scale(glm::mat4(1.0), glm::vec3(1, -1, 1)) *
                         glm::ortho(-halfWidth, halfWidth, -halfWidth / Ar, halfWidth / Ar, nearPlane, farPlane);
 
+        // TODO: Add damping to prospective rotation
         static float rot = 0;
         glm::mat4 View = glm::rotate(glm::mat4(1.0f), glm::radians(35.264f), glm::vec3(1.0f, 0.0f, 0.0f)) *
                          glm::rotate(glm::mat4(1.0f), glm::radians(-45.0f), glm::vec3(0.0f, 1.0f, 0.0f)) *
@@ -379,7 +426,41 @@ public:
         // TODO: add translation of player
 
 
-        glm::mat4 PrV = Prj * View;
+        glm::mat4 ViewPrj = Prj * View;
+
+        // TODO: add player movement controls
+
+        // TODO: add interaction with objects
+
+        // TODO: global uniform buffers first
+
+        // TODO: calculate objects world matrices
+        for (auto &pair: myMap) {
+            for (auto &obj: pair.second) {
+                switch (obj->type) {
+                    case SceneObjectType::SO_FLOOR:
+                    case SceneObjectType::SO_WALL:
+                    case SceneObjectType::SO_PLAYER:
+                    case SceneObjectType::SO_LIGHT:
+                    case SceneObjectType::SO_OTHER:
+                        updateUniformBuffersToon(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj,
+                                                 glm::mat4(1.0f), {}); // TODO: add global uniform buffers
+                        break;
+                }
+            }
+        }
+
+        // UniformBufferObject ubo{};
+        // GlobalUniformBufferObject gubo{};
+
+//        for(int i = 0; i < scene->InstanceCount; i++) {
+//            ubo.mMat = baseTr * scene->M[scene->I[i]->Mid]->Wm * scene->I[i]->Wm;
+//            ubo.mvpMat = ViewPrj * ubo.mMat;
+//            ubo.nMat = glm::inverse(glm::transpose(ubo.mMat));
+//
+//            SC.I[i]->DS[0]->map(currentImage, &ubo, sizeof(ubo), 0);
+//            SC.I[i]->DS[0]->map(currentImage, &gubo, sizeof(gubo), 2);
+//        }
     }
 };
 
@@ -391,7 +472,11 @@ public:
         scene = sc;
     }
 
-    void updateUniformBuffer(float deltaT, glm::vec3 m, glm::vec3 r, bool fire) override {
+    void localCleanup() override {
+
+    }
+
+    void updateUniformBuffer(uint32_t currentImage, float deltaT, glm::vec3 m, glm::vec3 r, bool fire) override {
         // TODO: Implement the MainMenuSceneController
     }
 };
@@ -419,6 +504,3 @@ static Scene *getNewSceneById(SceneId sceneId) {
             return nullptr;
     }
 }
-
-/* OBJECTS */
-

@@ -125,6 +125,8 @@ protected:
     }
 
     void localCleanup() override {
+        // TODO: Cleanup all Descriptor set layouts and Pipelines
+
         for (const auto &sceneId: sceneIds) {
             if (scenes[sceneId] != nullptr) {
                 scenes[sceneId]->localCleanup();
@@ -164,7 +166,7 @@ protected:
 
         getSixAxis(deltaT, m, r, fire);
 
-        scenes[currSceneId]->SC->updateUniformBuffer(deltaT, m, r, fire);
+        scenes[currSceneId]->SC->updateUniformBuffer(currentImage, deltaT, m, r, fire);
     }
 
     void changeScene(SceneId newSceneId) {
@@ -172,12 +174,14 @@ protected:
             scenes[currSceneId]->pipelinesAndDescriptorSetsCleanup();
         }
 
-        scenes[newSceneId] = getNewSceneById(newSceneId);
-        scenes[newSceneId]->init(this, SceneVDRs.find(newSceneId)->second, ScenePRs.find(newSceneId)->second,
-                                 sceneFiles.find(newSceneId)->second);
+        if (scenes[newSceneId] == nullptr) {
+            scenes[newSceneId] = getNewSceneById(newSceneId);
+            scenes[newSceneId]->init(this, SceneVDRs.find(newSceneId)->second, ScenePRs.find(newSceneId)->second,
+                                     sceneFiles.find(newSceneId)->second);
+            // FIXME: maybe this is called twice
+            scenes[newSceneId]->pipelinesAndDescriptorSetsInit();
+        }
         currSceneId = newSceneId;
-        // FIXME: maybe this is called twice
-        //scenes[currSceneId]->pipelinesAndDescriptorSetsInit();
     }
 
 };

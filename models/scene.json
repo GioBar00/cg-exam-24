@@ -1,0 +1,22 @@
+{
+    "models": [
+        { "format": "MGCG", "id": "player", "model": "models/dungeon/cast_Mesh.6268.mgcg", "VD": null },
+        { "format": "MGCG", "id": "ground", "model": "models/dungeon/tunnel.003_Mesh.4991.mgcg", "VD": null },
+        { "format": "MGCG", "id": "wall-line", "model": "models/dungeon/tunnel_Mesh.4672.mgcg", "VD": null },
+        { "format": "MGCG", "id": "wall-angle", "model": "models/dungeon/tunnel.028_Mesh.7989.mgcg", "VD": null },
+        { "format": "MGCG", "id": "light-i", "model": "models/dungeon/light.002_Mesh.6811.mgcg", "VD": null },
+        { "format": "MGCG", "id": "light-ni-a", "model": "models/dungeon/light.009_Mesh.6851.mgcg", "VD": null },
+        { "format": "MGCG", "id": "light-ni-b", "model": "models/dungeon/light.013_Mesh.7136.mgcg", "VD": null }
+    ],
+    "textures": [
+        { "format": "C", "id": "tex", "texture": "textures/dungeon/Textures_Dungeon.png" }
+    ],
+    "instances": [
+        {
+            "pipeline": "illumination",
+            "elements": [
+
+            ]
+        }
+    ]
+}

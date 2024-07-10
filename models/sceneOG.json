@@ -1,0 +1,33 @@
+{
+	"models": [
+		{"id": "pl",  "VD": "VDNM",  "model": "models/Plane.gltf",     "format":"GLTF"},
+		{"id": "sph", "VD": "VDNM",  "model": "models/Sphere.gltf",    "format":"GLTF"}
+	],
+	"textures": [
+		{"id": "m9a",   "texture": "textures/Metals_09_basecolor.png",    "format": "C"},
+		{"id": "m9mra", "texture": "textures/Metals_09_met_rough_ao.png", "format": "D"},
+		{"id": "m9n",   "texture": "textures/Metals_09_normal.png",       "format": "D"},
+		{"id": "ma",    "texture": "textures/fullwhite.png",		      "format": "C"},
+		{"id": "mmra",  "texture": "textures/met_rough_ao.png",           "format": "D"},
+		{"id": "mn",    "texture": "textures/original.png",               "format": "D"}
+	],
+	"instances": [
+		{"pipeline": "PNM", "elements": [
+			{"id": "sph",  "model": "sph",  "texture": ["m9a", "m9n", "m9mra"],
+			 "transform": [1, 0, 0, -1.5,
+						   0, 1, 0, 3,
+						   0, 0, 1, 0,
+						   0, 0, 0, 1]},
+			{"id": "sp2",  "model": "sph",  "texture": ["ma", "mn", "mmra"],
+			 "transform": [1, 0, 0, 1.5,
+						   0, 1, 0, 3,
+						   0, 0, 1, 0,
+						   0, 0, 0, 1]},
+			{"id": "pl",   "model": "pl",   "texture": ["m9a", "m9n", "m9mra"],
+			 "transform": [1, 0, 0, 0,
+						   0, 1, 0, -0.1,
+						   0, 0, 1, 0,
+						   0, 0, 0, 1]}
+		]}
+	]
+}

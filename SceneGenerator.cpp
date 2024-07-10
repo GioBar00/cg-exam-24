@@ -2,9 +2,11 @@
 using json = nlohmann::json;
 using namespace std;
 
-#define FILE_PATH string("level/module/")
-#define JSON_PATH "level/properties.json"
-#define RETURN_PATH "level/out.json"
+#define FILE_PATH string("levels/parts/")
+#define CONFIG_PATH "levels/properties.json"
+#define MODEL_PATH string("models/dungeon/")
+#define TEMPLATE_PATH "models/scene.json"
+#define RETURN_PATH "scenes/level-01.json"
 
 enum {
     NO_ID = -1,
@@ -30,7 +32,7 @@ vector<vector<string>> loadMap(string file, tuple<uint16_t, uint16_t>* O) {
 }
 
 void parseConfig(json* data) {
-    std::ifstream f(JSON_PATH);
+    std::ifstream f(CONFIG_PATH);
     try {
         *data = json::parse(f);
     }
@@ -74,9 +76,8 @@ glm::mat4 transform(json root, string type, int id, tuple<uint16_t, uint16_t> di
     return T;
 }
 
-void saveEntry(vector<json>* js, json root, glm::mat4 T, tuple<uint16_t, uint16_t> coords, int id, float orient) {
-    json j;
-    j["model"] = root["model"];
+void saveEntry(json jt, vector<json>* js, json root, glm::mat4 T, tuple<uint16_t, uint16_t> coords, int id, float orient) {
+    json j = json::object();
     vector<float> vec;
     for (uint8_t i = 0; i < 4; i++)
         for (uint8_t j = 0; j < 4; j++)
@@ -99,10 +100,20 @@ void saveEntry(vector<json>* js, json root, glm::mat4 T, tuple<uint16_t, uint16_
                 }
             break;
     }
+    for (auto x : jt["models"].get<vector<json>>())
+        if (x["model"].get<string>() == MODEL_PATH + root["model"].get<string>() + ".mgcg") {
+            j["model"] = x["id"];
+            break;
+        }
+    j["texture"] = json::array({ jt["textures"][0]["id"] });
+    j["id"] = j["model"].get<string>() + "-" + std::to_string(get<0>(coords)) + std::to_string(get<1>(coords));
     (*js).push_back(j);
 }
 
 void applyConfig(vector<vector<string>> LEVEL, vector<vector<string>> LIGHT, int mod, json data, tuple<uint16_t, uint16_t> O, bool reset) {
+    std::ifstream ft(TEMPLATE_PATH);
+    json jtemplate = json::parse(ft);
+    ft.close();
     vector<json> objs;
     json structure = data["structure"], light = data["light"];
     string test;
@@ -114,43 +125,36 @@ void applyConfig(vector<vector<string>> LEVEL, vector<vector<string>> LIGHT, int
             test = LEVEL[i][j];
             if (test == "S") {
                 M = transform(structure["SPAWN"][0], "SPAWN", NO_ID, tuple(0, 0), nullptr);
-                saveEntry(&objs, structure["SPAWN"][0], M, tuple(i, j), NO_ID, (float)NULL);
+                saveEntry(jtemplate, &objs, structure["SPAWN"][0], M, tuple(i, j), NO_ID, (float)NULL);
                 M = transform(structure["SPAWN"][1], "SPAWN", NO_ID, tuple(0, 0), nullptr);
-                saveEntry(&objs, structure["SPAWN"][1], M, tuple(i, j), NO_ID, (float)NULL);
+                saveEntry(jtemplate, &objs, structure["SPAWN"][1], M, tuple(i, j), NO_ID, (float)NULL);
             }
             else if (test == "G") {
                 M = transform(structure, "GROUND", NO_ID, tuple(mod * rows + i - get<0>(O), mod * columns + j - get<1>(O)), nullptr);
-                saveEntry(&objs, structure["GROUND"], M, tuple(i, j), NO_ID, (float)NULL);
+                saveEntry(jtemplate, &objs, structure["GROUND"], M, tuple(i, j), NO_ID, (float)NULL);
             }
             else if (test[0] == 'W') {
                 if (test[1] == 'L') {
                     M = transform(structure, "WALL_LINE", test[2] - '0', tuple(mod * rows + i - get<0>(O), mod * columns + j - get<1>(O)), &inherit);
-                    saveEntry(&objs, structure["WALL_LINE"], M, tuple(i, j), test[2] - '0', (float)NULL);
+                    saveEntry(jtemplate, &objs, structure["WALL_LINE"], M, tuple(i, j), test[2] - '0', (float)NULL);
                 }
                 else if (test[1] == 'A') {
                     M = transform(structure, "WALL_ANGLE", test[2] - '0', tuple(mod * rows + i - get<0>(O), mod * columns + j - get<1>(O)), &inherit);
-                    saveEntry(&objs, structure["WALL_ANGLE"], M, tuple(i, j), test[2] - '0', (float)NULL);
+                    saveEntry(jtemplate, &objs, structure["WALL_ANGLE"], M, tuple(i, j), test[2] - '0', (float)NULL);
                 }
             }
             test = LIGHT[i][j];
             if (test == "T")
-                saveEntry(&objs, light["TORCH"], M, tuple(i, j), LIGHT_MODE, inherit);
+                saveEntry(jtemplate, &objs, light["TORCH"], M, tuple(i, j), LIGHT_MODE, inherit);
             else if (test[0] == 'L')
-                saveEntry(&objs, light["LAMP_" + string(1, test[1])], M, tuple(i, j), LIGHT_MODE, inherit);
+                saveEntry(jtemplate, &objs, light["LAMP_" + string(1, test[1])], M, tuple(i, j), LIGHT_MODE, inherit);
         }
     }
-    json out;
-    if (reset) {
-        out = json::object();
-        out["objs"] = objs;
-    }
-    else {
-        std::ifstream fin(RETURN_PATH);
-        out = json::parse(fin);
-        fin.close();
-        for (auto x : objs)
-            out["objs"].push_back(x);
-    }
+    std::ifstream fin(reset ? TEMPLATE_PATH : RETURN_PATH);
+    json out = json::parse(fin);
+    fin.close();
+    for (auto x : objs)
+        out["instances"][0]["elements"].push_back(x);
     std::ofstream fout(RETURN_PATH, std::ofstream::trunc);
     fout << out.dump(4) << endl;
     fout.close();

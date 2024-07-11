@@ -58,6 +58,8 @@ public:
         return scene;
     }
 
+    virtual void addObjectToMap(std::pair<int, int> coords, ObjectInstance *obj) = 0;
+
     virtual void localCleanup() = 0;
 
     virtual void updateUniformBuffer(uint32_t currentImage, float deltaT, glm::vec3 m, glm::vec3 r, bool fire) = 0;
@@ -105,7 +107,7 @@ public:
         std::cout << "Scene DS init\n";
         for (int i = 0; i < InstanceCount; i++) {
             std::cout << "I: " << i << ", NTx: " << I[i]->NTx << ", NDs: " << I[i]->NDs << "\n";
-            auto **Tids = (Texture **) calloc(I[i]->NTx, sizeof(Texture *));
+            auto Tids = (Texture **) calloc(I[i]->NTx, sizeof(Texture *));
             for (int j = 0; j < I[i]->NTx; j++) {
                 Tids[j] = T[I[i]->Tid[j]];
             }
@@ -183,13 +185,12 @@ public:
 };
 
 class LevelSceneController;
-
 class LevelScene : public Scene {
 public:
-    LevelSceneController *SC{};
+    SceneController *SC{};
 
     void setSceneController(LevelSceneController *sc) {
-        SC = sc;
+        SC = reinterpret_cast<SceneController *>(sc);
     }
 
     int init(BaseProject *_BP, std::vector<VertexDescriptorRef> &VDRs,
@@ -273,7 +274,11 @@ public:
                 PI[k].I = (Instance *) calloc(PI[k].InstanceCount, sizeof(Instance));
 
                 for (int j = 0; j < PI[k].InstanceCount; j++) {
-
+                    auto *oi = new ObjectInstance();
+                    oi->I_id = is[j]["id"];
+                    oi->type = static_cast<SceneObjectType>(is[j]["type"]);
+                    std::pair<int, int> coords = {is[j]["coordinates"][0], is[j]["coordinates"][1]};
+                    SC->addObjectToMap(coords, oi);
                     std::cout << k << "." << j << "\t" << is[j]["id"] << ", " << is[j]["model"] << "("
                               << MeshIds[is[j]["model"]] << "), {";
                     PI[k].I[j].id = new std::string(is[j]["id"]);
@@ -390,7 +395,7 @@ public:
         scene = sc;
     }
 
-    void addObjectToMap(std::pair<int, int> coords, ObjectInstance *obj) {
+    void addObjectToMap(std::pair<int, int> coords, ObjectInstance *obj) override {
         myMap[coords].push_back(obj);
         if (obj->type == SceneObjectType::SO_PLAYER)
             initialPlayerCoords = coords;
@@ -442,6 +447,7 @@ public:
                     case SceneObjectType::SO_WALL:
                     case SceneObjectType::SO_PLAYER:
                     case SceneObjectType::SO_LIGHT:
+                        // updateUniformBuffersEmission
                     case SceneObjectType::SO_OTHER:
                         updateUniformBuffersToon(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj,
                                                  glm::mat4(1.0f), {}); // TODO: add global uniform buffers
@@ -470,6 +476,10 @@ protected:
 public:
     void setScene(MainMenuScene *sc) {
         scene = sc;
+    }
+
+    void addObjectToMap(std::pair<int, int> coords, ObjectInstance *obj) override {
+
     }
 
     void localCleanup() override {

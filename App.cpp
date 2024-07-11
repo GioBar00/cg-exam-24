@@ -1,4 +1,5 @@
 #include "modules/Starter.hpp"
+#include "modules/AppCommon.hpp"
 #include "modules/Scene.hpp"
 
 
@@ -122,6 +123,7 @@ protected:
     }
 
     void pipelinesAndDescriptorSetsInit() override {
+        IlluminationP.create();
         scenes[currSceneId]->pipelinesAndDescriptorSetsInit();
     }
 

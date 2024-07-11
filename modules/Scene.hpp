@@ -1,3 +1,34 @@
+#define MAX_LIGHTS 256
+
+
+/* Uniform buffers. */
+struct ObjectUniform {
+    alignas(16) glm::mat4   mvpMat;
+    alignas(16) glm::mat4   mMat;
+    alignas(16) glm::mat4   nMat;
+};
+
+struct LightUniform {
+    // FIX: Array of uint32_t, instead of glm::vec3, with switch statement inside fragment shader.
+    alignas(16) glm::vec3   TYPE[MAX_LIGHTS]; // i := DIRECT, j := POINT, k = SPOT.
+    alignas(16) glm::vec3   lightPos[MAX_LIGHTS];
+    alignas(16) glm::vec3   lightDir[MAX_LIGHTS];
+    alignas(16) glm::vec4   lightCol[MAX_LIGHTS];
+    alignas(4)  float       cosIn;
+    alignas(4)  float       cosOut;
+    alignas(4)  uint32_t    NUMBER;
+    alignas(16) glm::vec3   eyePos;
+};
+
+
+/* Vertex formats. */
+struct ToonVertex {
+    glm::vec3   pos;
+    glm::vec3   norm;
+    glm::vec2   UV;
+};
+
+
 
 /* SCENES */
 struct PipelineInstances;
@@ -270,7 +301,7 @@ public:
                     auto *oi = new ObjectInstance();
                     oi->I_id = is[j]["id"];
                     //oi->type = static_cast<SceneObjectType>(is[j]["type"]);
-                    oi->type = SceneObjectType::SO_FLOOR;
+                    oi->type = SceneObjectType::SO_FLOOR; // TODO.
                     std::pair<int, int> coords = {is[j]["coordinates"][0], is[j]["coordinates"][1]};
                     SC->addObjectToMap(coords, oi);
                     std::cout << k << "." << j << "\t" << is[j]["id"] << ", " << is[j]["model"] << "("
@@ -363,17 +394,14 @@ class LevelSceneController : public SceneController {
     std::pair<int, int> initialPlayerCoords = {0, 0};
     Direction playerDirection = NORTH;
 
-    void updateUniformBuffersToon(uint32_t currentImage, Instance *I, glm::mat4 ViewPrj, glm::mat4 baseTr,
-                                  const std::vector<void *> &gubs) {
-        // UniformBufferObject ubo{};
+    void updateObjectBuffer(uint32_t currentImage, Instance *I, glm::mat4 ViewPrj, const std::vector<void *> &gubos) {
+        ObjectUniform ubo{};
 
-        // ubo.mMat = baseTr * scene->M[I->Mid]->Wm * I->Wm;
-        // ubo.mvpMat = ViewPrj * ubo.mMat;
-        // ubo.nMat = glm::inverse(glm::transpose(ubo.mMat));
+        ubo.mMat = I->Wm;
+        ubo.nMat = glm::inverse(glm::transpose(ubo.mMat));
+        ubo.mvpMat = ViewPrj * ubo.mMat;
 
-        // SC.I[i]->DS[0]->map(currentImage, &ubo, sizeof(ubo), 0);
-        // SC.I[i]->DS[0]->map(currentImage, &gubo, sizeof(gubo), 2);
-
+        I->DS[1]->map(currentImage, &ubo, 0);
     }
 
 public:
@@ -400,7 +428,7 @@ public:
 
         // TODO: Add damping to zoom
         // Calculate Orthogonal Projection Matrix
-        static float zoom = 1.f;
+        static float zoom = 0.5f;
         const float halfWidth = 10.0f / zoom;
         const float nearPlane = -100.f;
         const float farPlane = 100.0f;
@@ -435,8 +463,7 @@ public:
                     case SceneObjectType::SO_LIGHT:
                         // updateUniformBuffersEmission
                     case SceneObjectType::SO_OTHER:
-                        updateUniformBuffersToon(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj,
-                                                 glm::mat4(1.0f), {}); // TODO: add global uniform buffers
+                        updateObjectBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj, {}); // TODO: add global uniform buffers
                         break;
                 }
             }

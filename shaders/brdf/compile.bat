@@ -1,8 +1,8 @@
-glslc Toon.vert -o ToonVert.spv
-glslc Toon.frag -o ToonFrag.spv
+glslc Toon.vert -o Toon.vert.spv
+glslc Toon.frag -o Toon.frag.spv
 
-glslc Phong.vert -o PhongVert.spv
-glslc Phong.frag -o PhongFrag.spv
+glslc Phong.vert -o Phong.vert.spv
+glslc Phong.frag -o Phong.frag.spv
 
-glslc Blinn.vert -o BlinnVert.spv
-glslc Blinn.frag -o BlinnFrag.spv
+glslc Blinn.vert -o Blinn.vert.spv
+glslc Blinn.frag -o Blinn.frag.spv

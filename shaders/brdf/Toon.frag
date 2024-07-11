@@ -5,7 +5,7 @@ layout(location = 1) in vec3 fragNorm;
 layout(location = 2) in vec2 fragUV;
 
 layout(location = 0) out vec4 outColor;
-layout(set = 1, binding = 1) uniform sampler2D tex;const int MAX_LIGHTS = 16;layout(set = 0, binding = 0) uniform LightUBO {
+layout(set = 1, binding = 1) uniform sampler2D tex;const int MAX_LIGHTS = 256;layout(set = 0, binding = 0) uniform LightUBO {
 	vec3 TYPE[MAX_LIGHTS];
 	vec3 lightPos[MAX_LIGHTS];
 	vec3 lightDir[MAX_LIGHTS];

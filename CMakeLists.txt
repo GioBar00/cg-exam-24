@@ -34,9 +34,9 @@ else ()
     endfunction()
     message(STATUS "Compiling shaders")
     file(GLOB SHADERS "shaders/*.vert" "shaders/*.frag")
-    foreach(SHADER ${SHADERS})
+    foreach (SHADER ${SHADERS})
         compile_shader(${SHADER})
-    endforeach()
+    endforeach ()
     message(STATUS "Shaders compiled")
 endif ()
 
@@ -48,6 +48,9 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_CURRENT_SOURCE_DIR}/models
         ${CMAKE_CURRENT_BINARY_DIR}/models
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/scenes
+        ${CMAKE_CURRENT_BINARY_DIR}/scenes
         COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/shaders
         COMMAND ${CMAKE_COMMAND} -E copy
         ${CMAKE_CURRENT_SOURCE_DIR}/shaders/*.spv
@@ -55,4 +58,4 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 )
 
 # Set ADDITIONAL_CLEAN_FILES to the list of files to be cleaned adding the copied files
-set_target_properties(${PROJECT_NAME} PROPERTIES ADDITIONAL_CLEAN_FILES "${CMAKE_CURRENT_BINARY_DIR}/shaders/;${CMAKE_CURRENT_BINARY_DIR}/textures/;${CMAKE_CURRENT_BINARY_DIR}/models/")
+set_target_properties(${PROJECT_NAME} PROPERTIES ADDITIONAL_CLEAN_FILES "${CMAKE_CURRENT_BINARY_DIR}/shaders/;${CMAKE_CURRENT_BINARY_DIR}/textures/;${CMAKE_CURRENT_BINARY_DIR}/models/;${CMAKE_CURRENT_BINARY_DIR}/scenes/")

@@ -36,10 +36,3 @@ enum class SceneObjectType {
     SO_OTHER,
     // TODO: Add more scene objects depending on requirements (different shaders or interactions)
 };
-
-enum Direction {
-    NORTH = 0,
-    WEST = 1,
-    SOUTH = 2,
-    EAST = 3
-};

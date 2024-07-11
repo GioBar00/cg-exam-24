@@ -101,12 +101,12 @@ protected:
 
 
         // Define vertex descriptor references per scene.
-        VertexDescriptorRef ToonVDR;
+        VertexDescriptorRef ToonVDR{};
         ToonVDR.init("ToonVD", &ToonVD);
         std::vector<VertexDescriptorRef> SL1VDRs = { ToonVDR };
 
         // Define pipeline references per scene.
-        PipelineRef IlluminationPR;
+        PipelineRef IlluminationPR{};
         IlluminationPR.init("illumination", &IlluminationP);
         std::vector<PipelineRef> SL1PRs = { IlluminationPR };
 
@@ -133,6 +133,11 @@ protected:
 
     void localCleanup() override {
         // TODO: Cleanup all Descriptor set layouts and Pipelines
+        ToonVD.cleanup();
+        ToonDSL.cleanup();
+        LightDSL.cleanup();
+
+        IlluminationP.destroy();
 
         for (const auto &sceneId: sceneIds) {
             if (scenes[sceneId] != nullptr) {

@@ -359,9 +359,17 @@ public:
 class LevelSceneController : public SceneController {
     LevelScene *scene{};
     std::map<std::pair<int, int>, std::vector<ObjectInstance *>> myMap;
-    // Player attributes
-    std::pair<int, int> initialPlayerCoords = {0, 0};
-    Direction playerDirection = NORTH;
+    ObjectInstance *player{};
+
+    const float UNIT = 3.1f;
+
+    const float zoom_speed = 0.1f;
+    const float max_zoom = 10.0f;
+    const float min_zoom = 1.0f;
+
+    const float dampM = 1000.0f;
+    const float dampR = 1000.0f;
+    const float dampRp = 200.0f;
 
     void updateUniformBuffersToon(uint32_t currentImage, Instance *I, glm::mat4 ViewPrj, glm::mat4 baseTr,
                                   const std::vector<void *> &gubs) {
@@ -376,6 +384,10 @@ class LevelSceneController : public SceneController {
 
     }
 
+    static auto applyDamping(auto curr, auto target, float damp, float deltaT) {
+        return target * exp(-damp * deltaT) + curr * (1 - exp(-damp * deltaT));
+    }
+
 public:
     void setScene(LevelScene *sc) {
         scene = sc;
@@ -384,7 +396,7 @@ public:
     void addObjectToMap(std::pair<int, int> coords, ObjectInstance *obj) override {
         myMap[coords].push_back(obj);
         if (obj->type == SceneObjectType::SO_PLAYER)
-            initialPlayerCoords = coords;
+            player = obj;
     }
 
     void localCleanup() override {
@@ -395,12 +407,40 @@ public:
         }
     }
 
-    void updateUniformBuffer(uint32_t currentImage, float deltaT, glm::vec3 m, glm::vec3 r, bool fire) override {
-        static bool isMoving = false;
+    static bool updatePlayerRotPos(glm::vec3 m, float projRot, float &playerRot, glm::vec3 &playerPos) {
+        // TODO: implement the function
+        // rotate input vector to match the camera rotation
+//        glm::vec4 rotated = glm::rotate(glm::mat4(1.0f), glm::radians(90.f * rot), glm::vec3(0.0f, 1.0f, 0.0f)) *
+//                            glm::vec4(m, 1.0f);
+//        // get the direction
+//        glm::vec2 xz = glm::normalize(glm::vec2(rotated.x, rotated.z));
+//        if (glm::length(xz) <= 0.5f) return NONE;
+//        if (glm::abs(xz.x) > glm::abs(xz.y)) {
+//            return xz.x > 0 ? EAST : WEST;
+//        } else {
+//            return xz.y > 0 ? NORTH : SOUTH;
+//        }
+        return false;
+    }
 
-        // TODO: Add damping to zoom
+    static std::pair<int, int> getAdjacentCell(std::pair<int, int> playerCoords, float playerRot) {
+        // TODO: implement the function
+        return playerCoords;
+    }
+
+    void updateUniformBuffer(uint32_t currentImage, float deltaT, glm::vec3 m, glm::vec3 r, bool fire) override {
+        static bool isCameraRotating = false;
+        static bool isPlayerRotating = false;
+        static bool isPlayerMoving = false;
+        static bool debounce = false;
+
         // Calculate Orthogonal Projection Matrix
         static float zoom = 1.f;
+        if (glm::abs(m.y) > 1e-5) {
+            zoom = glm::clamp(zoom + m.y * zoom_speed, min_zoom, max_zoom);
+            std::cout << "Zoom: " << zoom << "\n";
+        }
+
         const float halfWidth = 10.0f / zoom;
         const float nearPlane = -100.f;
         const float farPlane = 100.0f;
@@ -409,19 +449,112 @@ public:
         glm::mat4 Prj = glm::scale(glm::mat4(1.0), glm::vec3(1, -1, 1)) *
                         glm::ortho(-halfWidth, halfWidth, -halfWidth / Ar, halfWidth / Ar, nearPlane, farPlane);
 
-        // TODO: Add damping to prospective rotation
-        static float rot = 0;
+        // Calculate View Matrix
+        static float currProjRot = 0;
+        static float projRot = 0;
+        if (!isCameraRotating) {
+            // check r.z to move camera
+            if (glm::abs(r.z) > 0.5f) {
+                projRot += r.z > 0 ? 1 : -1;
+                isCameraRotating = true;
+                currProjRot = applyDamping(currProjRot, projRot, dampR, deltaT);
+                std::cout << "Camera STARTED rotating to " << projRot << "\n";
+            }
+        } else if (projRot != currProjRot) {
+            if (glm::abs(projRot - currProjRot) < 0.01f) {
+                currProjRot = projRot;
+                isCameraRotating = false;
+                std::cout << "Camera ENDED rotating to " << projRot << "\n";
+            } else {
+                //currProjRot = projRot * exp(-dampR * deltaT) + currProjRot * (1 - exp(-dampR * deltaT));
+                currProjRot = applyDamping(currProjRot, projRot, dampR, deltaT);
+                //std::cout << "Camera still rotating\n";
+            }
+        }
+
         glm::mat4 View = glm::rotate(glm::mat4(1.0f), glm::radians(35.264f), glm::vec3(1.0f, 0.0f, 0.0f)) *
                          glm::rotate(glm::mat4(1.0f), glm::radians(-45.0f), glm::vec3(0.0f, 1.0f, 0.0f)) *
-                         glm::rotate(glm::mat4(1.0f), glm::radians(90.f * rot), glm::vec3(0.0f, 1.0f, 0.0f));
-        // TODO: add translation of player
+                         glm::rotate(glm::mat4(1.0f), glm::radians(90.f * currProjRot), glm::vec3(0.0f, 1.0f, 0.0f));
 
-
+        // FIXME: add player translation to the camera
         glm::mat4 ViewPrj = Prj * View;
 
-        // TODO: add player movement controls
+        // Player attributes
+        static std::pair<int, int> playerCoords = {0, 0};
+        static float currPlayerRot = 0.0f;
+        static float playerRot = 0.0f;
 
-        // TODO: add interaction with objects
+        static glm::vec3 currPos = glm::vec3(playerCoords.first, 0.0f, playerCoords.second);
+        static glm::vec3 playerPos = glm::vec3(playerCoords.first, 0.0f, playerCoords.second);
+
+        // TODO: add player movement controls
+        if (!isPlayerMoving && !isPlayerRotating && !isCameraRotating && glm::length(glm::vec2(m.x, m.z)) > 0.5f) {
+            if (updatePlayerRotPos(m, projRot, playerRot, playerPos)) {
+                // player needs to rotate first
+                isPlayerRotating = true;
+                currPlayerRot = applyDamping(currPlayerRot, playerRot, dampRp, deltaT);
+                std::cout << "Player STARTED rotating to " << playerRot << "\n";
+            } else {
+                bool canMove = true;
+                for (ObjectInstance* obj : myMap[getAdjacentCell(playerCoords, playerRot)]) {
+                    if (obj->type == SceneObjectType::SO_WALL) {
+                        canMove = false;
+                        std::cout << "Player CANNOT move to " << playerCoords.first << ", " << playerCoords.second << "\n";
+                        break;
+                    }
+                }
+                if (canMove) {
+                    // player needs to move
+                    isPlayerMoving = true;
+                    playerCoords = getAdjacentCell(playerCoords, playerRot);
+                    currPos = applyDamping(currPos, playerPos, dampM, deltaT);
+                    std::cout << "Player STARTED moving to " << playerCoords.first << ", " << playerCoords.second << "\n";
+                }
+            }
+        } else {
+            if (isPlayerMoving) {
+                if (glm::length(playerPos - currPos) < 0.01f) {
+                    //player stopped moving to next cell
+                    currPos = playerPos;
+                    isPlayerMoving = false;
+                    std::cout << "Player ENDED moving to " << playerCoords.first << ", " << playerCoords.second << "\n";
+                } else {
+                    // moving to the next cell
+                    //currPos = playerPos * exp(-dampM * deltaT) + currPos * (1 - exp(-dampM * deltaT));
+                    currPos = applyDamping(currPos, playerPos, dampM, deltaT);
+                    //std::cout << "Player still moving to next cell\n";
+                }
+            } else if (isPlayerRotating) {
+                if (glm::abs(playerRot - currPlayerRot) < 0.01f) {
+                    // player stopped rotating
+                    currPlayerRot = playerRot;
+                    isPlayerRotating = false;
+                    std::cout << "Player rotated to " << playerRot << "\n";
+                } else {
+                    // player rotating
+                    //currPlayerRot = playerRot * exp(-dampRp * deltaT) + currPlayerRot * (1 - exp(-dampRp * deltaT));
+                    currPlayerRot = applyDamping(currPlayerRot, playerRot, dampRp, deltaT);
+                    //std::cout << "Player still rotating\n";
+                }
+            }
+        }
+
+        if (fire) {
+            if (!isPlayerMoving && !isPlayerRotating && !debounce) {
+                debounce = true;
+                std::cout << "Fire\n";
+                // TODO: check interactions with other objects
+                for (ObjectInstance* obj : myMap[playerCoords]) {
+                    if (obj->type == SceneObjectType::SO_LIGHT) {
+                        // TODO: Interact with obj
+                        break;
+                    }
+                }
+            }
+        } else if (debounce) {
+            debounce = false;
+            std::cout << "Debounce\n";
+        }
 
         // TODO: global uniform buffers first
 

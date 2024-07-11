@@ -26,3 +26,20 @@ const SceneIdMap_t sceneFiles = {
 //      {SCENE_LEVEL_2, "Level 2"},
 //      {SCENE_GAME_OVER, "Game Over"}
 };
+
+/* LEVEL SCENE OBJECTS */
+enum class SceneObjectType {
+    SO_FLOOR,
+    SO_WALL,
+    SO_PLAYER,
+    SO_LIGHT,
+    SO_OTHER,
+    // TODO: Add more scene objects depending on requirements (different shaders or interactions)
+};
+
+enum Direction {
+    NORTH = 0,
+    WEST = 1,
+    SOUTH = 2,
+    EAST = 3
+};

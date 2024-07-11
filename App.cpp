@@ -147,26 +147,6 @@ protected:
     }
 
     void updateUniformBuffer(uint32_t currentImage) override {
-        /*if (glfwGetKey(window, GLFW_KEY_ESCAPE)) {
-            glfwSetWindowShouldClose(window, GL_TRUE);
-        }
-
-
-        const float FOVy = glm::radians(90.0f);
-        const float nearPlane = 0.1f;
-        const float farPlane = 100.0f;
-
-        glm::mat4 Prj = glm::perspective(FOVy, Ar, nearPlane, farPlane);
-        Prj[1][1] *= -1;
-        glm::vec3 camTarget = glm::vec3(0, 0, 0);
-        glm::vec3 camPos = camTarget + glm::vec3(3, 2, 5) / 4.0f; // Green y, blue x, red z (inverted).
-        glm::mat4 View = glm::lookAt(camPos, camTarget, glm::vec3(0, 1, 0));
-
-        glm::mat4 World = glm::translate(glm::mat4(1), glm::vec3(0, 0, 0));
-        Uniform ubo{};
-        ubo.mvpMat = Prj * View * World;
-        DS.map(currentImage, &ubo, 0);*/
-
         float deltaT;
         auto m = glm::vec3(0.0f), r = glm::vec3(0.0f);
         bool fire;
@@ -185,8 +165,6 @@ protected:
             scenes[newSceneId] = getNewSceneById(newSceneId);
             scenes[newSceneId]->init(this, SceneVDRs.find(newSceneId)->second, ScenePRs.find(newSceneId)->second,
                                      sceneFiles.find(newSceneId)->second);
-            // FIXME: maybe this is called twice
-            scenes[newSceneId]->pipelinesAndDescriptorSetsInit();
         }
         currSceneId = newSceneId;
     }

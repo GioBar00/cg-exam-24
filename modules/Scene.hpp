@@ -269,7 +269,8 @@ public:
                 for (int j = 0; j < PI[k].InstanceCount; j++) {
                     auto *oi = new ObjectInstance();
                     oi->I_id = is[j]["id"];
-                    oi->type = static_cast<SceneObjectType>(is[j]["type"]);
+                    //oi->type = static_cast<SceneObjectType>(is[j]["type"]);
+                    oi->type = SceneObjectType::SO_FLOOR;
                     std::pair<int, int> coords = {is[j]["coordinates"][0], is[j]["coordinates"][1]};
                     SC->addObjectToMap(coords, oi);
                     std::cout << k << "." << j << "\t" << is[j]["id"] << ", " << is[j]["model"] << "("
@@ -359,7 +360,7 @@ class LevelSceneController : public SceneController {
     LevelScene *scene{};
     std::map<std::pair<int, int>, std::vector<ObjectInstance *>> myMap;
     // Player attributes
-    std::pair<int, int> initialPlayerCoords;
+    std::pair<int, int> initialPlayerCoords = {0, 0};
     Direction playerDirection = NORTH;
 
     void updateUniformBuffersToon(uint32_t currentImage, Instance *I, glm::mat4 ViewPrj, glm::mat4 baseTr,
@@ -440,18 +441,6 @@ public:
                 }
             }
         }
-
-        // UniformBufferObject ubo{};
-        // GlobalUniformBufferObject gubo{};
-
-//        for(int i = 0; i < scene->InstanceCount; i++) {
-//            ubo.mMat = baseTr * scene->M[scene->I[i]->Mid]->Wm * scene->I[i]->Wm;
-//            ubo.mvpMat = ViewPrj * ubo.mMat;
-//            ubo.nMat = glm::inverse(glm::transpose(ubo.mMat));
-//
-//            SC.I[i]->DS[0]->map(currentImage, &ubo, sizeof(ubo), 0);
-//            SC.I[i]->DS[0]->map(currentImage, &gubo, sizeof(gubo), 2);
-//        }
     }
 };
 

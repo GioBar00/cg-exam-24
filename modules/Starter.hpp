@@ -2376,7 +2376,7 @@ public:
 
         int j = 0;
         for (uint32_t y = 0; y < height; y++) {
-            auto *row = (unsigned int *) data;
+            auto row = (unsigned int *) data;
             for (uint32_t x = 0; x < width; x++) {
                 if (colorSwizzle) {
                     pixelArray[j++] = ((char *) row)[2];
@@ -2554,7 +2554,7 @@ void Model::loadModelOBJ(const std::string& file) {
                     attrib.vertices[3 * index.vertex_index + 2]
             };
             if (VD->Position.hasIt) {
-                auto *o = (glm::vec3 *) ((char *) (&vertex[0]) + VD->Position.offset);
+                auto o = (glm::vec3 *) ((char *) (&vertex[0]) + VD->Position.offset);
                 *o = pos;
             }
 
@@ -2564,7 +2564,7 @@ void Model::loadModelOBJ(const std::string& file) {
                     attrib.colors[3 * index.vertex_index + 2]
             };
             if (VD->Color.hasIt) {
-                auto *o = (glm::vec3 *) ((char *) (&vertex[0]) + VD->Color.offset);
+                auto o = (glm::vec3 *) ((char *) (&vertex[0]) + VD->Color.offset);
                 *o = color;
             }
 
@@ -2573,7 +2573,7 @@ void Model::loadModelOBJ(const std::string& file) {
                     1 - attrib.texcoords[2 * index.texcoord_index + 1]
             };
             if (VD->UV.hasIt) {
-                auto *o = (glm::vec2 *) ((char *) (&vertex[0]) + VD->UV.offset);
+                auto o = (glm::vec2 *) ((char *) (&vertex[0]) + VD->UV.offset);
                 *o = texCoord;
             }
 
@@ -2583,7 +2583,7 @@ void Model::loadModelOBJ(const std::string& file) {
                     attrib.normals[3 * index.normal_index + 2]
             };
             if (VD->Normal.hasIt) {
-                auto *o = (glm::vec3 *) ((char *) (&vertex[0]) + VD->Normal.offset);
+                auto o = (glm::vec3 *) ((char *) (&vertex[0]) + VD->Normal.offset);
                 *o = norm;
             }
 
@@ -2739,7 +2739,7 @@ void Model::loadModelGLTF(const std::string& file, bool encoded) {
                             bufferPos[3 * i + 2]
                     };
                     //std::cout << "Pos: " <<	VD->Position.offset << "\n";
-                    auto *o = (glm::vec3 *) ((char *) (&vertex[0]) + VD->Position.offset);
+                    auto o = (glm::vec3 *) ((char *) (&vertex[0]) + VD->Position.offset);
                     //std::cout << "at: " << o << "\n";
                     *o = pos;
                     //std::cout << "Copied: " << o->x << "\n";
@@ -2751,7 +2751,7 @@ void Model::loadModelGLTF(const std::string& file, bool encoded) {
                             bufferNormals[3 * i + 2]
                     };
                     //std::cout << "Nor: " <<	VD->Normal.offset << "\n";
-                    auto *o = (glm::vec3 *) ((char *) (&vertex[0]) + VD->Normal.offset);
+                    auto o = (glm::vec3 *) ((char *) (&vertex[0]) + VD->Normal.offset);
                     *o = normal;
                 }
 
@@ -2763,7 +2763,7 @@ void Model::loadModelGLTF(const std::string& file, bool encoded) {
                             bufferTangents[4 * i + 3]
                     };
                     //std::cout << "Tan: " <<	VD->Tangent.offset << "\n";
-                    auto *o = (glm::vec4 *) ((char *) (&vertex[0]) + VD->Tangent.offset);
+                    auto o = (glm::vec4 *) ((char *) (&vertex[0]) + VD->Tangent.offset);
                     *o = tangent;
                 }
 
@@ -2773,7 +2773,7 @@ void Model::loadModelGLTF(const std::string& file, bool encoded) {
                             bufferTexCoords[2 * i + 1]
                     };
                     //std::cout << "UV : " <<	VD->UV.offset << "\n";
-                    auto *o = (glm::vec2 *) ((char *) (&vertex[0]) + VD->UV.offset);
+                    auto o = (glm::vec2 *) ((char *) (&vertex[0]) + VD->UV.offset);
                     *o = texCoord;
                 }
 
@@ -2788,7 +2788,7 @@ void Model::loadModelGLTF(const std::string& file, bool encoded) {
 
             switch (accessor.componentType) {
                 case TINYGLTF_PARAMETER_TYPE_UNSIGNED_SHORT: {
-                    const auto *bufferIndex = reinterpret_cast<const uint16_t *>(&(buffer.data[accessor.byteOffset +
+                    const auto bufferIndex = reinterpret_cast<const uint16_t *>(&(buffer.data[accessor.byteOffset +
                                                                                                    bufferView.byteOffset]));
                     for (int i = 0; i < accessor.count; i++) {
                         indices.push_back(bufferIndex[i]);
@@ -2796,7 +2796,7 @@ void Model::loadModelGLTF(const std::string& file, bool encoded) {
                 }
                     break;
                 case TINYGLTF_PARAMETER_TYPE_UNSIGNED_INT: {
-                    const auto *bufferIndex = reinterpret_cast<const uint32_t *>(&(buffer.data[accessor.byteOffset +
+                    const auto bufferIndex = reinterpret_cast<const uint32_t *>(&(buffer.data[accessor.byteOffset +
                                                                                                    bufferView.byteOffset]));
                     for (int i = 0; i < accessor.count; i++) {
                         indices.push_back(bufferIndex[i]);

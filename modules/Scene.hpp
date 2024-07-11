@@ -1,4 +1,3 @@
-#include <utility>
 
 /* SCENES */
 struct PipelineInstances;
@@ -107,7 +106,8 @@ public:
         std::cout << "Scene DS init\n";
         for (int i = 0; i < InstanceCount; i++) {
             std::cout << "I: " << i << ", NTx: " << I[i]->NTx << ", NDs: " << I[i]->NDs << "\n";
-            auto Tids = (Texture **) calloc(I[i]->NTx, sizeof(Texture *));
+            //Texture ** Tids = (Texture **) calloc(I[i]->NTx, sizeof(Texture *));
+            std::vector<Texture *> Tids = std::vector<Texture *>(I[i]->NTx);
             for (int j = 0; j < I[i]->NTx; j++) {
                 Tids[j] = T[I[i]->Tid[j]];
             }
@@ -115,9 +115,8 @@ public:
             I[i]->DS = (DescriptorSet **) calloc(I[i]->NDs, sizeof(DescriptorSet *));
             for (int j = 0; j < I[i]->NDs; j++) {
                 I[i]->DS[j] = new DescriptorSet();
-                I[i]->DS[j]->init(BP, (*I[i]->D)[j], reinterpret_cast<const std::vector<Texture *> &>(Tids));
+                I[i]->DS[j]->init(BP, (*I[i]->D)[j], Tids);
             }
-            free(Tids);
         }
         std::cout << "Scene DS init Done\n";
     }
@@ -184,14 +183,8 @@ public:
     }
 };
 
-class LevelSceneController;
 class LevelScene : public Scene {
 public:
-    SceneController *SC{};
-
-    void setSceneController(LevelSceneController *sc) {
-        SC = reinterpret_cast<SceneController *>(sc);
-    }
 
     int init(BaseProject *_BP, std::vector<VertexDescriptorRef> &VDRs,
              std::vector<PipelineRef> &PRs, const std::string &file) override {
@@ -351,16 +344,8 @@ public:
     }
 };
 
-class MainMenuSceneController;
-
 class MainMenuScene : public Scene {
 public:
-    MainMenuSceneController *SC{};
-
-    void setSceneController(MainMenuSceneController *sc) {
-        SC = sc;
-    }
-
     int init(BaseProject *bp, std::vector<VertexDescriptorRef> &VDRs,
              std::vector<PipelineRef> &PRs, const std::string &file) override {
         BP = bp;
@@ -494,15 +479,15 @@ public:
 static Scene *getNewSceneById(SceneId sceneId) {
     switch (sceneId) {
         case SceneId::SCENE_MAIN_MENU: {
-            auto *mms = new MainMenuScene();
-            auto *mmsc = new MainMenuSceneController();
+            auto mms = new MainMenuScene();
+            auto mmsc = new MainMenuSceneController();
             mms->setSceneController(mmsc);
             mmsc->setScene(mms);
             return mms;
         }
         case SceneId::SCENE_LEVEL_1: {
-            auto *ls = new LevelScene();
-            auto *lsc = new LevelSceneController();
+            auto ls = new LevelScene();
+            auto lsc = new LevelSceneController();
             ls->setSceneController(lsc);
             lsc->setScene(ls);
             return ls;

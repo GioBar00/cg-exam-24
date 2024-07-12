@@ -76,6 +76,10 @@ struct PipelineInstances {
 struct ObjectInstance {
     std::string I_id;
     SceneObjectType type;
+
+    std::string lType;
+    glm::vec4 lColor;
+    glm::vec3 lPosition;
 };
 
 class Scene;
@@ -216,6 +220,12 @@ public:
 
 class LevelScene : public Scene {
 public:
+    std::map<std::string, SceneObjectType> str2enum = {
+        { "PLAYER", SceneObjectType::SO_PLAYER },
+        { "GROUND", SceneObjectType::SO_GROUND },
+        { "WALL", SceneObjectType::SO_WALL },
+        { "LIGHT", SceneObjectType::SO_LIGHT }
+    };
 
     int init(BaseProject *_BP, std::vector<VertexDescriptorRef> &VDRs,
              std::vector<PipelineRef> &PRs, const std::string &file) override {
@@ -300,8 +310,12 @@ public:
                 for (int j = 0; j < PI[k].InstanceCount; j++) {
                     auto *oi = new ObjectInstance();
                     oi->I_id = is[j]["id"];
-                    //oi->type = static_cast<SceneObjectType>(is[j]["type"]);
-                    oi->type = SceneObjectType::SO_FLOOR; // TODO.
+                    oi->type = static_cast<SceneObjectType>(str2enum[is[j]["label"]]);
+                    if (oi->type == SceneObjectType::SO_LIGHT) {
+                        oi->lType = is[j]["type"];
+                        oi->lColor = glm::vec4(is[j]["color"][0], is[j]["color"][1], is[j]["color"][2], 1.0f);
+                        oi->lPosition = glm::vec3(is[j]["where"][0], is[j]["where"][1], is[j]["where"][2]);
+                    }
                     std::pair<int, int> coords = {is[j]["coordinates"][0], is[j]["coordinates"][1]};
                     SC->addObjectToMap(coords, oi);
                     std::cout << k << "." << j << "\t" << is[j]["id"] << ", " << is[j]["model"] << "("
@@ -394,7 +408,7 @@ class LevelSceneController : public SceneController {
     std::pair<int, int> initialPlayerCoords = {0, 0};
     Direction playerDirection = NORTH;
 
-    void updateObjectBuffer(uint32_t currentImage, Instance *I, glm::mat4 ViewPrj, const std::vector<void *> &gubos) {
+    void updateUniformBuffer(uint32_t currentImage, Instance *I, glm::mat4 ViewPrj, const std::vector<void *> &gubos) {
         ObjectUniform ubo{};
 
         ubo.mMat = I->Wm;
@@ -402,6 +416,20 @@ class LevelSceneController : public SceneController {
         ubo.mvpMat = ViewPrj * ubo.mMat;
 
         I->DS[1]->map(currentImage, &ubo, 0);
+        I->DS[0]->map(currentImage, gubos[0], 0);
+    }
+
+    void updateLightBuffer(uint32_t currentImage, Instance* I, ObjectInstance* obj, glm::mat4 View, LightUniform* gubo, int idx) {
+        if (obj->lType == "DIRECT")
+            (*gubo).TYPE[idx] = glm::vec3(1, 0, 0);
+        else if (obj->lType == "POINT")
+            (*gubo).TYPE[idx] = glm::vec3(0, 1, 0);
+        else if (obj->lType == "SPOT")
+            (*gubo).TYPE[idx] = glm::vec3(0, 0, 1);
+        (*gubo).lightPos[idx] = obj->lPosition;
+        (*gubo).lightCol[idx] = obj->lColor;
+        (*gubo).NUMBER = idx + 1;
+        (*gubo).eyePos = glm::vec3(glm::inverse(View) * glm::vec4(0, 0, 0, 1));
     }
 
 public:
@@ -452,18 +480,28 @@ public:
         // TODO: add interaction with objects
 
         // TODO: global uniform buffers first
+        LightUniform lubo{};
+        int idx = 0;
+        for (auto& pair : myMap) {
+            for (auto& obj : pair.second) {
+                if (obj->type == SceneObjectType::SO_LIGHT) {
+                    updateLightBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], obj, View, &lubo, idx);
+                    idx++;
+                }
+            }
+        }
 
         // TODO: calculate objects world matrices
         for (auto &pair: myMap) {
             for (auto &obj: pair.second) {
                 switch (obj->type) {
-                    case SceneObjectType::SO_FLOOR:
-                    case SceneObjectType::SO_WALL:
                     case SceneObjectType::SO_PLAYER:
+                    case SceneObjectType::SO_GROUND:
+                    case SceneObjectType::SO_WALL:
                     case SceneObjectType::SO_LIGHT:
                         // updateUniformBuffersEmission
                     case SceneObjectType::SO_OTHER:
-                        updateObjectBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj, {}); // TODO: add global uniform buffers
+                        updateUniformBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj, {&lubo}); // TODO: add global uniform buffers
                         break;
                 }
             }

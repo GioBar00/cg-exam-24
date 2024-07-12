@@ -407,9 +407,9 @@ class LevelSceneController : public SceneController {
 
     constexpr static const float UNIT = 3.1f;
 
-    const float zoom_speed = 0.1f;
-    const float max_zoom = 10.0f;
-    const float min_zoom = 0.3f;
+    const float zoom_speed = 1.0f;
+    const float max_zoom = 8.0f;
+    const float min_zoom = 0.4f;
 
     const float camRotDuration = 1.f;
     const float playerRotDuration = 0.5f;
@@ -435,15 +435,15 @@ class LevelSceneController : public SceneController {
 
     static void updateLightBuffer(uint32_t currentImage, Instance* I, ObjectInstance* obj, glm::mat4 View, LightUniform* gubo, int idx) {
         if (obj->lType == "DIRECT")
-            (*gubo).TYPE[idx] = glm::vec3(1, 0, 0);
+            gubo->TYPE[idx] = glm::vec3(1, 0, 0);
         else if (obj->lType == "POINT")
-            (*gubo).TYPE[idx] = glm::vec3(0, 1, 0);
+            gubo->TYPE[idx] = glm::vec3(0, 1, 0);
         else if (obj->lType == "SPOT")
-            (*gubo).TYPE[idx] = glm::vec3(0, 0, 1);
-        (*gubo).lightPos[idx] = obj->lPosition;
-        (*gubo).lightCol[idx] = obj->lColor;
-        (*gubo).NUMBER = idx + 1;
-        (*gubo).eyePos = glm::vec3(glm::inverse(View) * glm::vec4(0, 0, 0, 1));
+            gubo->TYPE[idx] = glm::vec3(0, 0, 1);
+        gubo->lightPos[idx] = obj->lPosition;
+        gubo->lightCol[idx] = obj->lColor;
+        gubo->NUMBER = idx + 1;
+        //gubo->eyePos = glm::vec3(glm::inverse(View) * glm::vec4(0, 0, 0, 1));
     }
 
 public:
@@ -523,13 +523,13 @@ public:
 
         // TODO: Add damping to zoom
         // Calculate Orthogonal Projection Matrix
-        static float zoom = 0.5f;
+        static float zoom = 0.2f;
         if (glm::abs(m.y) > 1e-5) {
-            zoom = glm::clamp(zoom + m.y * zoom_speed, min_zoom, max_zoom);
+            zoom = glm::clamp(zoom + m.y * zoom_speed * deltaT, 0.0f, 1.0f);
             std::cout << "Zoom: " << zoom << "\n";
         }
 
-        const float halfWidth = 10.0f / zoom;
+        const float halfWidth = 10.0f / ((zoom * zoom * (max_zoom - min_zoom)) + min_zoom);
         const float nearPlane = -100.f;
         const float farPlane = 100.0f;
 
@@ -565,7 +565,8 @@ public:
 
         glm::mat4 View = glm::rotate(glm::mat4(1.0f), glm::radians(35.264f), glm::vec3(1.0f, 0.0f, 0.0f)) *
                          glm::rotate(glm::mat4(1.0f), glm::radians(-45.0f), glm::vec3(0.0f, 1.0f, 0.0f)) *
-                         glm::rotate(glm::mat4(1.0f), glm::radians(90.f * currProjRot), glm::vec3(0.0f, 1.0f, 0.0f));
+                         glm::rotate(glm::mat4(1.0f), glm::radians(90.f * currProjRot), glm::vec3(0.0f, 1.0f, 0.0f)) *
+                         glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
 
         glm::mat4 ViewPrj = Prj * View;
 
@@ -660,6 +661,8 @@ public:
 
         // TODO: global uniform buffers first
         LightUniform lubo{};
+        lubo.eyePos = glm::vec3(glm::inverse(View) * glm::vec4(0, 0, 10, 1));
+        std::cout << "EyePos: " << lubo.eyePos.x << ", " << lubo.eyePos.y << ", " << lubo.eyePos.z << "\n";
         int idx = 0;
         for (auto& pair : myMap) {
             for (auto& obj : pair.second) {

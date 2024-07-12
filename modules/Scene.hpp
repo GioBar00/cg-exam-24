@@ -396,11 +396,16 @@ class LevelSceneController : public SceneController {
 
     const float zoom_speed = 0.1f;
     const float max_zoom = 10.0f;
-    const float min_zoom = 1.0f;
+    const float min_zoom = 0.2f;
 
-    const float dampM = 1000.0f;
-    const float dampR = 1000.0f;
-    const float dampRp = 200.0f;
+//    const float dampM = 1000.0f;
+//    const float dampR = 1000.0f;
+//    const float dampRp = 200.0f;
+
+    const float camRotDuration = 1.f;
+    const float playerRotDuration = 0.5f;
+    const float playerMoveDuration = 1.f;
+
 
     static void updateObjectBuffer(uint32_t currentImage, Instance *I, glm::mat4 ViewPrj, const std::vector<void *> &gubos) {
         ObjectUniform ubo{};
@@ -413,8 +418,9 @@ class LevelSceneController : public SceneController {
         I->DS[0]->map(currentImage, gubos[0], 0);
     }
 
-    static auto applyDamping(auto curr, auto target, float damp, float deltaT) {
-        return target * exp(-damp * deltaT) + curr * (1 - exp(-damp * deltaT));
+    static auto interpolate(auto start, auto target, float timeI) {
+        timeI = (3.0f * timeI * timeI) - (2.0f * timeI * timeI * timeI);
+        return glm::mix(start, target, timeI);
     }
 
 public:
@@ -480,24 +486,27 @@ public:
                         glm::ortho(-halfWidth, halfWidth, -halfWidth / Ar, halfWidth / Ar, nearPlane, farPlane);
 
         // Calculate View Matrix
+        static std::chrono::time_point camStartTime = std::chrono::high_resolution_clock::now();
         static float currProjRot = 0;
+        static float projRot_old = 0;
         static float projRot = 0;
         if (!isCameraRotating) {
             // check r.z to move camera
             if (glm::abs(r.z) > 0.5f) {
                 projRot += r.z > 0 ? 1 : -1;
                 isCameraRotating = true;
-                currProjRot = applyDamping(currProjRot, projRot, dampR, deltaT);
+                camStartTime = std::chrono::high_resolution_clock::now();
                 std::cout << "Camera STARTED rotating to " << projRot << "\n";
             }
-        } else if (projRot != currProjRot) {
-            if (glm::abs(projRot - currProjRot) < 0.01f) {
-                currProjRot = projRot;
+        } else {
+            auto currTime = std::chrono::high_resolution_clock::now();
+            float elapsed = std::chrono::duration<float>(currTime - camStartTime).count();
+            if (elapsed > camRotDuration) {
+                currProjRot = projRot_old = projRot;
                 isCameraRotating = false;
                 std::cout << "Camera ENDED rotating to " << projRot << "\n";
             } else {
-                //currProjRot = projRot * exp(-dampR * deltaT) + currProjRot * (1 - exp(-dampR * deltaT));
-                currProjRot = applyDamping(currProjRot, projRot, dampR, deltaT);
+                currProjRot = interpolate(projRot_old, projRot, elapsed / camRotDuration);
                 //std::cout << "Camera still rotating\n";
             }
         }
@@ -522,7 +531,7 @@ public:
             if (updatePlayerRotPos(m, projRot, playerRot, playerPos)) {
                 // player needs to rotate first
                 isPlayerRotating = true;
-                currPlayerRot = applyDamping(currPlayerRot, playerRot, dampRp, deltaT);
+                //currPlayerRot = applyDamping(currPlayerRot, playerRot, dampRp, deltaT);
                 std::cout << "Player STARTED rotating to " << playerRot << "\n";
             } else {
                 bool canMove = true;
@@ -537,7 +546,7 @@ public:
                     // player needs to move
                     isPlayerMoving = true;
                     playerCoords = getAdjacentCell(playerCoords, playerRot);
-                    currPos = applyDamping(currPos, playerPos, dampM, deltaT);
+                    //currPos = applyDamping(currPos, playerPos, dampM, deltaT);
                     std::cout << "Player STARTED moving to " << playerCoords.first << ", " << playerCoords.second << "\n";
                 }
             }
@@ -551,7 +560,7 @@ public:
                 } else {
                     // moving to the next cell
                     //currPos = playerPos * exp(-dampM * deltaT) + currPos * (1 - exp(-dampM * deltaT));
-                    currPos = applyDamping(currPos, playerPos, dampM, deltaT);
+                    //currPos = applyDamping(currPos, playerPos, dampM, deltaT);
                     //std::cout << "Player still moving to next cell\n";
                 }
             } else if (isPlayerRotating) {
@@ -563,7 +572,7 @@ public:
                 } else {
                     // player rotating
                     //currPlayerRot = playerRot * exp(-dampRp * deltaT) + currPlayerRot * (1 - exp(-dampRp * deltaT));
-                    currPlayerRot = applyDamping(currPlayerRot, playerRot, dampRp, deltaT);
+                    //currPlayerRot = applyDamping(currPlayerRot, playerRot, dampRp, deltaT);
                     //std::cout << "Player still rotating\n";
                 }
             }
@@ -587,7 +596,7 @@ public:
         }
 
         // TODO: global uniform buffers first
-        LightUniform lubo;
+        LightUniform lubo{};
         lubo.TYPE[0] = glm::vec3(0, 1, 0);
         lubo.lightPos[0] = glm::vec3(0, 5, 0);
         lubo.lightCol[0] = glm::vec4(1.0f, 0.5f, 0.0f, 1.0f);

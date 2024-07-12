@@ -102,18 +102,16 @@ protected:
 
     void localCleanup() override {
         // TODO: Cleanup all Descriptor set layouts and Pipelines
-        ToonVD.cleanup();
-        ToonDSL.cleanup();
-        LightDSL.cleanup();
-
-        IlluminationP.destroy();
-
         for (const auto &sceneId: sceneIds) {
             if (scenes[sceneId] != nullptr) {
                 scenes[sceneId]->localCleanup();
                 free(scenes[sceneId]);
             }
         }
+        ToonDSL.cleanup();
+        LightDSL.cleanup();
+
+        IlluminationP.destroy();
     }
 
     void populateCommandBuffer(VkCommandBuffer commandBuffer, int currentImage) override {

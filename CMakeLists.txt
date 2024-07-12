@@ -51,10 +51,13 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_CURRENT_SOURCE_DIR}/scenes
         ${CMAKE_CURRENT_BINARY_DIR}/scenes
-        COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/shaders
-        COMMAND ${CMAKE_COMMAND} -E copy
-        ${CMAKE_CURRENT_SOURCE_DIR}/shaders/*.spv
-        ${CMAKE_CURRENT_BINARY_DIR}/shaders/
+#        COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/shaders
+#        COMMAND ${CMAKE_COMMAND} -E copy
+#        ${CMAKE_CURRENT_SOURCE_DIR}/shaders/*.spv
+#        ${CMAKE_CURRENT_BINARY_DIR}/shaders/
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/shaders
+        ${CMAKE_CURRENT_BINARY_DIR}/shaders
 )
 
 # Set ADDITIONAL_CLEAN_FILES to the list of files to be cleaned adding the copied files

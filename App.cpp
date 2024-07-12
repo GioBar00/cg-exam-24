@@ -3,7 +3,6 @@
 #include "modules/Scene.hpp"
 
 
-
 class App : public BaseProject {
 protected:
 
@@ -71,12 +70,12 @@ protected:
 
 
         // Define vertex descriptor references per scene.
-        VertexDescriptorRef ToonVDR;
+        VertexDescriptorRef ToonVDR{};
         ToonVDR.init("ToonVD", &ToonVD);
         std::vector<VertexDescriptorRef> SL1VDRs = { ToonVDR };
 
         // Define pipeline references per scene.
-        PipelineRef IlluminationPR;
+        PipelineRef IlluminationPR{};
         IlluminationPR.init("illumination", &IlluminationP);
         std::vector<PipelineRef> SL1PRs = { IlluminationPR };
 
@@ -103,13 +102,16 @@ protected:
 
     void localCleanup() override {
         // TODO: Cleanup all Descriptor set layouts and Pipelines
-
         for (const auto &sceneId: sceneIds) {
             if (scenes[sceneId] != nullptr) {
                 scenes[sceneId]->localCleanup();
                 free(scenes[sceneId]);
             }
         }
+        ToonDSL.cleanup();
+        LightDSL.cleanup();
+
+        IlluminationP.destroy();
     }
 
     void populateCommandBuffer(VkCommandBuffer commandBuffer, int currentImage) override {

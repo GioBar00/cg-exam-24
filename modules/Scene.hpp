@@ -410,6 +410,7 @@ class LevelSceneController : public SceneController {
         ubo.mvpMat = ViewPrj * ubo.mMat;
 
         I->DS[1]->map(currentImage, &ubo, 0);
+        I->DS[0]->map(currentImage, gubos[0], 0);
     }
 
     static auto applyDamping(auto curr, auto target, float damp, float deltaT) {
@@ -586,6 +587,12 @@ public:
         }
 
         // TODO: global uniform buffers first
+        LightUniform lubo;
+        lubo.TYPE[0] = glm::vec3(0, 1, 0);
+        lubo.lightPos[0] = glm::vec3(0, 5, 0);
+        lubo.lightCol[0] = glm::vec4(1.0f, 0.5f, 0.0f, 1.0f);
+        lubo.NUMBER = 1;
+        lubo.eyePos = glm::vec3(glm::inverse(View) * glm::vec4(0, 0, 0, 1));
 
         // TODO: calculate objects world matrices
         for (auto &pair: myMap) {
@@ -597,7 +604,7 @@ public:
                     case SceneObjectType::SO_LIGHT:
                         // updateUniformBuffersEmission
                     case SceneObjectType::SO_OTHER:
-                        updateObjectBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj, {}); // TODO: add global uniform buffers
+                        updateObjectBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj, {&lubo}); // TODO: add global uniform buffers
                         break;
                 }
             }

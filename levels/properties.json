@@ -4,7 +4,8 @@
             {
                 "model": "cast_Mesh.6268",
                 "transform": [
-                    { "translate": [ 0.0, 1.0, 0.0 ], "unit": "NONE" }
+                    { "translate": [ 0.0, 1.0, 0.0 ], "unit": "NONE" },
+                    { "rotate": 180.0 }
                 ]
             },
             {

@@ -77,12 +77,14 @@ glm::mat4 transform(ordered_json root, string type, uint8_t id, tuple<int16_t, i
             }
             else if (x["unit"] == "NONE")
                     T = glm::translate(T, glm::vec3(v[0], v[1], v[2]));
-            *trans = T;
+            if (trans != nullptr)
+                *trans = T;
         }
         else if (t == "rotate") {
             float_t ang = x[t].get<float_t>();
             T = glm::rotate(T, glm::radians(ang), glm::vec3(0, 1, 0));
-            *rot = ang;
+            if (rot != nullptr)
+                *rot = ang;
         }
         else if (t == "scale") {
             array<float_t, 3> v = x[t].get<array<float_t, 3>>();
@@ -162,12 +164,12 @@ void applyConfig(vector<vector<string>> LEVEL, vector<vector<string>> LIGHT, uin
             }
             test = LIGHT[i][j];
             if (test == "T") {
-                M = transform(light, "TORCH", NO_ID, tuple(INT16_MAX, INT16_MAX), nullptr, nullptr) * inheritTrans;
+                M = transform(light, "TORCH", NO_ID, tuple(INT16_MAX, INT16_MAX), nullptr, &inheritRot) * inheritTrans;
                 M = glm::rotate(M, glm::radians(inheritRot), glm::vec3(0, 1, 0));
                 saveEntry(jtemplate, &objs, light["TORCH"], M, tuple(-mod * rows + i - get<0>(O), j - get<1>(O)), LIGHT_MODE, inheritRot);
             }
             else if (test[0] == 'L') {
-                M = transform(light, "LAMP_" + string(1, test[1]), NO_ID, tuple(INT16_MAX, INT16_MAX), nullptr, nullptr) * inheritTrans;
+                M = transform(light, "LAMP_" + string(1, test[1]), NO_ID, tuple(INT16_MAX, INT16_MAX), nullptr, &inheritRot) * inheritTrans;
                 M = glm::rotate(M, glm::radians(inheritRot), glm::vec3(0, 1, 0));
                 saveEntry(jtemplate, &objs, light["LAMP_" + string(1, test[1])], M, tuple(-mod * rows + i - get<0>(O), j - get<1>(O)), LIGHT_MODE, inheritRot);
             }

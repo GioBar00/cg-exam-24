@@ -74,15 +74,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -8,
-                        -7
+                        -7,
+                        8
                     ],
                     "orientation": 90.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n8n7",
+                    "id": "wall-line-n7p8",
                     "label": "WALL"
                 },
                 {
@@ -105,15 +105,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -8,
-                        -6
+                        -6,
+                        8
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n8n6",
+                    "id": "ground-n6p8",
                     "label": "GROUND"
                 },
                 {
@@ -136,15 +136,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -8,
-                        -5
+                        -5,
+                        8
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n8n5",
+                    "id": "ground-n5p8",
                     "label": "GROUND"
                 },
                 {
@@ -167,15 +167,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -8,
-                        -4
+                        -4,
+                        8
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n8n4",
+                    "id": "ground-n4p8",
                     "label": "GROUND"
                 },
                 {
@@ -198,15 +198,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -8,
-                        -3
+                        -3,
+                        8
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n8n3",
+                    "id": "ground-n3p8",
                     "label": "GROUND"
                 },
                 {
@@ -229,15 +229,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -8,
-                        -2
+                        -2,
+                        8
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n8n2",
+                    "id": "ground-n2p8",
                     "label": "GROUND"
                 },
                 {
@@ -260,15 +260,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -8,
-                        -1
+                        -1,
+                        8
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n8n1",
+                    "id": "ground-n1p8",
                     "label": "GROUND"
                 },
                 {
@@ -291,15 +291,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -8,
-                        0
+                        0,
+                        8
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n8p0",
+                    "id": "ground-p0p8",
                     "label": "GROUND"
                 },
                 {
@@ -322,15 +322,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -8,
-                        1
+                        1,
+                        8
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n8p1",
+                    "id": "ground-p1p8",
                     "label": "GROUND"
                 },
                 {
@@ -353,15 +353,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -8,
-                        2
+                        2,
+                        8
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n8p2",
+                    "id": "ground-p2p8",
                     "label": "GROUND"
                 },
                 {
@@ -384,15 +384,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -8,
-                        3
+                        3,
+                        8
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n8p3",
+                    "id": "ground-p3p8",
                     "label": "GROUND"
                 },
                 {
@@ -415,15 +415,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -8,
-                        4
+                        4,
+                        8
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n8p4",
+                    "id": "ground-p4p8",
                     "label": "GROUND"
                 },
                 {
@@ -446,15 +446,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -8,
-                        5
+                        5,
+                        8
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n8p5",
+                    "id": "ground-p5p8",
                     "label": "GROUND"
                 },
                 {
@@ -477,15 +477,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -8,
-                        6
+                        6,
+                        8
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n8p6",
+                    "id": "ground-p6p8",
                     "label": "GROUND"
                 },
                 {
@@ -508,15 +508,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -8,
-                        7
+                        7,
+                        8
                     ],
                     "orientation": 270.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n8p7",
+                    "id": "wall-line-p7p8",
                     "label": "WALL"
                 },
                 {
@@ -540,14 +540,14 @@
                     ],
                     "coordinates": [
                         -7,
-                        -7
+                        7
                     ],
                     "orientation": 90.0,
                     "model": "wall-angle",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-angle-n7n7",
+                    "id": "wall-angle-n7p7",
                     "label": "WALL"
                 },
                 {
@@ -570,15 +570,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -7,
-                        -6
+                        -6,
+                        7
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n7n6",
+                    "id": "ground-n6p7",
                     "label": "GROUND"
                 },
                 {
@@ -601,15 +601,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -7,
-                        -5
+                        -5,
+                        7
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n7n5",
+                    "id": "ground-n5p7",
                     "label": "GROUND"
                 },
                 {
@@ -632,15 +632,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -7,
-                        -4
+                        -4,
+                        7
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n7n4",
+                    "id": "ground-n4p7",
                     "label": "GROUND"
                 },
                 {
@@ -663,15 +663,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -7,
-                        -3
+                        -3,
+                        7
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n7n3",
+                    "id": "ground-n3p7",
                     "label": "GROUND"
                 },
                 {
@@ -694,15 +694,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -7,
-                        -2
+                        -2,
+                        7
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n7n2",
+                    "id": "ground-n2p7",
                     "label": "GROUND"
                 },
                 {
@@ -725,15 +725,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -7,
-                        -1
+                        -1,
+                        7
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n7n1",
+                    "id": "ground-n1p7",
                     "label": "GROUND"
                 },
                 {
@@ -756,15 +756,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -7,
-                        0
+                        0,
+                        7
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n7p0",
+                    "id": "ground-p0p7",
                     "label": "GROUND"
                 },
                 {
@@ -787,15 +787,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -7,
-                        1
+                        1,
+                        7
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n7p1",
+                    "id": "ground-p1p7",
                     "label": "GROUND"
                 },
                 {
@@ -818,15 +818,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -7,
-                        2
+                        2,
+                        7
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n7p2",
+                    "id": "ground-p2p7",
                     "label": "GROUND"
                 },
                 {
@@ -849,15 +849,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -7,
-                        3
+                        3,
+                        7
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n7p3",
+                    "id": "ground-p3p7",
                     "label": "GROUND"
                 },
                 {
@@ -880,15 +880,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -7,
-                        4
+                        4,
+                        7
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n7p4",
+                    "id": "ground-p4p7",
                     "label": "GROUND"
                 },
                 {
@@ -911,15 +911,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -7,
-                        5
+                        5,
+                        7
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n7p5",
+                    "id": "ground-p5p7",
                     "label": "GROUND"
                 },
                 {
@@ -942,15 +942,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -7,
-                        6
+                        6,
+                        7
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n7p6",
+                    "id": "ground-p6p7",
                     "label": "GROUND"
                 },
                 {
@@ -973,7 +973,7 @@
                         1.0
                     ],
                     "coordinates": [
-                        -7,
+                        7,
                         7
                     ],
                     "orientation": 180.0,
@@ -981,7 +981,7 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-angle-n7p7",
+                    "id": "wall-angle-p7p7",
                     "label": "WALL"
                 },
                 {
@@ -1005,14 +1005,14 @@
                     ],
                     "coordinates": [
                         -6,
-                        -6
+                        6
                     ],
                     "orientation": 90.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n6n6",
+                    "id": "wall-line-n6p6",
                     "label": "WALL"
                 },
                 {
@@ -1035,15 +1035,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -6,
-                        -5
+                        -5,
+                        6
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n6n5",
+                    "id": "ground-n5p6",
                     "label": "GROUND"
                 },
                 {
@@ -1066,15 +1066,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -6,
-                        -4
+                        -4,
+                        6
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n6n4",
+                    "id": "ground-n4p6",
                     "label": "GROUND"
                 },
                 {
@@ -1097,15 +1097,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -6,
-                        -3
+                        -3,
+                        6
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n6n3",
+                    "id": "ground-n3p6",
                     "label": "GROUND"
                 },
                 {
@@ -1128,15 +1128,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -6,
-                        -2
+                        -2,
+                        6
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n6n2",
+                    "id": "ground-n2p6",
                     "label": "GROUND"
                 },
                 {
@@ -1159,15 +1159,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -6,
-                        -1
+                        -1,
+                        6
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n6n1",
+                    "id": "ground-n1p6",
                     "label": "GROUND"
                 },
                 {
@@ -1190,15 +1190,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -6,
-                        0
+                        0,
+                        6
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n6p0",
+                    "id": "ground-p0p6",
                     "label": "GROUND"
                 },
                 {
@@ -1221,15 +1221,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -6,
-                        1
+                        1,
+                        6
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n6p1",
+                    "id": "ground-p1p6",
                     "label": "GROUND"
                 },
                 {
@@ -1252,15 +1252,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -6,
-                        2
+                        2,
+                        6
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n6p2",
+                    "id": "ground-p2p6",
                     "label": "GROUND"
                 },
                 {
@@ -1283,15 +1283,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -6,
-                        3
+                        3,
+                        6
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n6p3",
+                    "id": "ground-p3p6",
                     "label": "GROUND"
                 },
                 {
@@ -1314,15 +1314,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -6,
-                        4
+                        4,
+                        6
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n6p4",
+                    "id": "ground-p4p6",
                     "label": "GROUND"
                 },
                 {
@@ -1345,15 +1345,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -6,
-                        5
+                        5,
+                        6
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n6p5",
+                    "id": "ground-p5p6",
                     "label": "GROUND"
                 },
                 {
@@ -1376,7 +1376,7 @@
                         1.0
                     ],
                     "coordinates": [
-                        -6,
+                        6,
                         6
                     ],
                     "orientation": 270.0,
@@ -1384,7 +1384,7 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n6p6",
+                    "id": "wall-line-p6p6",
                     "label": "WALL"
                 },
                 {
@@ -1407,15 +1407,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -5,
-                        -6
+                        -6,
+                        5
                     ],
                     "orientation": 90.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n5n6",
+                    "id": "wall-line-n6p5",
                     "label": "WALL"
                 },
                 {
@@ -1438,15 +1438,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -5,
-                        -6
+                        -6,
+                        5
                     ],
                     "orientation": 90.0,
                     "model": "light-i",
                     "texture": [
                         "tex"
                     ],
-                    "id": "light-i-n5n6",
+                    "id": "light-i-n6p5",
                     "label": "LIGHT",
                     "type": "POINT",
                     "color": [
@@ -1466,316 +1466,6 @@
                         0.0,
                         0.0,
                         -10.33229923248291,
-                        0.0,
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        -10.33229923248291,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -5,
-                        -5
-                    ],
-                    "orientation": 0,
-                    "model": "ground",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "ground-n5n5",
-                    "label": "GROUND"
-                },
-                {
-                    "transform": [
-                        0.5,
-                        0.0,
-                        0.0,
-                        -8.265839576721191,
-                        0.0,
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        -10.33229923248291,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -5,
-                        -4
-                    ],
-                    "orientation": 0,
-                    "model": "ground",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "ground-n5n4",
-                    "label": "GROUND"
-                },
-                {
-                    "transform": [
-                        0.5,
-                        0.0,
-                        0.0,
-                        -6.199379920959473,
-                        0.0,
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        -10.33229923248291,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -5,
-                        -3
-                    ],
-                    "orientation": 0,
-                    "model": "ground",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "ground-n5n3",
-                    "label": "GROUND"
-                },
-                {
-                    "transform": [
-                        0.5,
-                        0.0,
-                        0.0,
-                        -4.132919788360596,
-                        0.0,
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        -10.33229923248291,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -5,
-                        -2
-                    ],
-                    "orientation": 0,
-                    "model": "ground",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "ground-n5n2",
-                    "label": "GROUND"
-                },
-                {
-                    "transform": [
-                        0.5,
-                        0.0,
-                        0.0,
-                        -2.066459894180298,
-                        0.0,
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        -10.33229923248291,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -5,
-                        -1
-                    ],
-                    "orientation": 0,
-                    "model": "ground",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "ground-n5n1",
-                    "label": "GROUND"
-                },
-                {
-                    "transform": [
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        -10.33229923248291,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -5,
-                        0
-                    ],
-                    "orientation": 0,
-                    "model": "ground",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "ground-n5p0",
-                    "label": "GROUND"
-                },
-                {
-                    "transform": [
-                        0.5,
-                        0.0,
-                        0.0,
-                        2.066459894180298,
-                        0.0,
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        -10.33229923248291,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -5,
-                        1
-                    ],
-                    "orientation": 0,
-                    "model": "ground",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "ground-n5p1",
-                    "label": "GROUND"
-                },
-                {
-                    "transform": [
-                        0.5,
-                        0.0,
-                        0.0,
-                        4.132919788360596,
-                        0.0,
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        -10.33229923248291,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -5,
-                        2
-                    ],
-                    "orientation": 0,
-                    "model": "ground",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "ground-n5p2",
-                    "label": "GROUND"
-                },
-                {
-                    "transform": [
-                        0.5,
-                        0.0,
-                        0.0,
-                        6.199379920959473,
-                        0.0,
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        -10.33229923248291,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -5,
-                        3
-                    ],
-                    "orientation": 0,
-                    "model": "ground",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "ground-n5p3",
-                    "label": "GROUND"
-                },
-                {
-                    "transform": [
-                        0.5,
-                        0.0,
-                        0.0,
-                        8.265839576721191,
-                        0.0,
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        -10.33229923248291,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -5,
-                        4
-                    ],
-                    "orientation": 0,
-                    "model": "ground",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "ground-n5p4",
-                    "label": "GROUND"
-                },
-                {
-                    "transform": [
-                        0.5,
-                        0.0,
-                        0.0,
-                        10.33229923248291,
                         0.0,
                         0.5,
                         0.0,
@@ -1803,6 +1493,316 @@
                 },
                 {
                     "transform": [
+                        0.5,
+                        0.0,
+                        0.0,
+                        -8.265839576721191,
+                        0.0,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -10.33229923248291,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        -4,
+                        5
+                    ],
+                    "orientation": 0,
+                    "model": "ground",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "ground-n4p5",
+                    "label": "GROUND"
+                },
+                {
+                    "transform": [
+                        0.5,
+                        0.0,
+                        0.0,
+                        -6.199379920959473,
+                        0.0,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -10.33229923248291,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        -3,
+                        5
+                    ],
+                    "orientation": 0,
+                    "model": "ground",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "ground-n3p5",
+                    "label": "GROUND"
+                },
+                {
+                    "transform": [
+                        0.5,
+                        0.0,
+                        0.0,
+                        -4.132919788360596,
+                        0.0,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -10.33229923248291,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        -2,
+                        5
+                    ],
+                    "orientation": 0,
+                    "model": "ground",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "ground-n2p5",
+                    "label": "GROUND"
+                },
+                {
+                    "transform": [
+                        0.5,
+                        0.0,
+                        0.0,
+                        -2.066459894180298,
+                        0.0,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -10.33229923248291,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        -1,
+                        5
+                    ],
+                    "orientation": 0,
+                    "model": "ground",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "ground-n1p5",
+                    "label": "GROUND"
+                },
+                {
+                    "transform": [
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -10.33229923248291,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        0,
+                        5
+                    ],
+                    "orientation": 0,
+                    "model": "ground",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "ground-p0p5",
+                    "label": "GROUND"
+                },
+                {
+                    "transform": [
+                        0.5,
+                        0.0,
+                        0.0,
+                        2.066459894180298,
+                        0.0,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -10.33229923248291,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        1,
+                        5
+                    ],
+                    "orientation": 0,
+                    "model": "ground",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "ground-p1p5",
+                    "label": "GROUND"
+                },
+                {
+                    "transform": [
+                        0.5,
+                        0.0,
+                        0.0,
+                        4.132919788360596,
+                        0.0,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -10.33229923248291,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        2,
+                        5
+                    ],
+                    "orientation": 0,
+                    "model": "ground",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "ground-p2p5",
+                    "label": "GROUND"
+                },
+                {
+                    "transform": [
+                        0.5,
+                        0.0,
+                        0.0,
+                        6.199379920959473,
+                        0.0,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -10.33229923248291,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        3,
+                        5
+                    ],
+                    "orientation": 0,
+                    "model": "ground",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "ground-p3p5",
+                    "label": "GROUND"
+                },
+                {
+                    "transform": [
+                        0.5,
+                        0.0,
+                        0.0,
+                        8.265839576721191,
+                        0.0,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -10.33229923248291,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        4,
+                        5
+                    ],
+                    "orientation": 0,
+                    "model": "ground",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "ground-p4p5",
+                    "label": "GROUND"
+                },
+                {
+                    "transform": [
+                        0.5,
+                        0.0,
+                        0.0,
+                        10.33229923248291,
+                        0.0,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -10.33229923248291,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        5,
+                        5
+                    ],
+                    "orientation": 0,
+                    "model": "ground",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "ground-p5p5",
+                    "label": "GROUND"
+                },
+                {
+                    "transform": [
                         5.962440319251527e-09,
                         0.0,
                         -1.0,
@@ -1821,15 +1821,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -5,
-                        6
+                        6,
+                        5
                     ],
                     "orientation": 270.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n5p6",
+                    "id": "wall-line-p6p5",
                     "label": "WALL"
                 },
                 {
@@ -1852,15 +1852,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -5,
-                        6
+                        6,
+                        5
                     ],
                     "orientation": 270.0,
                     "model": "light-i",
                     "texture": [
                         "tex"
                     ],
-                    "id": "light-i-n5p6",
+                    "id": "light-i-p6p5",
                     "label": "LIGHT",
                     "type": "POINT",
                     "color": [
@@ -1894,15 +1894,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -4,
-                        -6
+                        -6,
+                        4
                     ],
                     "orientation": 90.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n4n6",
+                    "id": "wall-line-n6p4",
                     "label": "WALL"
                 },
                 {
@@ -1925,15 +1925,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -4,
-                        -5
+                        -5,
+                        4
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n4n5",
+                    "id": "ground-n5p4",
                     "label": "GROUND"
                 },
                 {
@@ -1942,254 +1942,6 @@
                         0.0,
                         0.0,
                         -8.265839576721191,
-                        0.0,
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        -8.265839576721191,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -4,
-                        -4
-                    ],
-                    "orientation": 0,
-                    "model": "ground",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "ground-n4n4",
-                    "label": "GROUND"
-                },
-                {
-                    "transform": [
-                        0.5,
-                        0.0,
-                        0.0,
-                        -6.199379920959473,
-                        0.0,
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        -8.265839576721191,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -4,
-                        -3
-                    ],
-                    "orientation": 0,
-                    "model": "ground",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "ground-n4n3",
-                    "label": "GROUND"
-                },
-                {
-                    "transform": [
-                        0.5,
-                        0.0,
-                        0.0,
-                        -4.132919788360596,
-                        0.0,
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        -8.265839576721191,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -4,
-                        -2
-                    ],
-                    "orientation": 0,
-                    "model": "ground",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "ground-n4n2",
-                    "label": "GROUND"
-                },
-                {
-                    "transform": [
-                        0.5,
-                        0.0,
-                        0.0,
-                        -2.066459894180298,
-                        0.0,
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        -8.265839576721191,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -4,
-                        -1
-                    ],
-                    "orientation": 0,
-                    "model": "ground",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "ground-n4n1",
-                    "label": "GROUND"
-                },
-                {
-                    "transform": [
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        -8.265839576721191,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -4,
-                        0
-                    ],
-                    "orientation": 0,
-                    "model": "ground",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "ground-n4p0",
-                    "label": "GROUND"
-                },
-                {
-                    "transform": [
-                        0.5,
-                        0.0,
-                        0.0,
-                        2.066459894180298,
-                        0.0,
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        -8.265839576721191,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -4,
-                        1
-                    ],
-                    "orientation": 0,
-                    "model": "ground",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "ground-n4p1",
-                    "label": "GROUND"
-                },
-                {
-                    "transform": [
-                        0.5,
-                        0.0,
-                        0.0,
-                        4.132919788360596,
-                        0.0,
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        -8.265839576721191,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -4,
-                        2
-                    ],
-                    "orientation": 0,
-                    "model": "ground",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "ground-n4p2",
-                    "label": "GROUND"
-                },
-                {
-                    "transform": [
-                        0.5,
-                        0.0,
-                        0.0,
-                        6.199379920959473,
-                        0.0,
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        -8.265839576721191,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -4,
-                        3
-                    ],
-                    "orientation": 0,
-                    "model": "ground",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "ground-n4p3",
-                    "label": "GROUND"
-                },
-                {
-                    "transform": [
-                        0.5,
-                        0.0,
-                        0.0,
-                        8.265839576721191,
                         0.0,
                         0.5,
                         0.0,
@@ -2220,6 +1972,254 @@
                         0.5,
                         0.0,
                         0.0,
+                        -6.199379920959473,
+                        0.0,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -8.265839576721191,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        -3,
+                        4
+                    ],
+                    "orientation": 0,
+                    "model": "ground",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "ground-n3p4",
+                    "label": "GROUND"
+                },
+                {
+                    "transform": [
+                        0.5,
+                        0.0,
+                        0.0,
+                        -4.132919788360596,
+                        0.0,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -8.265839576721191,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        -2,
+                        4
+                    ],
+                    "orientation": 0,
+                    "model": "ground",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "ground-n2p4",
+                    "label": "GROUND"
+                },
+                {
+                    "transform": [
+                        0.5,
+                        0.0,
+                        0.0,
+                        -2.066459894180298,
+                        0.0,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -8.265839576721191,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        -1,
+                        4
+                    ],
+                    "orientation": 0,
+                    "model": "ground",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "ground-n1p4",
+                    "label": "GROUND"
+                },
+                {
+                    "transform": [
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -8.265839576721191,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        0,
+                        4
+                    ],
+                    "orientation": 0,
+                    "model": "ground",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "ground-p0p4",
+                    "label": "GROUND"
+                },
+                {
+                    "transform": [
+                        0.5,
+                        0.0,
+                        0.0,
+                        2.066459894180298,
+                        0.0,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -8.265839576721191,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        1,
+                        4
+                    ],
+                    "orientation": 0,
+                    "model": "ground",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "ground-p1p4",
+                    "label": "GROUND"
+                },
+                {
+                    "transform": [
+                        0.5,
+                        0.0,
+                        0.0,
+                        4.132919788360596,
+                        0.0,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -8.265839576721191,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        2,
+                        4
+                    ],
+                    "orientation": 0,
+                    "model": "ground",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "ground-p2p4",
+                    "label": "GROUND"
+                },
+                {
+                    "transform": [
+                        0.5,
+                        0.0,
+                        0.0,
+                        6.199379920959473,
+                        0.0,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -8.265839576721191,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        3,
+                        4
+                    ],
+                    "orientation": 0,
+                    "model": "ground",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "ground-p3p4",
+                    "label": "GROUND"
+                },
+                {
+                    "transform": [
+                        0.5,
+                        0.0,
+                        0.0,
+                        8.265839576721191,
+                        0.0,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -8.265839576721191,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        4,
+                        4
+                    ],
+                    "orientation": 0,
+                    "model": "ground",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "ground-p4p4",
+                    "label": "GROUND"
+                },
+                {
+                    "transform": [
+                        0.5,
+                        0.0,
+                        0.0,
                         10.33229923248291,
                         0.0,
                         0.5,
@@ -2235,15 +2235,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -4,
-                        5
+                        5,
+                        4
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n4p5",
+                    "id": "ground-p5p4",
                     "label": "GROUND"
                 },
                 {
@@ -2266,15 +2266,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -4,
-                        6
+                        6,
+                        4
                     ],
                     "orientation": 270.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n4p6",
+                    "id": "wall-line-p6p4",
                     "label": "WALL"
                 },
                 {
@@ -2297,15 +2297,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -3,
-                        -6
+                        -6,
+                        3
                     ],
                     "orientation": 90.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n3n6",
+                    "id": "wall-line-n6p3",
                     "label": "WALL"
                 },
                 {
@@ -2328,15 +2328,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -3,
-                        -5
+                        -5,
+                        3
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n3n5",
+                    "id": "ground-n5p3",
                     "label": "GROUND"
                 },
                 {
@@ -2359,15 +2359,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -3,
-                        -4
+                        -4,
+                        3
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n3n4",
+                    "id": "ground-n4p3",
                     "label": "GROUND"
                 },
                 {
@@ -2376,192 +2376,6 @@
                         0.0,
                         0.0,
                         -6.199379920959473,
-                        0.0,
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        -6.199379920959473,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -3,
-                        -3
-                    ],
-                    "orientation": 0,
-                    "model": "ground",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "ground-n3n3",
-                    "label": "GROUND"
-                },
-                {
-                    "transform": [
-                        0.5,
-                        0.0,
-                        0.0,
-                        -4.132919788360596,
-                        0.0,
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        -6.199379920959473,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -3,
-                        -2
-                    ],
-                    "orientation": 0,
-                    "model": "ground",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "ground-n3n2",
-                    "label": "GROUND"
-                },
-                {
-                    "transform": [
-                        0.5,
-                        0.0,
-                        0.0,
-                        -2.066459894180298,
-                        0.0,
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        -6.199379920959473,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -3,
-                        -1
-                    ],
-                    "orientation": 0,
-                    "model": "ground",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "ground-n3n1",
-                    "label": "GROUND"
-                },
-                {
-                    "transform": [
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        -6.199379920959473,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -3,
-                        0
-                    ],
-                    "orientation": 0,
-                    "model": "ground",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "ground-n3p0",
-                    "label": "GROUND"
-                },
-                {
-                    "transform": [
-                        0.5,
-                        0.0,
-                        0.0,
-                        2.066459894180298,
-                        0.0,
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        -6.199379920959473,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -3,
-                        1
-                    ],
-                    "orientation": 0,
-                    "model": "ground",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "ground-n3p1",
-                    "label": "GROUND"
-                },
-                {
-                    "transform": [
-                        0.5,
-                        0.0,
-                        0.0,
-                        4.132919788360596,
-                        0.0,
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        -6.199379920959473,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -3,
-                        2
-                    ],
-                    "orientation": 0,
-                    "model": "ground",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "ground-n3p2",
-                    "label": "GROUND"
-                },
-                {
-                    "transform": [
-                        0.5,
-                        0.0,
-                        0.0,
-                        6.199379920959473,
                         0.0,
                         0.5,
                         0.0,
@@ -2592,6 +2406,192 @@
                         0.5,
                         0.0,
                         0.0,
+                        -4.132919788360596,
+                        0.0,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -6.199379920959473,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        -2,
+                        3
+                    ],
+                    "orientation": 0,
+                    "model": "ground",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "ground-n2p3",
+                    "label": "GROUND"
+                },
+                {
+                    "transform": [
+                        0.5,
+                        0.0,
+                        0.0,
+                        -2.066459894180298,
+                        0.0,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -6.199379920959473,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        -1,
+                        3
+                    ],
+                    "orientation": 0,
+                    "model": "ground",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "ground-n1p3",
+                    "label": "GROUND"
+                },
+                {
+                    "transform": [
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -6.199379920959473,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        0,
+                        3
+                    ],
+                    "orientation": 0,
+                    "model": "ground",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "ground-p0p3",
+                    "label": "GROUND"
+                },
+                {
+                    "transform": [
+                        0.5,
+                        0.0,
+                        0.0,
+                        2.066459894180298,
+                        0.0,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -6.199379920959473,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        1,
+                        3
+                    ],
+                    "orientation": 0,
+                    "model": "ground",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "ground-p1p3",
+                    "label": "GROUND"
+                },
+                {
+                    "transform": [
+                        0.5,
+                        0.0,
+                        0.0,
+                        4.132919788360596,
+                        0.0,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -6.199379920959473,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        2,
+                        3
+                    ],
+                    "orientation": 0,
+                    "model": "ground",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "ground-p2p3",
+                    "label": "GROUND"
+                },
+                {
+                    "transform": [
+                        0.5,
+                        0.0,
+                        0.0,
+                        6.199379920959473,
+                        0.0,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -6.199379920959473,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        3,
+                        3
+                    ],
+                    "orientation": 0,
+                    "model": "ground",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "ground-p3p3",
+                    "label": "GROUND"
+                },
+                {
+                    "transform": [
+                        0.5,
+                        0.0,
+                        0.0,
                         8.265839576721191,
                         0.0,
                         0.5,
@@ -2607,15 +2607,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -3,
-                        4
+                        4,
+                        3
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n3p4",
+                    "id": "ground-p4p3",
                     "label": "GROUND"
                 },
                 {
@@ -2638,15 +2638,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -3,
-                        5
+                        5,
+                        3
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n3p5",
+                    "id": "ground-p5p3",
                     "label": "GROUND"
                 },
                 {
@@ -2669,15 +2669,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -3,
-                        6
+                        6,
+                        3
                     ],
                     "orientation": 270.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n3p6",
+                    "id": "wall-line-p6p3",
                     "label": "WALL"
                 },
                 {
@@ -2700,15 +2700,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -2,
-                        -6
+                        -6,
+                        2
                     ],
                     "orientation": 90.0,
                     "model": "wall-angle",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-angle-n2n6",
+                    "id": "wall-angle-n6p2",
                     "label": "WALL"
                 },
                 {
@@ -2731,15 +2731,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -2,
-                        -5
+                        -5,
+                        2
                     ],
                     "orientation": 180.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n2n5",
+                    "id": "wall-line-n5p2",
                     "label": "WALL"
                 },
                 {
@@ -2762,15 +2762,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -2,
-                        -4
+                        -4,
+                        2
                     ],
                     "orientation": 180.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n2n4",
+                    "id": "wall-line-n4p2",
                     "label": "WALL"
                 },
                 {
@@ -2793,15 +2793,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -2,
-                        -3
+                        -3,
+                        2
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n2n3",
+                    "id": "ground-n3p2",
                     "label": "GROUND"
                 },
                 {
@@ -2810,130 +2810,6 @@
                         0.0,
                         0.0,
                         -4.132919788360596,
-                        0.0,
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        -4.132919788360596,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -2,
-                        -2
-                    ],
-                    "orientation": 0,
-                    "model": "ground",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "ground-n2n2",
-                    "label": "GROUND"
-                },
-                {
-                    "transform": [
-                        0.5,
-                        0.0,
-                        0.0,
-                        -2.066459894180298,
-                        0.0,
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        -4.132919788360596,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -2,
-                        -1
-                    ],
-                    "orientation": 0,
-                    "model": "ground",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "ground-n2n1",
-                    "label": "GROUND"
-                },
-                {
-                    "transform": [
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        -4.132919788360596,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -2,
-                        0
-                    ],
-                    "orientation": 0,
-                    "model": "ground",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "ground-n2p0",
-                    "label": "GROUND"
-                },
-                {
-                    "transform": [
-                        0.5,
-                        0.0,
-                        0.0,
-                        2.066459894180298,
-                        0.0,
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        -4.132919788360596,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -2,
-                        1
-                    ],
-                    "orientation": 0,
-                    "model": "ground",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "ground-n2p1",
-                    "label": "GROUND"
-                },
-                {
-                    "transform": [
-                        0.5,
-                        0.0,
-                        0.0,
-                        4.132919788360596,
                         0.0,
                         0.5,
                         0.0,
@@ -2964,6 +2840,130 @@
                         0.5,
                         0.0,
                         0.0,
+                        -2.066459894180298,
+                        0.0,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -4.132919788360596,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        -1,
+                        2
+                    ],
+                    "orientation": 0,
+                    "model": "ground",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "ground-n1p2",
+                    "label": "GROUND"
+                },
+                {
+                    "transform": [
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -4.132919788360596,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        0,
+                        2
+                    ],
+                    "orientation": 0,
+                    "model": "ground",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "ground-p0p2",
+                    "label": "GROUND"
+                },
+                {
+                    "transform": [
+                        0.5,
+                        0.0,
+                        0.0,
+                        2.066459894180298,
+                        0.0,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -4.132919788360596,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        1,
+                        2
+                    ],
+                    "orientation": 0,
+                    "model": "ground",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "ground-p1p2",
+                    "label": "GROUND"
+                },
+                {
+                    "transform": [
+                        0.5,
+                        0.0,
+                        0.0,
+                        4.132919788360596,
+                        0.0,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -4.132919788360596,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        2,
+                        2
+                    ],
+                    "orientation": 0,
+                    "model": "ground",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "ground-p2p2",
+                    "label": "GROUND"
+                },
+                {
+                    "transform": [
+                        0.5,
+                        0.0,
+                        0.0,
                         6.199379920959473,
                         0.0,
                         0.5,
@@ -2979,15 +2979,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -2,
-                        3
+                        3,
+                        2
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n2p3",
+                    "id": "ground-p3p2",
                     "label": "GROUND"
                 },
                 {
@@ -3010,15 +3010,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -2,
-                        4
+                        4,
+                        2
                     ],
                     "orientation": 180.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n2p4",
+                    "id": "wall-line-p4p2",
                     "label": "WALL"
                 },
                 {
@@ -3041,15 +3041,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -2,
-                        5
+                        5,
+                        2
                     ],
                     "orientation": 180.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n2p5",
+                    "id": "wall-line-p5p2",
                     "label": "WALL"
                 },
                 {
@@ -3072,15 +3072,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -2,
-                        6
+                        6,
+                        2
                     ],
                     "orientation": 180.0,
                     "model": "wall-angle",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-angle-n2p6",
+                    "id": "wall-angle-p6p2",
                     "label": "WALL"
                 },
                 {
@@ -3103,15 +3103,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -1,
-                        -3
+                        -3,
+                        1
                     ],
                     "orientation": 90.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n1n3",
+                    "id": "wall-line-n3p1",
                     "label": "WALL"
                 },
                 {
@@ -3134,15 +3134,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -1,
-                        -2
+                        -2,
+                        1
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n1n2",
+                    "id": "ground-n2p1",
                     "label": "GROUND"
                 },
                 {
@@ -3151,68 +3151,6 @@
                         0.0,
                         0.0,
                         -2.066459894180298,
-                        0.0,
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        -2.066459894180298,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -1,
-                        -1
-                    ],
-                    "orientation": 0,
-                    "model": "ground",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "ground-n1n1",
-                    "label": "GROUND"
-                },
-                {
-                    "transform": [
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        -2.066459894180298,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -1,
-                        0
-                    ],
-                    "orientation": 0,
-                    "model": "ground",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "ground-n1p0",
-                    "label": "GROUND"
-                },
-                {
-                    "transform": [
-                        0.5,
-                        0.0,
-                        0.0,
-                        2.066459894180298,
                         0.0,
                         0.5,
                         0.0,
@@ -3243,6 +3181,68 @@
                         0.5,
                         0.0,
                         0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -2.066459894180298,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        0,
+                        1
+                    ],
+                    "orientation": 0,
+                    "model": "ground",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "ground-p0p1",
+                    "label": "GROUND"
+                },
+                {
+                    "transform": [
+                        0.5,
+                        0.0,
+                        0.0,
+                        2.066459894180298,
+                        0.0,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -2.066459894180298,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        1,
+                        1
+                    ],
+                    "orientation": 0,
+                    "model": "ground",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "ground-p1p1",
+                    "label": "GROUND"
+                },
+                {
+                    "transform": [
+                        0.5,
+                        0.0,
+                        0.0,
                         4.132919788360596,
                         0.0,
                         0.5,
@@ -3258,15 +3258,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -1,
-                        2
+                        2,
+                        1
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n1p2",
+                    "id": "ground-p2p1",
                     "label": "GROUND"
                 },
                 {
@@ -3289,15 +3289,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -1,
-                        3
+                        3,
+                        1
                     ],
                     "orientation": 270.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n1p3",
+                    "id": "wall-line-p3p1",
                     "label": "WALL"
                 },
                 {
@@ -3320,15 +3320,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        0,
-                        -3
+                        -3,
+                        0
                     ],
                     "orientation": 90.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-p0n3",
+                    "id": "wall-line-n3p0",
                     "label": "WALL"
                 },
                 {
@@ -3351,15 +3351,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        0,
-                        -2
+                        -2,
+                        0
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-p0n2",
+                    "id": "ground-n2p0",
                     "label": "GROUND"
                 },
                 {
@@ -3382,15 +3382,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        0,
-                        -1
+                        -1,
+                        0
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-p0n1",
+                    "id": "ground-n1p0",
                     "label": "GROUND"
                 },
                 {
@@ -3453,7 +3453,7 @@
                         "tex"
                     ],
                     "id": "ground-p0p0",
-                    "label": "SPAWN"
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -3475,15 +3475,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        0,
-                        1
+                        1,
+                        0
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-p0p1",
+                    "id": "ground-p1p0",
                     "label": "GROUND"
                 },
                 {
@@ -3506,15 +3506,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        0,
-                        2
+                        2,
+                        0
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-p0p2",
+                    "id": "ground-p2p0",
                     "label": "GROUND"
                 },
                 {
@@ -3537,15 +3537,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        0,
-                        3
+                        3,
+                        0
                     ],
                     "orientation": 270.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-p0p3",
+                    "id": "wall-line-p3p0",
                     "label": "WALL"
                 },
                 {
@@ -3568,15 +3568,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        1,
-                        -3
+                        -3,
+                        -1
                     ],
                     "orientation": 90.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-p1n3",
+                    "id": "wall-line-n3n1",
                     "label": "WALL"
                 },
                 {
@@ -3599,15 +3599,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        1,
-                        -2
+                        -2,
+                        -1
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-p1n2",
+                    "id": "ground-n2n1",
                     "label": "GROUND"
                 },
                 {
@@ -3616,6 +3616,68 @@
                         0.0,
                         0.0,
                         -2.066459894180298,
+                        0.0,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        2.066459894180298,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        -1,
+                        -1
+                    ],
+                    "orientation": 0,
+                    "model": "ground",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "ground-n1n1",
+                    "label": "GROUND"
+                },
+                {
+                    "transform": [
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        2.066459894180298,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        0,
+                        -1
+                    ],
+                    "orientation": 0,
+                    "model": "ground",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "ground-p0n1",
+                    "label": "GROUND"
+                },
+                {
+                    "transform": [
+                        0.5,
+                        0.0,
+                        0.0,
+                        2.066459894180298,
                         0.0,
                         0.5,
                         0.0,
@@ -3646,68 +3708,6 @@
                         0.5,
                         0.0,
                         0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        2.066459894180298,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        1,
-                        0
-                    ],
-                    "orientation": 0,
-                    "model": "ground",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "ground-p1p0",
-                    "label": "GROUND"
-                },
-                {
-                    "transform": [
-                        0.5,
-                        0.0,
-                        0.0,
-                        2.066459894180298,
-                        0.0,
-                        0.5,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.5,
-                        2.066459894180298,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        1,
-                        1
-                    ],
-                    "orientation": 0,
-                    "model": "ground",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "ground-p1p1",
-                    "label": "GROUND"
-                },
-                {
-                    "transform": [
-                        0.5,
-                        0.0,
-                        0.0,
                         4.132919788360596,
                         0.0,
                         0.5,
@@ -3723,15 +3723,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        1,
-                        2
+                        2,
+                        -1
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-p1p2",
+                    "id": "ground-p2n1",
                     "label": "GROUND"
                 },
                 {
@@ -3754,15 +3754,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        1,
-                        3
+                        3,
+                        -1
                     ],
                     "orientation": 270.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-p1p3",
+                    "id": "wall-line-p3n1",
                     "label": "WALL"
                 },
                 {
@@ -3785,15 +3785,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        2,
-                        -3
+                        -3,
+                        -2
                     ],
                     "orientation": 90.0,
                     "model": "wall-angle",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-angle-p2n3",
+                    "id": "wall-angle-n3n2",
                     "label": "WALL"
                 },
                 {
@@ -3802,6 +3802,130 @@
                         0.0,
                         -8.742277657347586e-08,
                         -4.132919788360596,
+                        0.0,
+                        1.0,
+                        0.0,
+                        0.0,
+                        4.371138828673793e-08,
+                        0.0,
+                        -1.0,
+                        5.166460037231445,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        -2,
+                        -2
+                    ],
+                    "orientation": 180.0,
+                    "model": "wall-line",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "wall-line-n2n2",
+                    "label": "WALL"
+                },
+                {
+                    "transform": [
+                        -0.5,
+                        0.0,
+                        -8.742277657347586e-08,
+                        -2.066459894180298,
+                        0.0,
+                        1.0,
+                        0.0,
+                        0.0,
+                        4.371138828673793e-08,
+                        0.0,
+                        -1.0,
+                        5.166460037231445,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        -1,
+                        -2
+                    ],
+                    "orientation": 180.0,
+                    "model": "wall-line",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "wall-line-n1n2",
+                    "label": "WALL"
+                },
+                {
+                    "transform": [
+                        -0.5,
+                        0.0,
+                        -8.742277657347586e-08,
+                        0.0,
+                        0.0,
+                        1.0,
+                        0.0,
+                        0.0,
+                        4.371138828673793e-08,
+                        0.0,
+                        -1.0,
+                        5.166460037231445,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        0,
+                        -2
+                    ],
+                    "orientation": 180.0,
+                    "model": "wall-line",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "wall-line-p0n2",
+                    "label": "WALL"
+                },
+                {
+                    "transform": [
+                        -0.5,
+                        0.0,
+                        -8.742277657347586e-08,
+                        2.066459894180298,
+                        0.0,
+                        1.0,
+                        0.0,
+                        0.0,
+                        4.371138828673793e-08,
+                        0.0,
+                        -1.0,
+                        5.166460037231445,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        1,
+                        -2
+                    ],
+                    "orientation": 180.0,
+                    "model": "wall-line",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "wall-line-p1n2",
+                    "label": "WALL"
+                },
+                {
+                    "transform": [
+                        -0.5,
+                        0.0,
+                        -8.742277657347586e-08,
+                        4.132919788360596,
                         0.0,
                         1.0,
                         0.0,
@@ -3829,130 +3953,6 @@
                 },
                 {
                     "transform": [
-                        -0.5,
-                        0.0,
-                        -8.742277657347586e-08,
-                        -2.066459894180298,
-                        0.0,
-                        1.0,
-                        0.0,
-                        0.0,
-                        4.371138828673793e-08,
-                        0.0,
-                        -1.0,
-                        5.166460037231445,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        2,
-                        -1
-                    ],
-                    "orientation": 180.0,
-                    "model": "wall-line",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "wall-line-p2n1",
-                    "label": "WALL"
-                },
-                {
-                    "transform": [
-                        -0.5,
-                        0.0,
-                        -8.742277657347586e-08,
-                        0.0,
-                        0.0,
-                        1.0,
-                        0.0,
-                        0.0,
-                        4.371138828673793e-08,
-                        0.0,
-                        -1.0,
-                        5.166460037231445,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        2,
-                        0
-                    ],
-                    "orientation": 180.0,
-                    "model": "wall-line",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "wall-line-p2p0",
-                    "label": "WALL"
-                },
-                {
-                    "transform": [
-                        -0.5,
-                        0.0,
-                        -8.742277657347586e-08,
-                        2.066459894180298,
-                        0.0,
-                        1.0,
-                        0.0,
-                        0.0,
-                        4.371138828673793e-08,
-                        0.0,
-                        -1.0,
-                        5.166460037231445,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        2,
-                        1
-                    ],
-                    "orientation": 180.0,
-                    "model": "wall-line",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "wall-line-p2p1",
-                    "label": "WALL"
-                },
-                {
-                    "transform": [
-                        -0.5,
-                        0.0,
-                        -8.742277657347586e-08,
-                        4.132919788360596,
-                        0.0,
-                        1.0,
-                        0.0,
-                        0.0,
-                        4.371138828673793e-08,
-                        0.0,
-                        -1.0,
-                        5.166460037231445,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        2,
-                        2
-                    ],
-                    "orientation": 180.0,
-                    "model": "wall-line",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "wall-line-p2p2",
-                    "label": "WALL"
-                },
-                {
-                    "transform": [
                         -1.0,
                         0.0,
                         -8.742277657347586e-08,
@@ -3971,15 +3971,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        2,
-                        3
+                        3,
+                        -2
                     ],
                     "orientation": 180.0,
                     "model": "wall-angle",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-angle-p2p3",
+                    "id": "wall-angle-p3n2",
                     "label": "WALL"
                 },
                 {
@@ -4002,15 +4002,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -12,
-                        -7
+                        -7,
+                        12
                     ],
                     "orientation": 0.0,
                     "model": "wall-angle",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-angle-n12n7",
+                    "id": "wall-angle-n7p12",
                     "label": "WALL"
                 },
                 {
@@ -4033,15 +4033,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -12,
-                        7
+                        7,
+                        12
                     ],
                     "orientation": 270.0,
                     "model": "wall-angle",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-angle-n12p7",
+                    "id": "wall-angle-p7p12",
                     "label": "WALL"
                 },
                 {
@@ -4064,15 +4064,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -11,
-                        -7
+                        -7,
+                        11
                     ],
                     "orientation": 90.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n11n7",
+                    "id": "wall-line-n7p11",
                     "label": "WALL"
                 },
                 {
@@ -4095,15 +4095,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -11,
-                        -6
+                        -6,
+                        11
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n11n6",
+                    "id": "ground-n6p11",
                     "label": "GROUND"
                 },
                 {
@@ -4126,15 +4126,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -11,
-                        -5
+                        -5,
+                        11
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n11n5",
+                    "id": "ground-n5p11",
                     "label": "GROUND"
                 },
                 {
@@ -4157,15 +4157,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -11,
-                        -4
+                        -4,
+                        11
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n11n4",
+                    "id": "ground-n4p11",
                     "label": "GROUND"
                 },
                 {
@@ -4188,15 +4188,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -11,
-                        -3
+                        -3,
+                        11
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n11n3",
+                    "id": "ground-n3p11",
                     "label": "GROUND"
                 },
                 {
@@ -4219,15 +4219,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -11,
-                        -2
+                        -2,
+                        11
                     ],
                     "orientation": 270.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n11n2",
+                    "id": "wall-line-n2p11",
                     "label": "WALL"
                 },
                 {
@@ -4250,15 +4250,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -11,
-                        2
+                        2,
+                        11
                     ],
                     "orientation": 90.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n11p2",
+                    "id": "wall-line-p2p11",
                     "label": "WALL"
                 },
                 {
@@ -4281,15 +4281,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -11,
-                        3
+                        3,
+                        11
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n11p3",
+                    "id": "ground-p3p11",
                     "label": "GROUND"
                 },
                 {
@@ -4312,15 +4312,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -11,
-                        4
+                        4,
+                        11
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n11p4",
+                    "id": "ground-p4p11",
                     "label": "GROUND"
                 },
                 {
@@ -4343,15 +4343,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -11,
-                        5
+                        5,
+                        11
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n11p5",
+                    "id": "ground-p5p11",
                     "label": "GROUND"
                 },
                 {
@@ -4374,15 +4374,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -11,
-                        6
+                        6,
+                        11
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n11p6",
+                    "id": "ground-p6p11",
                     "label": "GROUND"
                 },
                 {
@@ -4405,15 +4405,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -11,
-                        7
+                        7,
+                        11
                     ],
                     "orientation": 270.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n11p7",
+                    "id": "wall-line-p7p11",
                     "label": "WALL"
                 },
                 {
@@ -4436,15 +4436,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -10,
-                        -7
+                        -7,
+                        10
                     ],
                     "orientation": 90.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n10n7",
+                    "id": "wall-line-n7p10",
                     "label": "WALL"
                 },
                 {
@@ -4467,15 +4467,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -10,
-                        -6
+                        -6,
+                        10
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n10n6",
+                    "id": "ground-n6p10",
                     "label": "GROUND"
                 },
                 {
@@ -4498,15 +4498,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -10,
-                        -5
+                        -5,
+                        10
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n10n5",
+                    "id": "ground-n5p10",
                     "label": "GROUND"
                 },
                 {
@@ -4529,15 +4529,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -10,
-                        -4
+                        -4,
+                        10
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n10n4",
+                    "id": "ground-n4p10",
                     "label": "GROUND"
                 },
                 {
@@ -4560,15 +4560,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -10,
-                        -3
+                        -3,
+                        10
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n10n3",
+                    "id": "ground-n3p10",
                     "label": "GROUND"
                 },
                 {
@@ -4591,15 +4591,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -10,
-                        -2
+                        -2,
+                        10
                     ],
                     "orientation": 270.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n10n2",
+                    "id": "wall-line-n2p10",
                     "label": "WALL"
                 },
                 {
@@ -4622,15 +4622,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -10,
-                        -2
+                        -2,
+                        10
                     ],
                     "orientation": 270.0,
                     "model": "light-ni-a",
                     "texture": [
                         "tex"
                     ],
-                    "id": "light-ni-a-n10n2",
+                    "id": "light-ni-a-n2p10",
                     "label": "LIGHT",
                     "type": "POINT",
                     "color": [
@@ -4664,15 +4664,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -10,
-                        2
+                        2,
+                        10
                     ],
                     "orientation": 90.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n10p2",
+                    "id": "wall-line-p2p10",
                     "label": "WALL"
                 },
                 {
@@ -4695,15 +4695,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -10,
-                        2
+                        2,
+                        10
                     ],
                     "orientation": 90.0,
                     "model": "light-ni-b",
                     "texture": [
                         "tex"
                     ],
-                    "id": "light-ni-b-n10p2",
+                    "id": "light-ni-b-p2p10",
                     "label": "LIGHT",
                     "type": "POINT",
                     "color": [
@@ -4737,15 +4737,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -10,
-                        3
+                        3,
+                        10
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n10p3",
+                    "id": "ground-p3p10",
                     "label": "GROUND"
                 },
                 {
@@ -4768,15 +4768,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -10,
-                        4
+                        4,
+                        10
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n10p4",
+                    "id": "ground-p4p10",
                     "label": "GROUND"
                 },
                 {
@@ -4799,15 +4799,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -10,
-                        5
+                        5,
+                        10
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n10p5",
+                    "id": "ground-p5p10",
                     "label": "GROUND"
                 },
                 {
@@ -4830,15 +4830,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -10,
-                        6
+                        6,
+                        10
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n10p6",
+                    "id": "ground-p6p10",
                     "label": "GROUND"
                 },
                 {
@@ -4861,15 +4861,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -10,
-                        7
+                        7,
+                        10
                     ],
                     "orientation": 270.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n10p7",
+                    "id": "wall-line-p7p10",
                     "label": "WALL"
                 },
                 {
@@ -4892,15 +4892,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -9,
-                        -7
+                        -7,
+                        9
                     ],
                     "orientation": 90.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n9n7",
+                    "id": "wall-line-n7p9",
                     "label": "WALL"
                 },
                 {
@@ -4923,15 +4923,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -9,
-                        -6
+                        -6,
+                        9
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n9n6",
+                    "id": "ground-n6p9",
                     "label": "GROUND"
                 },
                 {
@@ -4954,15 +4954,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -9,
-                        -5
+                        -5,
+                        9
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n9n5",
+                    "id": "ground-n5p9",
                     "label": "GROUND"
                 },
                 {
@@ -4985,15 +4985,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -9,
-                        -4
+                        -4,
+                        9
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n9n4",
+                    "id": "ground-n4p9",
                     "label": "GROUND"
                 },
                 {
@@ -5016,15 +5016,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -9,
-                        -3
+                        -3,
+                        9
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n9n3",
+                    "id": "ground-n3p9",
                     "label": "GROUND"
                 },
                 {
@@ -5047,15 +5047,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -9,
-                        -2
+                        -2,
+                        9
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n9n2",
+                    "id": "ground-n2p9",
                     "label": "GROUND"
                 },
                 {
@@ -5078,15 +5078,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -9,
-                        -1
+                        -1,
+                        9
                     ],
                     "orientation": 0.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n9n1",
+                    "id": "wall-line-n1p9",
                     "label": "WALL"
                 },
                 {
@@ -5109,15 +5109,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -9,
-                        0
+                        0,
+                        9
                     ],
                     "orientation": 0.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n9p0",
+                    "id": "wall-line-p0p9",
                     "label": "WALL"
                 },
                 {
@@ -5140,15 +5140,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -9,
-                        1
+                        1,
+                        9
                     ],
                     "orientation": 0.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n9p1",
+                    "id": "wall-line-p1p9",
                     "label": "WALL"
                 },
                 {
@@ -5171,15 +5171,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -9,
-                        2
+                        2,
+                        9
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n9p2",
+                    "id": "ground-p2p9",
                     "label": "GROUND"
                 },
                 {
@@ -5202,15 +5202,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -9,
-                        3
+                        3,
+                        9
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n9p3",
+                    "id": "ground-p3p9",
                     "label": "GROUND"
                 },
                 {
@@ -5233,15 +5233,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -9,
-                        4
+                        4,
+                        9
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n9p4",
+                    "id": "ground-p4p9",
                     "label": "GROUND"
                 },
                 {
@@ -5264,15 +5264,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -9,
-                        5
+                        5,
+                        9
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n9p5",
+                    "id": "ground-p5p9",
                     "label": "GROUND"
                 },
                 {
@@ -5295,15 +5295,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -9,
-                        6
+                        6,
+                        9
                     ],
                     "orientation": 0,
                     "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n9p6",
+                    "id": "ground-p6p9",
                     "label": "GROUND"
                 },
                 {
@@ -5326,15 +5326,15 @@
                         1.0
                     ],
                     "coordinates": [
-                        -9,
-                        7
+                        7,
+                        9
                     ],
                     "orientation": 270.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n9p7",
+                    "id": "wall-line-p7p9",
                     "label": "WALL"
                 }
             ]

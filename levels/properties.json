@@ -4,7 +4,8 @@
             {
                 "model": "cast_Mesh.6268",
                 "transform": [
-                    { "translate": [ 0.0, 1.0, 0.0 ], "unit": "NONE" }
+                    { "translate": [ 0.0, 1.0, 0.0 ], "unit": "NONE" },
+                    { "rotate": 180.0 }
                 ]
             },
             {
@@ -117,30 +118,33 @@
             "model": "light.002_Mesh.6811",
             "transform": [
                 { "translate": [ 0.0, 0.5, 0.0 ], "unit": "U", "factor": false },
-                { "translate": [ -5.0, 0.0, 0.0 ], "unit": "ALT" }
+                { "translate": [ -5.0, 0.0, 5.0 ], "unit": "ALT", "mask": true }
             ],
             "type": "POINT",
             "color": [ 1.0, 0.5, 0.0 ],
+            "power": null,
             "action": true
         },
         "LAMP_0": {
             "model": "light.009_Mesh.6851",
             "transform": [
                 { "translate": [ 0.0, 0.5, 0.0 ], "unit": "U", "factor": false },
-                { "translate": [ -7.75, 0.0, 0.0 ], "unit": "ALT" }
+                { "translate": [ -7.75, 0.0, 7.75 ], "unit": "ALT", "mask": true }
             ],
             "type": "POINT",
             "color": [ 0.0, 0.5, 1.0 ],
+            "power": null,
             "action": false
         },
         "LAMP_1": {
             "model": "light.013_Mesh.7136",
             "transform": [
                 { "translate": [ 0.0, 0.5, 0.0 ], "unit": "U", "factor": false },
-                { "translate": [ -9.0, 0.0, 0.0 ], "unit": "ALT" }
+                { "translate": [ -9.0, 0.0, 9.0 ], "unit": "ALT", "mask": true }
             ],
             "type": "POINT",
             "color": [ 0.0, 1.0, 0.0 ],
+            "power": null,
             "action": false
         }
     },

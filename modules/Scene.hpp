@@ -3,29 +3,29 @@
 
 /* Uniform buffers. */
 struct ObjectUniform {
-    alignas(16) glm::mat4 mvpMat;
-    alignas(16) glm::mat4 mMat;
-    alignas(16) glm::mat4 nMat;
+    alignas(16) glm::mat4   mvpMat;
+    alignas(16) glm::mat4   mMat;
+    alignas(16) glm::mat4   nMat;
 };
 
 struct LightUniform {
     // FIX: Array of uint32_t, instead of glm::vec3, with switch statement inside fragment shader.
-    alignas(16) glm::vec3 TYPE[MAX_LIGHTS]; // i := DIRECT, j := POINT, k = SPOT.
-    alignas(16) glm::vec3 lightPos[MAX_LIGHTS];
-    alignas(16) glm::vec3 lightDir[MAX_LIGHTS];
-    alignas(16) glm::vec4 lightCol[MAX_LIGHTS];
-    alignas(4) float cosIn;
-    alignas(4) float cosOut;
-    alignas(4)  uint32_t NUMBER;
-    alignas(16) glm::vec3 eyePos;
+    alignas(16) glm::vec3   TYPE[MAX_LIGHTS]; // i := DIRECT, j := POINT, k = SPOT.
+    alignas(16) glm::vec3   lightPos[MAX_LIGHTS];
+    alignas(16) glm::vec3   lightDir[MAX_LIGHTS];
+    alignas(16) glm::vec4   lightCol[MAX_LIGHTS];
+    alignas(4)  float       cosIn;
+    alignas(4)  float       cosOut;
+    alignas(4)  uint32_t    NUMBER;
+    alignas(16) glm::vec3   eyePos;
 };
 
 
 /* Vertex formats. */
 struct ToonVertex {
-    glm::vec3 pos;
-    glm::vec3 norm;
-    glm::vec2 UV;
+    glm::vec3   pos;
+    glm::vec3   norm;
+    glm::vec2   UV;
 };
 
 
@@ -75,6 +75,10 @@ struct PipelineInstances {
 struct ObjectInstance {
     std::string I_id;
     SceneObjectType type;
+
+    std::string lType;
+    glm::vec4 lColor;
+    glm::vec3 lPosition;
 };
 
 class Scene;
@@ -215,6 +219,12 @@ public:
 
 class LevelScene : public Scene {
 public:
+    std::map<std::string, SceneObjectType> str2enum = {
+        { "PLAYER", SceneObjectType::SO_PLAYER },
+        { "GROUND", SceneObjectType::SO_GROUND },
+        { "WALL", SceneObjectType::SO_WALL },
+        { "LIGHT", SceneObjectType::SO_LIGHT }
+    };
 
     int init(BaseProject *_BP, std::vector<VertexDescriptorRef> &VDRs,
              std::vector<PipelineRef> &PRs, const std::string &file) override {
@@ -299,8 +309,12 @@ public:
                 for (int j = 0; j < PI[k].InstanceCount; j++) {
                     auto *oi = new ObjectInstance();
                     oi->I_id = is[j]["id"];
-                    //oi->type = static_cast<SceneObjectType>(is[j]["type"]);
-                    oi->type = SceneObjectType::SO_FLOOR; // TODO.
+                    oi->type = static_cast<SceneObjectType>(str2enum[is[j]["label"]]);
+                    if (oi->type == SceneObjectType::SO_LIGHT) {
+                        oi->lType = is[j]["type"];
+                        oi->lColor = glm::vec4(is[j]["color"][0], is[j]["color"][1], is[j]["color"][2], 1.0f);
+                        oi->lPosition = glm::vec3(is[j]["where"][0], is[j]["where"][1], is[j]["where"][2]);
+                    }
                     std::pair<int, int> coords = {is[j]["coordinates"][0], is[j]["coordinates"][1]};
                     SC->addObjectToMap(coords, oi);
                     std::cout << k << "." << j << "\t" << is[j]["id"] << ", " << is[j]["model"] << "("
@@ -417,6 +431,19 @@ class LevelSceneController : public SceneController {
     static auto interpolate(auto start, auto target, float timeI) {
         timeI = (3.0f * timeI * timeI) - (2.0f * timeI * timeI * timeI);
         return glm::mix(start, target, timeI);
+    }
+
+    static void updateLightBuffer(uint32_t currentImage, Instance* I, ObjectInstance* obj, glm::mat4 View, LightUniform* gubo, int idx) {
+        if (obj->lType == "DIRECT")
+            (*gubo).TYPE[idx] = glm::vec3(1, 0, 0);
+        else if (obj->lType == "POINT")
+            (*gubo).TYPE[idx] = glm::vec3(0, 1, 0);
+        else if (obj->lType == "SPOT")
+            (*gubo).TYPE[idx] = glm::vec3(0, 0, 1);
+        (*gubo).lightPos[idx] = obj->lPosition;
+        (*gubo).lightCol[idx] = obj->lColor;
+        (*gubo).NUMBER = idx + 1;
+        (*gubo).eyePos = glm::vec3(glm::inverse(View) * glm::vec4(0, 0, 0, 1));
     }
 
 public:
@@ -627,24 +654,27 @@ public:
 
         // TODO: global uniform buffers first
         LightUniform lubo{};
-        lubo.TYPE[0] = glm::vec3(0, 1, 0);
-        lubo.lightPos[0] = glm::vec3(0, 5, 0);
-        lubo.lightCol[0] = glm::vec4(1.0f, 0.5f, 0.0f, 1.0f);
-        lubo.NUMBER = 1;
-        lubo.eyePos = glm::vec3(glm::inverse(View) * glm::vec4(0, 0, 0, 1));
+        int idx = 0;
+        for (auto& pair : myMap) {
+            for (auto& obj : pair.second) {
+                if (obj->type == SceneObjectType::SO_LIGHT) {
+                    updateLightBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], obj, View, &lubo, idx);
+                    idx++;
+                }
+            }
+        }
 
         // TODO: calculate objects world matrices
         for (auto &pair: myMap) {
             for (auto &obj: pair.second) {
                 switch (obj->type) {
-                    case SceneObjectType::SO_FLOOR:
-                    case SceneObjectType::SO_WALL:
                     case SceneObjectType::SO_PLAYER:
+                    case SceneObjectType::SO_GROUND:
+                    case SceneObjectType::SO_WALL:
                     case SceneObjectType::SO_LIGHT:
                         // updateUniformBuffersEmission
                     case SceneObjectType::SO_OTHER:
-                        updateObjectBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj,
-                                           {&lubo}); // TODO: add global uniform buffers
+                        updateObjectBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj, {&lubo}); // TODO: add global uniform buffers
                         break;
                 }
             }

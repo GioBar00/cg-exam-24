@@ -82,7 +82,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n8n7"
+                    "id": "wall-line-n8n7",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -112,7 +113,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n8n6"
+                    "id": "ground-n8n6",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -142,7 +144,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n8n5"
+                    "id": "ground-n8n5",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -172,7 +175,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n8n4"
+                    "id": "ground-n8n4",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -202,7 +206,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n8n3"
+                    "id": "ground-n8n3",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -232,7 +237,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n8n2"
+                    "id": "ground-n8n2",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -262,7 +268,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n8n1"
+                    "id": "ground-n8n1",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -292,7 +299,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n8p0"
+                    "id": "ground-n8p0",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -322,7 +330,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n8p1"
+                    "id": "ground-n8p1",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -352,7 +361,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n8p2"
+                    "id": "ground-n8p2",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -382,7 +392,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n8p3"
+                    "id": "ground-n8p3",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -412,7 +423,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n8p4"
+                    "id": "ground-n8p4",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -442,7 +454,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n8p5"
+                    "id": "ground-n8p5",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -472,7 +485,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n8p6"
+                    "id": "ground-n8p6",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -502,7 +516,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n8p7"
+                    "id": "wall-line-n8p7",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -532,22 +547,23 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-angle-n7n7"
+                    "id": "wall-angle-n7n7",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
-                        1.1924880638503055e-08,
-                        0.0,
-                        -1.0,
-                        -11.365219116210938,
-                        0.0,
-                        1.0,
+                        0.5,
                         0.0,
                         0.0,
-                        1.0,
+                        -12.398759841918945,
                         0.0,
-                        1.1924880638503055e-08,
-                        -15.498758316040039,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -14.465218544006348,
                         0.0,
                         0.0,
                         0.0,
@@ -557,12 +573,13 @@
                         -7,
                         -6
                     ],
-                    "orientation": 270.0,
-                    "model": "wall-angle",
+                    "orientation": 0,
+                    "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-angle-n7n6"
+                    "id": "ground-n7n6",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -592,7 +609,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n7n5"
+                    "id": "ground-n7n5",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -622,7 +640,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n7n4"
+                    "id": "ground-n7n4",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -652,7 +671,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n7n3"
+                    "id": "ground-n7n3",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -682,7 +702,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n7n2"
+                    "id": "ground-n7n2",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -712,7 +733,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n7n1"
+                    "id": "ground-n7n1",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -742,7 +764,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n7p0"
+                    "id": "ground-n7p0",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -772,7 +795,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n7p1"
+                    "id": "ground-n7p1",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -802,7 +826,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n7p2"
+                    "id": "ground-n7p2",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -832,7 +857,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n7p3"
+                    "id": "ground-n7p3",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -862,7 +888,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n7p4"
+                    "id": "ground-n7p4",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -892,22 +919,23 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n7p5"
+                    "id": "ground-n7p5",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
-                        1.0,
+                        0.5,
                         0.0,
                         0.0,
-                        11.365219116210938,
+                        12.398759841918945,
                         0.0,
-                        1.0,
-                        0.0,
-                        0.0,
+                        0.5,
                         0.0,
                         0.0,
-                        1.0,
-                        -15.498758316040039,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -14.465218544006348,
                         0.0,
                         0.0,
                         0.0,
@@ -917,12 +945,13 @@
                         -7,
                         6
                     ],
-                    "orientation": 0.0,
-                    "model": "wall-angle",
+                    "orientation": 0,
+                    "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-angle-n7p6"
+                    "id": "ground-n7p6",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -952,7 +981,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-angle-n7p7"
+                    "id": "wall-angle-n7p7",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -982,7 +1012,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n6n6"
+                    "id": "wall-line-n6n6",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -1012,7 +1043,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n6n5"
+                    "id": "ground-n6n5",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -1042,7 +1074,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n6n4"
+                    "id": "ground-n6n4",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -1072,7 +1105,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n6n3"
+                    "id": "ground-n6n3",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -1102,7 +1136,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n6n2"
+                    "id": "ground-n6n2",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -1132,7 +1167,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n6n1"
+                    "id": "ground-n6n1",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -1162,7 +1198,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n6p0"
+                    "id": "ground-n6p0",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -1192,7 +1229,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n6p1"
+                    "id": "ground-n6p1",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -1222,7 +1260,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n6p2"
+                    "id": "ground-n6p2",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -1252,7 +1291,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n6p3"
+                    "id": "ground-n6p3",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -1282,7 +1322,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n6p4"
+                    "id": "ground-n6p4",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -1312,7 +1353,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n6p5"
+                    "id": "ground-n6p5",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -1342,7 +1384,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n6p6"
+                    "id": "wall-line-n6p6",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -1372,22 +1415,23 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n5n6"
+                    "id": "wall-line-n5n6",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
-                        -2.1855694143368964e-08,
+                        -4.371138828673793e-08,
                         0.0,
                         1.0,
-                        -13.432300567626953,
+                        -12.932300567626953,
                         0.0,
                         0.9999999403953552,
                         0.0,
-                        1.5499998331069946,
-                        -0.5,
+                        1.5499999523162842,
+                        -1.0,
                         0.0,
                         -4.371138828673793e-08,
-                        -10.08229923248291,
+                        -10.33229923248291,
                         0.0,
                         0.0,
                         0.0,
@@ -1402,7 +1446,19 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "light-i-n5n6"
+                    "id": "light-i-n5n6",
+                    "label": "LIGHT",
+                    "type": "POINT",
+                    "color": [
+                        1.0,
+                        0.5,
+                        0.0
+                    ],
+                    "where": [
+                        -12.932300567626953,
+                        1.5499999523162842,
+                        -10.33229923248291
+                    ]
                 },
                 {
                     "transform": [
@@ -1432,7 +1488,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n5n5"
+                    "id": "ground-n5n5",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -1462,7 +1519,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n5n4"
+                    "id": "ground-n5n4",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -1492,7 +1550,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n5n3"
+                    "id": "ground-n5n3",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -1522,7 +1581,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n5n2"
+                    "id": "ground-n5n2",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -1552,7 +1612,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n5n1"
+                    "id": "ground-n5n1",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -1582,7 +1643,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n5p0"
+                    "id": "ground-n5p0",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -1612,7 +1674,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n5p1"
+                    "id": "ground-n5p1",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -1642,7 +1705,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n5p2"
+                    "id": "ground-n5p2",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -1672,7 +1736,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n5p3"
+                    "id": "ground-n5p3",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -1702,7 +1767,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n5p4"
+                    "id": "ground-n5p4",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -1732,7 +1798,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n5p5"
+                    "id": "ground-n5p5",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -1762,22 +1829,23 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n5p6"
+                    "id": "wall-line-n5p6",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
-                        5.962440319251527e-09,
+                        1.1924880638503055e-08,
                         0.0,
                         -1.0,
-                        13.432300567626953,
+                        12.932300567626953,
                         0.0,
                         1.0,
                         0.0,
                         1.5499999523162842,
-                        0.5,
+                        1.0,
                         0.0,
                         1.1924880638503055e-08,
-                        -10.58229923248291,
+                        -10.33229923248291,
                         0.0,
                         0.0,
                         0.0,
@@ -1792,7 +1860,19 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "light-i-n5p6"
+                    "id": "light-i-n5p6",
+                    "label": "LIGHT",
+                    "type": "POINT",
+                    "color": [
+                        1.0,
+                        0.5,
+                        0.0
+                    ],
+                    "where": [
+                        12.932300567626953,
+                        1.5499999523162842,
+                        -10.33229923248291
+                    ]
                 },
                 {
                     "transform": [
@@ -1822,7 +1902,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n4n6"
+                    "id": "wall-line-n4n6",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -1852,7 +1933,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n4n5"
+                    "id": "ground-n4n5",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -1882,7 +1964,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n4n4"
+                    "id": "ground-n4n4",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -1912,7 +1995,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n4n3"
+                    "id": "ground-n4n3",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -1942,7 +2026,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n4n2"
+                    "id": "ground-n4n2",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -1972,7 +2057,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n4n1"
+                    "id": "ground-n4n1",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -2002,7 +2088,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n4p0"
+                    "id": "ground-n4p0",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -2032,7 +2119,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n4p1"
+                    "id": "ground-n4p1",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -2062,7 +2150,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n4p2"
+                    "id": "ground-n4p2",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -2092,7 +2181,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n4p3"
+                    "id": "ground-n4p3",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -2122,7 +2212,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n4p4"
+                    "id": "ground-n4p4",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -2152,7 +2243,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n4p5"
+                    "id": "ground-n4p5",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -2182,7 +2274,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n4p6"
+                    "id": "wall-line-n4p6",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -2212,7 +2305,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n3n6"
+                    "id": "wall-line-n3n6",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -2242,7 +2336,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n3n5"
+                    "id": "ground-n3n5",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -2272,7 +2367,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n3n4"
+                    "id": "ground-n3n4",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -2302,7 +2398,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n3n3"
+                    "id": "ground-n3n3",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -2332,7 +2429,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n3n2"
+                    "id": "ground-n3n2",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -2362,7 +2460,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n3n1"
+                    "id": "ground-n3n1",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -2392,7 +2491,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n3p0"
+                    "id": "ground-n3p0",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -2422,7 +2522,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n3p1"
+                    "id": "ground-n3p1",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -2452,7 +2553,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n3p2"
+                    "id": "ground-n3p2",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -2482,7 +2584,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n3p3"
+                    "id": "ground-n3p3",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -2512,7 +2615,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n3p4"
+                    "id": "ground-n3p4",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -2542,7 +2646,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n3p5"
+                    "id": "ground-n3p5",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -2572,7 +2677,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n3p6"
+                    "id": "wall-line-n3p6",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -2602,7 +2708,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-angle-n2n6"
+                    "id": "wall-angle-n2n6",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -2632,7 +2739,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n2n5"
+                    "id": "wall-line-n2n5",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -2662,22 +2770,23 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n2n4"
+                    "id": "wall-line-n2n4",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
-                        1.1924880638503055e-08,
-                        0.0,
-                        -1.0,
-                        -5.165839672088623,
-                        0.0,
-                        1.0,
+                        0.5,
                         0.0,
                         0.0,
-                        1.0,
+                        -6.199379920959473,
                         0.0,
-                        1.1924880638503055e-08,
-                        -5.166460037231445,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -4.132919788360596,
                         0.0,
                         0.0,
                         0.0,
@@ -2687,12 +2796,13 @@
                         -2,
                         -3
                     ],
-                    "orientation": 270.0,
-                    "model": "wall-angle",
+                    "orientation": 0,
+                    "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-angle-n2n3"
+                    "id": "ground-n2n3",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -2722,7 +2832,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n2n2"
+                    "id": "ground-n2n2",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -2752,7 +2863,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n2n1"
+                    "id": "ground-n2n1",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -2782,7 +2894,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n2p0"
+                    "id": "ground-n2p0",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -2812,7 +2925,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n2p1"
+                    "id": "ground-n2p1",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -2842,22 +2956,23 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n2p2"
+                    "id": "ground-n2p2",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
-                        1.0,
+                        0.5,
                         0.0,
                         0.0,
-                        5.165839672088623,
+                        6.199379920959473,
                         0.0,
-                        1.0,
-                        0.0,
-                        0.0,
+                        0.5,
                         0.0,
                         0.0,
-                        1.0,
-                        -5.166460037231445,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -4.132919788360596,
                         0.0,
                         0.0,
                         0.0,
@@ -2867,12 +2982,13 @@
                         -2,
                         3
                     ],
-                    "orientation": 0.0,
-                    "model": "wall-angle",
+                    "orientation": 0,
+                    "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-angle-n2p3"
+                    "id": "ground-n2p3",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -2902,7 +3018,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n2p4"
+                    "id": "wall-line-n2p4",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -2932,7 +3049,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n2p5"
+                    "id": "wall-line-n2p5",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -2962,7 +3080,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-angle-n2p6"
+                    "id": "wall-angle-n2p6",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -2992,7 +3111,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n1n3"
+                    "id": "wall-line-n1n3",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -3022,7 +3142,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n1n2"
+                    "id": "ground-n1n2",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -3052,7 +3173,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n1n1"
+                    "id": "ground-n1n1",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -3082,7 +3204,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n1p0"
+                    "id": "ground-n1p0",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -3112,7 +3235,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n1p1"
+                    "id": "ground-n1p1",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -3142,7 +3266,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n1p2"
+                    "id": "ground-n1p2",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -3172,7 +3297,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n1p3"
+                    "id": "wall-line-n1p3",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -3202,7 +3328,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-p0n3"
+                    "id": "wall-line-p0n3",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -3232,7 +3359,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-p0n2"
+                    "id": "ground-p0n2",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -3262,21 +3390,22 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-p0n1"
+                    "id": "ground-p0n1",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
-                        1.0,
+                        -1.0,
                         0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0,
-                        0.0,
-                        1.0,
+                        -8.742277657347586e-08,
                         0.0,
                         0.0,
                         1.0,
+                        0.0,
+                        1.0,
+                        8.742277657347586e-08,
+                        0.0,
+                        -1.0,
                         0.0,
                         0.0,
                         0.0,
@@ -3292,7 +3421,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "player-p0p0"
+                    "id": "player-p0p0",
+                    "label": "SPAWN"
                 },
                 {
                     "transform": [
@@ -3322,7 +3452,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-p0p0"
+                    "id": "ground-p0p0",
+                    "label": "SPAWN"
                 },
                 {
                     "transform": [
@@ -3352,7 +3483,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-p0p1"
+                    "id": "ground-p0p1",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -3382,7 +3514,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-p0p2"
+                    "id": "ground-p0p2",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -3412,7 +3545,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-p0p3"
+                    "id": "wall-line-p0p3",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -3442,7 +3576,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-p1n3"
+                    "id": "wall-line-p1n3",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -3472,7 +3607,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-p1n2"
+                    "id": "ground-p1n2",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -3502,7 +3638,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-p1n1"
+                    "id": "ground-p1n1",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -3532,7 +3669,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-p1p0"
+                    "id": "ground-p1p0",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -3562,7 +3700,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-p1p1"
+                    "id": "ground-p1p1",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -3592,7 +3731,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-p1p2"
+                    "id": "ground-p1p2",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -3622,7 +3762,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-p1p3"
+                    "id": "wall-line-p1p3",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -3652,7 +3793,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-angle-p2n3"
+                    "id": "wall-angle-p2n3",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -3682,7 +3824,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-p2n2"
+                    "id": "wall-line-p2n2",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -3712,7 +3855,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-p2n1"
+                    "id": "wall-line-p2n1",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -3742,7 +3886,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-p2p0"
+                    "id": "wall-line-p2p0",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -3772,7 +3917,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-p2p1"
+                    "id": "wall-line-p2p1",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -3802,7 +3948,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-p2p2"
+                    "id": "wall-line-p2p2",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -3832,7 +3979,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-angle-p2p3"
+                    "id": "wall-angle-p2p3",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -3862,7 +4010,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-angle-n12n7"
+                    "id": "wall-angle-n12n7",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -3892,7 +4041,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-angle-n12p7"
+                    "id": "wall-angle-n12p7",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -3922,7 +4072,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n11n7"
+                    "id": "wall-line-n11n7",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -3952,7 +4103,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n11n6"
+                    "id": "ground-n11n6",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -3982,7 +4134,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n11n5"
+                    "id": "ground-n11n5",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -4012,7 +4165,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n11n4"
+                    "id": "ground-n11n4",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -4042,44 +4196,15 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n11n3"
-                },
-                {
-                    "transform": [
-                        -2.1855694143368964e-08,
-                        0.0,
-                        1.0,
-                        -5.166460037231445,
-                        0.0,
-                        0.9999999403953552,
-                        0.0,
-                        0.0,
-                        -0.5,
-                        0.0,
-                        -4.371138828673793e-08,
-                        -22.73105812072754,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -11,
-                        -2
-                    ],
-                    "orientation": 90.0,
-                    "model": "wall-line",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "wall-line-n11n2"
+                    "id": "ground-n11n3",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
                         5.962440319251527e-09,
                         0.0,
                         -1.0,
-                        5.166460037231445,
+                        -3.0993800163269043,
                         0.0,
                         1.0,
                         0.0,
@@ -4095,14 +4220,46 @@
                     ],
                     "coordinates": [
                         -11,
-                        2
+                        -2
                     ],
                     "orientation": 270.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n11p2"
+                    "id": "wall-line-n11n2",
+                    "label": "WALL"
+                },
+                {
+                    "transform": [
+                        -2.1855694143368964e-08,
+                        0.0,
+                        1.0,
+                        3.0993800163269043,
+                        0.0,
+                        0.9999999403953552,
+                        0.0,
+                        0.0,
+                        -0.5,
+                        0.0,
+                        -4.371138828673793e-08,
+                        -22.73105812072754,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        -11,
+                        2
+                    ],
+                    "orientation": 90.0,
+                    "model": "wall-line",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "wall-line-n11p2",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -4132,7 +4289,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n11p3"
+                    "id": "ground-n11p3",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -4162,7 +4320,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n11p4"
+                    "id": "ground-n11p4",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -4192,7 +4351,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n11p5"
+                    "id": "ground-n11p5",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -4222,7 +4382,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n11p6"
+                    "id": "ground-n11p6",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -4252,7 +4413,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n11p7"
+                    "id": "wall-line-n11p7",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -4282,7 +4444,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n10n7"
+                    "id": "wall-line-n10n7",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -4312,7 +4475,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n10n6"
+                    "id": "ground-n10n6",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -4342,7 +4506,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n10n5"
+                    "id": "ground-n10n5",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -4372,7 +4537,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n10n4"
+                    "id": "ground-n10n4",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -4402,74 +4568,15 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n10n3"
-                },
-                {
-                    "transform": [
-                        -2.1855694143368964e-08,
-                        0.0,
-                        1.0,
-                        -5.166460037231445,
-                        0.0,
-                        0.9999999403953552,
-                        0.0,
-                        0.0,
-                        -0.5,
-                        0.0,
-                        -4.371138828673793e-08,
-                        -20.66459846496582,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -10,
-                        -2
-                    ],
-                    "orientation": 90.0,
-                    "model": "wall-line",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "wall-line-n10n2"
-                },
-                {
-                    "transform": [
-                        -2.1855694143368964e-08,
-                        0.0,
-                        1.0,
-                        -5.166460037231445,
-                        0.0,
-                        0.9999999403953552,
-                        0.0,
-                        1.5499998331069946,
-                        -0.5,
-                        0.0,
-                        -4.371138828673793e-08,
-                        -20.277097702026367,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -10,
-                        -2
-                    ],
-                    "orientation": 90.0,
-                    "model": "light-ni-a",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "light-ni-a-n10n2"
+                    "id": "ground-n10n3",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
                         5.962440319251527e-09,
                         0.0,
                         -1.0,
-                        5.166460037231445,
+                        -3.0993800163269043,
                         0.0,
                         1.0,
                         0.0,
@@ -4485,29 +4592,72 @@
                     ],
                     "coordinates": [
                         -10,
-                        2
+                        -2
                     ],
                     "orientation": 270.0,
                     "model": "wall-line",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n10p2"
+                    "id": "wall-line-n10n2",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
-                        5.962440319251527e-09,
+                        1.1924880638503055e-08,
                         0.0,
                         -1.0,
-                        5.166460037231445,
+                        -3.874380111694336,
                         0.0,
                         1.0,
                         0.0,
                         1.5499999523162842,
-                        0.5,
+                        1.0,
                         0.0,
                         1.1924880638503055e-08,
-                        -21.114599227905273,
+                        -20.66459846496582,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        -10,
+                        -2
+                    ],
+                    "orientation": 270.0,
+                    "model": "light-ni-a",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "light-ni-a-n10n2",
+                    "label": "LIGHT",
+                    "type": "POINT",
+                    "color": [
+                        0.0,
+                        0.5,
+                        1.0
+                    ],
+                    "where": [
+                        -3.874380111694336,
+                        1.5499999523162842,
+                        -20.66459846496582
+                    ]
+                },
+                {
+                    "transform": [
+                        -2.1855694143368964e-08,
+                        0.0,
+                        1.0,
+                        3.0993800163269043,
+                        0.0,
+                        0.9999999403953552,
+                        0.0,
+                        0.0,
+                        -0.5,
+                        0.0,
+                        -4.371138828673793e-08,
+                        -20.66459846496582,
                         0.0,
                         0.0,
                         0.0,
@@ -4517,12 +4667,55 @@
                         -10,
                         2
                     ],
-                    "orientation": 270.0,
+                    "orientation": 90.0,
+                    "model": "wall-line",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "wall-line-n10p2",
+                    "label": "WALL"
+                },
+                {
+                    "transform": [
+                        -4.371138828673793e-08,
+                        0.0,
+                        1.0,
+                        3.999380111694336,
+                        0.0,
+                        0.9999999403953552,
+                        0.0,
+                        1.5499999523162842,
+                        -1.0,
+                        0.0,
+                        -4.371138828673793e-08,
+                        -20.66459846496582,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        -10,
+                        2
+                    ],
+                    "orientation": 90.0,
                     "model": "light-ni-b",
                     "texture": [
                         "tex"
                     ],
-                    "id": "light-ni-b-n10p2"
+                    "id": "light-ni-b-n10p2",
+                    "label": "LIGHT",
+                    "type": "POINT",
+                    "color": [
+                        0.0,
+                        1.0,
+                        0.0
+                    ],
+                    "where": [
+                        3.999380111694336,
+                        1.5499999523162842,
+                        -20.66459846496582
+                    ]
                 },
                 {
                     "transform": [
@@ -4552,7 +4745,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n10p3"
+                    "id": "ground-n10p3",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -4582,7 +4776,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n10p4"
+                    "id": "ground-n10p4",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -4612,7 +4807,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n10p5"
+                    "id": "ground-n10p5",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -4642,7 +4838,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n10p6"
+                    "id": "ground-n10p6",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -4672,7 +4869,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n10p7"
+                    "id": "wall-line-n10p7",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -4702,7 +4900,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n9n7"
+                    "id": "wall-line-n9n7",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -4732,7 +4931,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n9n6"
+                    "id": "ground-n9n6",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -4762,7 +4962,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n9n5"
+                    "id": "ground-n9n5",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -4792,7 +4993,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n9n4"
+                    "id": "ground-n9n4",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -4822,22 +5024,23 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n9n3"
+                    "id": "ground-n9n3",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
-                        -4.371138828673793e-08,
-                        0.0,
-                        1.0,
-                        -5.166460037231445,
-                        0.0,
-                        0.9999999403953552,
+                        0.5,
                         0.0,
                         0.0,
-                        -1.0,
+                        -4.132919788360596,
                         0.0,
-                        -4.371138828673793e-08,
-                        -17.564599990844727,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -18.598140716552734,
                         0.0,
                         0.0,
                         0.0,
@@ -4847,12 +5050,13 @@
                         -9,
                         -2
                     ],
-                    "orientation": 90.0,
-                    "model": "wall-angle",
+                    "orientation": 0,
+                    "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-angle-n9n2"
+                    "id": "ground-n9n2",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -4882,7 +5086,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n9n1"
+                    "id": "wall-line-n9n1",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -4912,7 +5117,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n9p0"
+                    "id": "wall-line-n9p0",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
@@ -4942,22 +5148,23 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n9p1"
+                    "id": "wall-line-n9p1",
+                    "label": "WALL"
                 },
                 {
                     "transform": [
-                        -1.0,
-                        0.0,
-                        -8.742277657347586e-08,
-                        5.166460037231445,
-                        0.0,
-                        1.0,
+                        0.5,
                         0.0,
                         0.0,
-                        8.742277657347586e-08,
+                        4.132919788360596,
                         0.0,
-                        -1.0,
-                        -17.564599990844727,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5,
+                        -18.598140716552734,
                         0.0,
                         0.0,
                         0.0,
@@ -4967,12 +5174,13 @@
                         -9,
                         2
                     ],
-                    "orientation": 180.0,
-                    "model": "wall-angle",
+                    "orientation": 0,
+                    "model": "ground",
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-angle-n9p2"
+                    "id": "ground-n9p2",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -5002,7 +5210,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n9p3"
+                    "id": "ground-n9p3",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -5032,7 +5241,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n9p4"
+                    "id": "ground-n9p4",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -5062,7 +5272,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n9p5"
+                    "id": "ground-n9p5",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -5092,7 +5303,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "ground-n9p6"
+                    "id": "ground-n9p6",
+                    "label": "GROUND"
                 },
                 {
                     "transform": [
@@ -5122,7 +5334,8 @@
                     "texture": [
                         "tex"
                     ],
-                    "id": "wall-line-n9p7"
+                    "id": "wall-line-n9p7",
+                    "label": "WALL"
                 }
             ]
         }

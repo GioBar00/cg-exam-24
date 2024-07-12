@@ -45,7 +45,7 @@ void parseConfig(ordered_json* data) {
     f.close();
 }
 
-glm::mat4 transform(ordered_json root, string type, uint8_t id, tuple<int16_t, int16_t> dist, float_t* rot) {
+glm::mat4 transform(ordered_json root, string type, uint8_t id, tuple<int16_t, int16_t> dist, glm::mat4* trans, float_t* rot) {
     ordered_json branch;
     if (type == "SPAWN")
         branch = root;
@@ -68,15 +68,23 @@ glm::mat4 transform(ordered_json root, string type, uint8_t id, tuple<int16_t, i
                 else if (flag != nullptr && !flag.get<bool>())
                     T = glm::translate(T, UNIT * glm::vec3(v[0], v[1], v[2]));
             }
-            else if (x["unit"] == "ALT")
-                T = glm::translate(T, OFFSET * glm::vec3(v[0], v[1], v[2]));
+            else if (x["unit"] == "ALT") {
+                flag = x["mask"];
+                if (flag == nullptr || !flag.get<bool>())
+                    T = glm::translate(T, OFFSET * glm::vec3(v[0], v[1], v[2]));
+                else if (flag != nullptr && flag.get<bool>())
+                    T = glm::translate(T, OFFSET * glm::vec3(glm::cos(glm::radians(*rot + 90)) * v[0], v[1], glm::sin(glm::radians(*rot + 90)) * v[2]));
+            }
             else if (x["unit"] == "NONE")
                     T = glm::translate(T, glm::vec3(v[0], v[1], v[2]));
+            if (trans != nullptr)
+                *trans = T;
         }
         else if (t == "rotate") {
             float_t ang = x[t].get<float_t>();
             T = glm::rotate(T, glm::radians(ang), glm::vec3(0, 1, 0));
-            *rot = ang;
+            if (rot != nullptr)
+                *rot = ang;
         }
         else if (t == "scale") {
             array<float_t, 3> v = x[t].get<array<float_t, 3>>();
@@ -86,7 +94,7 @@ glm::mat4 transform(ordered_json root, string type, uint8_t id, tuple<int16_t, i
     return T;
 }
 
-void saveEntry(ordered_json jt, vector<ordered_json>* js, ordered_json root, glm::mat4 T, tuple<int16_t, int16_t> coords, int8_t id, float_t orient) {
+void saveEntry(ordered_json jt, vector<ordered_json>* js, ordered_json root, string label, glm::mat4 T, tuple<int16_t, int16_t> coords, int8_t id, float_t orient) {
     ordered_json j = ordered_json::object();
     vector<float_t> vec;
     for (uint8_t i = 0; i < 4; i++)
@@ -117,6 +125,12 @@ void saveEntry(ordered_json jt, vector<ordered_json>* js, ordered_json root, glm
         }
     j["texture"] = ordered_json::array({ jt["textures"][0]["id"] });
     j["id"] = j["model"].get<string>() + "-" + (std::signbit(static_cast<float_t>(get<0>(coords))) ? "n" : "p") + to_string(std::abs(get<0>(coords))) + (std::signbit(static_cast<float_t>(get<1>(coords))) ? "n" : "p") + to_string(std::abs(get<1>(coords)));
+    j["label"] = label;
+    if (id == LIGHT_MODE) {
+        j["type"] = root["type"];
+        j["color"] = root["color"];
+        j["where"] = array<float_t, 3> { T[3][0], T[3][1], T[3][2] };
+    }
     (*js).push_back(j);
 }
 
@@ -126,41 +140,44 @@ void applyConfig(vector<vector<string>> LEVEL, vector<vector<string>> LIGHT, uin
     ft.close();
     vector<ordered_json> objs;
     ordered_json structure = data["structure"], light = data["light"];
+    glm::mat4 inheritTrans;
+    float_t inheritRot;
     string test;
     glm::mat4 M;
-    float_t inherit;
     uint16_t rows = LEVEL.size(), columns = LEVEL[0].size();
     for (uint16_t i = 0; i < rows; i++) {
         for (uint16_t j = 0; j < columns; j++) {
             test = LEVEL[i][j];
             if (test == "S") {
-                M = transform(structure["SPAWN"][0], "SPAWN", NO_ID, tuple(0, 0), nullptr);
-                saveEntry(jtemplate, &objs, structure["SPAWN"][0], M, tuple(0, 0), NO_ID, (float_t)NULL);
-                M = transform(structure["SPAWN"][1], "SPAWN", NO_ID, tuple(0, 0), nullptr);
-                saveEntry(jtemplate, &objs, structure["SPAWN"][1], M, tuple(0, 0), NO_ID, (float_t)NULL);
+                M = transform(structure["SPAWN"][0], "SPAWN", NO_ID, tuple(0, 0), nullptr, nullptr);
+                saveEntry(jtemplate, &objs, structure["SPAWN"][0], "SPAWN", M, tuple(0, 0), NO_ID, (float_t)NULL);
+                M = transform(structure["SPAWN"][1], "SPAWN", NO_ID, tuple(0, 0), nullptr, nullptr);
+                saveEntry(jtemplate, &objs, structure["SPAWN"][1], "SPAWN", M, tuple(0, 0), NO_ID, (float_t)NULL);
             }
             else if (test == "G") {
-                M = transform(structure, "GROUND", NO_ID, tuple(j - get<1>(O), -mod * rows + i - get<0>(O)), nullptr); // Stack sublevels on rows.
-                saveEntry(jtemplate, &objs, structure["GROUND"], M, tuple(-mod * rows + i - get<0>(O), j - get<1>(O)), NO_ID, (float_t)NULL);
+                M = transform(structure, "GROUND", NO_ID, tuple(j - get<1>(O), -mod * rows + i - get<0>(O)), nullptr, nullptr); // Stack sublevels on rows.
+                saveEntry(jtemplate, &objs, structure["GROUND"], "GROUND", M, tuple(-mod * rows + i - get<0>(O), j - get<1>(O)), NO_ID, (float_t)NULL);
             }
             else if (test[0] == 'W') {
                 if (test[1] == 'L') {
-                    M = transform(structure, "WALL_LINE", test[2] - '0', tuple(j - get<1>(O), -mod * rows + i - get<0>(O)), &inherit);
-                    saveEntry(jtemplate, &objs, structure["WALL_LINE"], M, tuple(-mod * rows + i - get<0>(O), j - get<1>(O)), test[2] - '0', (float_t)NULL);
+                    M = transform(structure, "WALL_LINE", test[2] - '0', tuple(j - get<1>(O), -mod * rows + i - get<0>(O)), &inheritTrans, &inheritRot);
+                    saveEntry(jtemplate, &objs, structure["WALL_LINE"], "WALL", M, tuple(-mod * rows + i - get<0>(O), j - get<1>(O)), test[2] - '0', (float_t)NULL);
                 }
                 else if (test[1] == 'A') {
-                    M = transform(structure, "WALL_ANGLE", test[2] - '0', tuple(j - get<1>(O), -mod * rows + i - get<0>(O)), &inherit);
-                    saveEntry(jtemplate, &objs, structure["WALL_ANGLE"], M, tuple(-mod * rows + i - get<0>(O), j - get<1>(O)), test[2] - '0', (float_t)NULL);
+                    M = transform(structure, "WALL_ANGLE", test[2] - '0', tuple(j - get<1>(O), -mod * rows + i - get<0>(O)), &inheritTrans, &inheritRot);
+                    saveEntry(jtemplate, &objs, structure["WALL_ANGLE"], "WALL", M, tuple(-mod * rows + i - get<0>(O), j - get<1>(O)), test[2] - '0', (float_t)NULL);
                 }
             }
             test = LIGHT[i][j];
             if (test == "T") {
-                M *= transform(light, "TORCH", NO_ID, tuple(INT16_MAX, INT16_MAX), nullptr);
-                saveEntry(jtemplate, &objs, light["TORCH"], M, tuple(-mod * rows + i - get<0>(O), j - get<1>(O)), LIGHT_MODE, inherit);
+                M = transform(light, "TORCH", NO_ID, tuple(INT16_MAX, INT16_MAX), nullptr, &inheritRot) * inheritTrans;
+                M = glm::rotate(M, glm::radians(inheritRot), glm::vec3(0, 1, 0));
+                saveEntry(jtemplate, &objs, light["TORCH"], "LIGHT", M, tuple(-mod * rows + i - get<0>(O), j - get<1>(O)), LIGHT_MODE, inheritRot);
             }
             else if (test[0] == 'L') {
-                M *= transform(light, "LAMP_" + string(1, test[1]), NO_ID, tuple(INT16_MAX, INT16_MAX), nullptr);
-                saveEntry(jtemplate, &objs, light["LAMP_" + string(1, test[1])], M, tuple(-mod * rows + i - get<0>(O), j - get<1>(O)), LIGHT_MODE, inherit);
+                M = transform(light, "LAMP_" + string(1, test[1]), NO_ID, tuple(INT16_MAX, INT16_MAX), nullptr, &inheritRot) * inheritTrans;
+                M = glm::rotate(M, glm::radians(inheritRot), glm::vec3(0, 1, 0));
+                saveEntry(jtemplate, &objs, light["LAMP_" + string(1, test[1])], "LIGHT", M, tuple(-mod * rows + i - get<0>(O), j - get<1>(O)), LIGHT_MODE, inheritRot);
             }
         }
     }

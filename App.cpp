@@ -3,36 +3,6 @@
 #include "modules/Scene.hpp"
 
 
-#define MAX_LIGHTS 256
-
-
-/* Uniform buffers. */
-struct ObjectUniform {
-    alignas(16) glm::mat4   mvpMat;
-    alignas(16) glm::mat4   mMat;
-    alignas(16) glm::mat4   nMat;
-};
-
-struct LightUniform {
-    // FIX: Array of uint32_t, instead of glm::vec3, with switch statement inside fragment shader.
-    alignas(16) glm::vec3   TYPE[MAX_LIGHTS]; // i := DIRECT, j := POINT, k = SPOT.
-    alignas(16) glm::vec3   lightPos[MAX_LIGHTS];
-    alignas(16) glm::vec3   lightDir[MAX_LIGHTS];
-    alignas(16) glm::vec4   lightCol[MAX_LIGHTS];
-    alignas(4)  float       cosIn;
-    alignas(4)  float       cosOut;
-    alignas(4)  uint32_t    NUMBER;
-    alignas(16) glm::vec3   eyePos;
-};
-
-
-/* Vertex formats. */
-struct ToonVertex {
-    glm::vec3   pos;
-    glm::vec3   norm;
-    glm::vec2   UV;
-};
-
 
 class App : public BaseProject {
 protected:
@@ -59,8 +29,8 @@ protected:
     SceneId currSceneId;
 
     void setWindowParameters() override {
-        windowWidth = 800;
-        windowHeight = 600;
+        windowWidth = 1200;
+        windowHeight = 900;
         windowTitle = "CG24 @ PoliMi";
         windowResizable = GLFW_FALSE;
         initialBackgroundColor = {0.05f, 0.05f, 0.05f, 1.0f};

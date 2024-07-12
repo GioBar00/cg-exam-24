@@ -402,7 +402,7 @@ class LevelSceneController : public SceneController {
     const float dampR = 1000.0f;
     const float dampRp = 200.0f;
 
-    void updateObjectBuffer(uint32_t currentImage, Instance *I, glm::mat4 ViewPrj, const std::vector<void *> &gubos) {
+    static void updateObjectBuffer(uint32_t currentImage, Instance *I, glm::mat4 ViewPrj, const std::vector<void *> &gubos) {
         ObjectUniform ubo{};
 
         ubo.mMat = I->Wm;
@@ -410,6 +410,10 @@ class LevelSceneController : public SceneController {
         ubo.mvpMat = ViewPrj * ubo.mMat;
 
         I->DS[1]->map(currentImage, &ubo, 0);
+    }
+
+    static auto applyDamping(auto curr, auto target, float damp, float deltaT) {
+        return target * exp(-damp * deltaT) + curr * (1 - exp(-damp * deltaT));
     }
 
 public:

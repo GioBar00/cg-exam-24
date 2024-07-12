@@ -3,7 +3,6 @@
 #include "modules/Scene.hpp"
 
 
-
 class App : public BaseProject {
 protected:
 

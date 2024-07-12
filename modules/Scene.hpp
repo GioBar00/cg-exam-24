@@ -567,7 +567,6 @@ public:
                          glm::rotate(glm::mat4(1.0f), glm::radians(-45.0f), glm::vec3(0.0f, 1.0f, 0.0f)) *
                          glm::rotate(glm::mat4(1.0f), glm::radians(90.f * currProjRot), glm::vec3(0.0f, 1.0f, 0.0f));
 
-        // FIXME: add player translation to the camera
         glm::mat4 ViewPrj = Prj * View;
 
         // Player attributes
@@ -581,7 +580,6 @@ public:
         static glm::vec3 playerPos_old = glm::vec3(playerCoords.first, 0.0f, playerCoords.second);
         static glm::vec3 playerPos = glm::vec3(playerCoords.first, 0.0f, playerCoords.second);
 
-        // TODO: add player movement controls
         if (!isPlayerMoving && !isPlayerRotating && !isCameraRotating && glm::length(glm::vec2(m.x, m.z)) > 0.5f) {
             if (updatePlayerRotPos(m, projRot, playerRot, playerPos)) {
                 // player needs to rotate first
@@ -605,6 +603,10 @@ public:
                     playerCoords = getAdjacentCell(playerCoords, playerRot);
                     std::cout << "Player STARTED moving to " << playerCoords.first << ", " << playerCoords.second
                               << "\n";
+                } else {
+                    // reset player position
+                    playerPos = currPlayerPos;
+                    playerRot = currPlayerRot;
                 }
             }
         } else if (isPlayerMoving || isPlayerRotating) {
@@ -652,6 +654,10 @@ public:
             std::cout << "Debounce\n";
         }
 
+        // make camera follow player
+        glm::mat4 playerPosTr = glm::translate(glm::mat4(1.0f), currPlayerPos);
+        ViewPrj = ViewPrj * glm::inverse(playerPosTr);
+
         // TODO: global uniform buffers first
         LightUniform lubo{};
         int idx = 0;
@@ -670,8 +676,7 @@ public:
                 glm::mat4 baseTr = glm::mat4(1.0f);
                 switch (obj->type) {
                     case SceneObjectType::SO_PLAYER:
-                        baseTr = glm::translate(glm::mat4(1.0f), currPlayerPos) *
-                                 glm::rotate(glm::mat4(1.0f), glm::radians(currPlayerRot), glm::vec3(0, 1, 0));
+                        baseTr = playerPosTr * glm::rotate(glm::mat4(1.0f), glm::radians(currPlayerRot), glm::vec3(0, 1, 0));;
                     case SceneObjectType::SO_GROUND:
                     case SceneObjectType::SO_WALL:
                     case SceneObjectType::SO_LIGHT:

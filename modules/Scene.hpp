@@ -412,15 +412,15 @@ class LevelSceneController : public SceneController {
     const float min_zoom = 0.3f;
 
     const float camRotDuration = 1.f;
-    const float playerRotDuration = 2.f;
-    const float playerMoveDuration = 3.f;
+    const float playerRotDuration = 0.5f;
+    const float playerMoveDuration = 1.f;
 
 
-    static void updateObjectBuffer(uint32_t currentImage, Instance *I, glm::mat4 ViewPrj,
+    static void updateObjectBuffer(uint32_t currentImage, Instance *I, glm::mat4 ViewPrj, glm::mat4 baseTr,
                                    const std::vector<void *> &gubos) {
         ObjectUniform ubo{};
 
-        ubo.mMat = I->Wm;
+        ubo.mMat = baseTr * I->Wm;
         ubo.nMat = glm::inverse(glm::transpose(ubo.mMat));
         ubo.mvpMat = ViewPrj * ubo.mMat;
 
@@ -467,17 +467,17 @@ public:
 
     static bool updatePlayerRotPos(glm::vec3 m, float projRot, float &playerRot, glm::vec3 &playerPos) {
         // rotate m by projRot
-        glm::vec4 rotatedM = glm::rotate(glm::mat4(1.f), glm::radians(projRot), glm::vec3(0, 1, 0)) * glm::vec4(m, 1);
+        glm::vec4 rotatedM = glm::rotate(glm::mat4(1.f), glm::radians(-90 * projRot), glm::vec3(0, 1, 0)) * glm::vec4(m, 1);
         // choose m.x or m.z movement
         glm::vec2 input = glm::normalize(glm::vec2(rotatedM.x, rotatedM.z));
         float newPlayerRot = -1;
-        if (m.z > 0.5f) {
+        if (input.y > 0.5f) {
             newPlayerRot = 180;
-        } else if (m.z < -0.5f) {
+        } else if (input.y < -0.5f) {
             newPlayerRot = 0;
-        } else if (m.x > 0.5f) {
+        } else if (input.x > 0.5f) {
             newPlayerRot = 270;
-        } else if (m.x < -0.5f) {
+        } else if (input.x < -0.5f) {
             newPlayerRot = 90;
         }
 
@@ -488,13 +488,13 @@ public:
 
         float move = UNIT / 1.5f;
 
-        if (m.z > 0.5f) {
-            playerPos.z -= move;
-        } else if (m.z < -0.5f) {
+        if (input.y > 0.5f) {
             playerPos.z += move;
-        } else if (m.x > 0.5f) {
+        } else if (input.y < -0.5f) {
+            playerPos.z -= move;
+        } else if (input.x > 0.5f) {
             playerPos.x += move;
-        } else if (m.x < -0.5f) {
+        } else if (input.x < -0.5f) {
             playerPos.x -= move;
         }
         return false;
@@ -667,14 +667,17 @@ public:
         // TODO: calculate objects world matrices
         for (auto &pair: myMap) {
             for (auto &obj: pair.second) {
+                glm::mat4 baseTr = glm::mat4(1.0f);
                 switch (obj->type) {
                     case SceneObjectType::SO_PLAYER:
+                        baseTr = glm::translate(glm::mat4(1.0f), currPlayerPos) *
+                                 glm::rotate(glm::mat4(1.0f), glm::radians(currPlayerRot), glm::vec3(0, 1, 0));
                     case SceneObjectType::SO_GROUND:
                     case SceneObjectType::SO_WALL:
                     case SceneObjectType::SO_LIGHT:
                         // updateUniformBuffersEmission
                     case SceneObjectType::SO_OTHER:
-                        updateObjectBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj, {&lubo}); // TODO: add global uniform buffers
+                        updateObjectBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj, baseTr, {&lubo}); // TODO: add global uniform buffers
                         break;
                 }
             }

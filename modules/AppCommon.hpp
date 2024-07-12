@@ -29,9 +29,9 @@ const SceneIdMap_t sceneFiles = {
 
 /* LEVEL SCENE OBJECTS */
 enum class SceneObjectType {
-    SO_FLOOR,
-    SO_WALL,
     SO_PLAYER,
+    SO_GROUND,
+    SO_WALL,
     SO_LIGHT,
     SO_OTHER,
     // TODO: Add more scene objects depending on requirements (different shaders or interactions)

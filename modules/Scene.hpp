@@ -3,31 +3,30 @@
 
 /* Uniform buffers. */
 struct ObjectUniform {
-    alignas(16) glm::mat4   mvpMat;
-    alignas(16) glm::mat4   mMat;
-    alignas(16) glm::mat4   nMat;
+    alignas(16) glm::mat4 mvpMat;
+    alignas(16) glm::mat4 mMat;
+    alignas(16) glm::mat4 nMat;
 };
 
 struct LightUniform {
     // FIX: Array of uint32_t, instead of glm::vec3, with switch statement inside fragment shader.
-    alignas(16) glm::vec3   TYPE[MAX_LIGHTS]; // i := DIRECT, j := POINT, k = SPOT.
-    alignas(16) glm::vec3   lightPos[MAX_LIGHTS];
-    alignas(16) glm::vec3   lightDir[MAX_LIGHTS];
-    alignas(16) glm::vec4   lightCol[MAX_LIGHTS];
-    alignas(4)  float       cosIn;
-    alignas(4)  float       cosOut;
-    alignas(4)  uint32_t    NUMBER;
-    alignas(16) glm::vec3   eyePos;
+    alignas(16) glm::vec3 TYPE[MAX_LIGHTS]; // i := DIRECT, j := POINT, k = SPOT.
+    alignas(16) glm::vec3 lightPos[MAX_LIGHTS];
+    alignas(16) glm::vec3 lightDir[MAX_LIGHTS];
+    alignas(16) glm::vec4 lightCol[MAX_LIGHTS];
+    alignas(4) float cosIn;
+    alignas(4) float cosOut;
+    alignas(4)  uint32_t NUMBER;
+    alignas(16) glm::vec3 eyePos;
 };
 
 
 /* Vertex formats. */
 struct ToonVertex {
-    glm::vec3   pos;
-    glm::vec3   norm;
-    glm::vec2   UV;
+    glm::vec3 pos;
+    glm::vec3 norm;
+    glm::vec2 UV;
 };
-
 
 
 /* SCENES */
@@ -392,22 +391,19 @@ class LevelSceneController : public SceneController {
     std::map<std::pair<int, int>, std::vector<ObjectInstance *>> myMap;
     ObjectInstance *player{};
 
-    const float UNIT = 3.1f;
+    constexpr static const float UNIT = 3.1f;
 
     const float zoom_speed = 0.1f;
     const float max_zoom = 10.0f;
-    const float min_zoom = 0.2f;
-
-//    const float dampM = 1000.0f;
-//    const float dampR = 1000.0f;
-//    const float dampRp = 200.0f;
+    const float min_zoom = 0.3f;
 
     const float camRotDuration = 1.f;
-    const float playerRotDuration = 0.5f;
-    const float playerMoveDuration = 1.f;
+    const float playerRotDuration = 2.f;
+    const float playerMoveDuration = 3.f;
 
 
-    static void updateObjectBuffer(uint32_t currentImage, Instance *I, glm::mat4 ViewPrj, const std::vector<void *> &gubos) {
+    static void updateObjectBuffer(uint32_t currentImage, Instance *I, glm::mat4 ViewPrj,
+                                   const std::vector<void *> &gubos) {
         ObjectUniform ubo{};
 
         ubo.mMat = I->Wm;
@@ -443,24 +439,53 @@ public:
     }
 
     static bool updatePlayerRotPos(glm::vec3 m, float projRot, float &playerRot, glm::vec3 &playerPos) {
-        // TODO: implement the function
-        // rotate input vector to match the camera rotation
-//        glm::vec4 rotated = glm::rotate(glm::mat4(1.0f), glm::radians(90.f * rot), glm::vec3(0.0f, 1.0f, 0.0f)) *
-//                            glm::vec4(m, 1.0f);
-//        // get the direction
-//        glm::vec2 xz = glm::normalize(glm::vec2(rotated.x, rotated.z));
-//        if (glm::length(xz) <= 0.5f) return NONE;
-//        if (glm::abs(xz.x) > glm::abs(xz.y)) {
-//            return xz.x > 0 ? EAST : WEST;
-//        } else {
-//            return xz.y > 0 ? NORTH : SOUTH;
-//        }
+        // rotate m by projRot
+        glm::vec4 rotatedM = glm::rotate(glm::mat4(1.f), glm::radians(projRot), glm::vec3(0, 1, 0)) * glm::vec4(m, 1);
+        // choose m.x or m.z movement
+        glm::vec2 input = glm::normalize(glm::vec2(rotatedM.x, rotatedM.z));
+        float newPlayerRot = -1;
+        if (m.z > 0.5f) {
+            newPlayerRot = 180;
+        } else if (m.z < -0.5f) {
+            newPlayerRot = 0;
+        } else if (m.x > 0.5f) {
+            newPlayerRot = 270;
+        } else if (m.x < -0.5f) {
+            newPlayerRot = 90;
+        }
+
+        if (newPlayerRot != playerRot) {
+            playerRot = newPlayerRot;
+            return true;
+        }
+
+        float move = UNIT / 1.5f;
+
+        if (m.z > 0.5f) {
+            playerPos.z -= move;
+        } else if (m.z < -0.5f) {
+            playerPos.z += move;
+        } else if (m.x > 0.5f) {
+            playerPos.x += move;
+        } else if (m.x < -0.5f) {
+            playerPos.x -= move;
+        }
         return false;
     }
 
     static std::pair<int, int> getAdjacentCell(std::pair<int, int> playerCoords, float playerRot) {
-        // TODO: implement the function
-        return playerCoords;
+        int x = playerCoords.first;
+        int z = playerCoords.second;
+        if (playerRot == 0) {
+            z++;
+        } else if (playerRot == 90) {
+            x--;
+        } else if (playerRot == 180) {
+            z--;
+        } else if (playerRot == 270) {
+            x++;
+        }
+        return {x, z};
     }
 
     void updateUniformBuffer(uint32_t currentImage, float deltaT, glm::vec3 m, glm::vec3 r, bool fire) override {
@@ -519,11 +544,14 @@ public:
         glm::mat4 ViewPrj = Prj * View;
 
         // Player attributes
+        static std::chrono::time_point playerStartTime = std::chrono::high_resolution_clock::now();
         static std::pair<int, int> playerCoords = {0, 0};
         static float currPlayerRot = 0.0f;
+        static float playerRot_old = 0.0f;
         static float playerRot = 0.0f;
 
-        static glm::vec3 currPos = glm::vec3(playerCoords.first, 0.0f, playerCoords.second);
+        static glm::vec3 currPlayerPos = glm::vec3(playerCoords.first, 0.0f, playerCoords.second);
+        static glm::vec3 playerPos_old = glm::vec3(playerCoords.first, 0.0f, playerCoords.second);
         static glm::vec3 playerPos = glm::vec3(playerCoords.first, 0.0f, playerCoords.second);
 
         // TODO: add player movement controls
@@ -531,48 +559,50 @@ public:
             if (updatePlayerRotPos(m, projRot, playerRot, playerPos)) {
                 // player needs to rotate first
                 isPlayerRotating = true;
-                //currPlayerRot = applyDamping(currPlayerRot, playerRot, dampRp, deltaT);
+                playerStartTime = std::chrono::high_resolution_clock::now();
                 std::cout << "Player STARTED rotating to " << playerRot << "\n";
             } else {
                 bool canMove = true;
-                for (ObjectInstance* obj : myMap[getAdjacentCell(playerCoords, playerRot)]) {
+                for (ObjectInstance *obj: myMap[getAdjacentCell(playerCoords, playerRot)]) {
                     if (obj->type == SceneObjectType::SO_WALL) {
                         canMove = false;
-                        std::cout << "Player CANNOT move to " << playerCoords.first << ", " << playerCoords.second << "\n";
+                        std::cout << "Player CANNOT move to " << playerCoords.first << ", " << playerCoords.second
+                                  << "\n";
                         break;
                     }
                 }
                 if (canMove) {
                     // player needs to move
                     isPlayerMoving = true;
+                    playerStartTime = std::chrono::high_resolution_clock::now();
                     playerCoords = getAdjacentCell(playerCoords, playerRot);
-                    //currPos = applyDamping(currPos, playerPos, dampM, deltaT);
-                    std::cout << "Player STARTED moving to " << playerCoords.first << ", " << playerCoords.second << "\n";
+                    std::cout << "Player STARTED moving to " << playerCoords.first << ", " << playerCoords.second
+                              << "\n";
                 }
             }
-        } else {
+        } else if (isPlayerMoving || isPlayerRotating) {
+            auto currTime = std::chrono::high_resolution_clock::now();
+            float elapsed = std::chrono::duration<float>(currTime - playerStartTime).count();
             if (isPlayerMoving) {
-                if (glm::length(playerPos - currPos) < 0.01f) {
+                if (elapsed > playerMoveDuration) {
                     //player stopped moving to next cell
-                    currPos = playerPos;
+                    currPlayerPos = playerPos_old = playerPos;
                     isPlayerMoving = false;
                     std::cout << "Player ENDED moving to " << playerCoords.first << ", " << playerCoords.second << "\n";
                 } else {
                     // moving to the next cell
-                    //currPos = playerPos * exp(-dampM * deltaT) + currPos * (1 - exp(-dampM * deltaT));
-                    //currPos = applyDamping(currPos, playerPos, dampM, deltaT);
+                    currPlayerPos = interpolate(playerPos_old, playerPos, elapsed / playerMoveDuration);
                     //std::cout << "Player still moving to next cell\n";
                 }
             } else if (isPlayerRotating) {
-                if (glm::abs(playerRot - currPlayerRot) < 0.01f) {
+                if (elapsed > playerRotDuration) {
                     // player stopped rotating
-                    currPlayerRot = playerRot;
+                    currPlayerRot = playerRot_old = playerRot;
                     isPlayerRotating = false;
-                    std::cout << "Player rotated to " << playerRot << "\n";
+                    std::cout << "Player ENDED rotating to " << playerRot << "\n";
                 } else {
                     // player rotating
-                    //currPlayerRot = playerRot * exp(-dampRp * deltaT) + currPlayerRot * (1 - exp(-dampRp * deltaT));
-                    //currPlayerRot = applyDamping(currPlayerRot, playerRot, dampRp, deltaT);
+                    currPlayerRot = interpolate(playerRot_old, playerRot, elapsed / playerRotDuration);
                     //std::cout << "Player still rotating\n";
                 }
             }
@@ -583,7 +613,7 @@ public:
                 debounce = true;
                 std::cout << "Fire\n";
                 // TODO: check interactions with other objects
-                for (ObjectInstance* obj : myMap[playerCoords]) {
+                for (ObjectInstance *obj: myMap[playerCoords]) {
                     if (obj->type == SceneObjectType::SO_LIGHT) {
                         // TODO: Interact with obj
                         break;
@@ -613,7 +643,8 @@ public:
                     case SceneObjectType::SO_LIGHT:
                         // updateUniformBuffersEmission
                     case SceneObjectType::SO_OTHER:
-                        updateObjectBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj, {&lubo}); // TODO: add global uniform buffers
+                        updateObjectBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj,
+                                           {&lubo}); // TODO: add global uniform buffers
                         break;
                 }
             }

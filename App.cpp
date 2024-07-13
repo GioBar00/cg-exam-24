@@ -7,15 +7,15 @@ class App : public BaseProject {
 protected:
 
     /* Descriptor set layouts. */
-    DescriptorSetLayout ToonDSL, LightDSL;
+    DescriptorSetLayout ObjectDSL, SourceDSL, LightDSL;
 
 
     /* Vertex descriptors. */
-    VertexDescriptor ToonVD;
+    VertexDescriptor ObjectVD, SourceVD;
 
 
     /* Pipelines. */
-    Pipeline IlluminationP;
+    Pipeline ToonP, PhongP, SourceP;
 
 
     /* Scenes */
@@ -49,35 +49,51 @@ protected:
         }
 
 
-        ToonDSL.init(this, {
+        ObjectDSL.init(this, {
             {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,          VK_SHADER_STAGE_ALL_GRAPHICS,   sizeof(ObjectUniform),  1},
+            {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,  VK_SHADER_STAGE_FRAGMENT_BIT,   0,                      1}
+        });
+        SourceDSL.init(this, {
+            {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,          VK_SHADER_STAGE_ALL_GRAPHICS,   sizeof(SourceUniform),  1},
             {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,  VK_SHADER_STAGE_FRAGMENT_BIT,   0,                      1}
         });
         LightDSL.init(this, {
             {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,          VK_SHADER_STAGE_FRAGMENT_BIT,   sizeof(LightUniform),   1}
 		});
 
-        ToonVD.init(this, {
-                {0, sizeof(ToonVertex), VK_VERTEX_INPUT_RATE_VERTEX}
+        ObjectVD.init(this, {
+                {0, sizeof(ObjectVertex), VK_VERTEX_INPUT_RATE_VERTEX}
             }, {
-                {0, 0, VK_FORMAT_R32G32B32_SFLOAT,  offsetof(ToonVertex, pos),  sizeof(glm::vec3),  POSITION},
-                {0, 1, VK_FORMAT_R32G32B32_SFLOAT,  offsetof(ToonVertex, norm), sizeof(glm::vec3),  NORMAL},
-                {0, 2, VK_FORMAT_R32G32_SFLOAT,     offsetof(ToonVertex, UV),   sizeof(glm::vec2),  UV}
+                {0, 0, VK_FORMAT_R32G32B32_SFLOAT,  offsetof(ObjectVertex, pos),    sizeof(glm::vec3),  POSITION},
+                {0, 1, VK_FORMAT_R32G32B32_SFLOAT,  offsetof(ObjectVertex, norm),   sizeof(glm::vec3),  NORMAL},
+                {0, 2, VK_FORMAT_R32G32_SFLOAT,     offsetof(ObjectVertex, UV),     sizeof(glm::vec2),  UV}
+            }
+        );
+        SourceVD.init(this, {
+                {0, sizeof(SourceVertex), VK_VERTEX_INPUT_RATE_VERTEX}
+            }, {
+                {0, 0, VK_FORMAT_R32G32B32_SFLOAT,  offsetof(SourceVertex, pos),    sizeof(glm::vec3),  POSITION},
+                {0, 1, VK_FORMAT_R32G32_SFLOAT,     offsetof(SourceVertex, UV),     sizeof(glm::vec2),  UV}
             }
         );
 
-        IlluminationP.init(this, &ToonVD, "shaders/Toon.vert.spv", "shaders/Toon.frag.spv", {&LightDSL, &ToonDSL});
+        ToonP.init(this, &ObjectVD, "shaders/Shader.vert.spv", "shaders/Toon.frag.spv", {&LightDSL, &ObjectDSL});
+        PhongP.init(this, &ObjectVD, "shaders/Shader.vert.spv", "shaders/Phong.frag.spv", {&LightDSL, &ObjectDSL});
+        SourceP.init(this, &SourceVD, "shaders/Emission.vert.spv", "shaders/Emission.frag.spv", {&SourceDSL});
 
 
         // Define vertex descriptor references per scene.
-        VertexDescriptorRef ToonVDR{};
-        ToonVDR.init("ToonVD", &ToonVD);
-        std::vector<VertexDescriptorRef> SL1VDRs = { ToonVDR };
+        VertexDescriptorRef ObjectVDR{}, SourceVDR{};
+        ObjectVDR.init("ObjectVD", &ObjectVD);
+        SourceVDR.init("SourceVD", &SourceVD);
+        std::vector<VertexDescriptorRef> SL1VDRs = { ObjectVDR, SourceVDR };
 
         // Define pipeline references per scene.
-        PipelineRef IlluminationPR{};
-        IlluminationPR.init("illumination", &IlluminationP);
-        std::vector<PipelineRef> SL1PRs = { IlluminationPR };
+        PipelineRef ToonPR{}, PhongPR{}, SourcePR{};
+        ToonPR.init("toon", &ToonP);
+        PhongPR.init("phong", &PhongP);
+        SourcePR.init("emission", &SourceP);
+        std::vector<PipelineRef> SL1PRs = { ToonPR, PhongPR, SourcePR };
 
         // TODO: Add all SceneVDRs and ScenePRs to the maps
         SceneVDRs[SceneId::SCENE_LEVEL_1] = SL1VDRs;
@@ -92,7 +108,9 @@ protected:
     }
 
     void pipelinesAndDescriptorSetsInit() override {
-        IlluminationP.create();
+        ToonP.create();
+        PhongP.create();
+        SourceP.create();
         scenes[currSceneId]->pipelinesAndDescriptorSetsInit();
     }
 
@@ -108,10 +126,13 @@ protected:
                 free(scenes[sceneId]);
             }
         }
-        ToonDSL.cleanup();
+        ObjectDSL.cleanup();
+        SourceDSL.cleanup();
         LightDSL.cleanup();
 
-        IlluminationP.destroy();
+        ToonP.destroy();
+        PhongP.destroy();
+        SourceP.destroy();
     }
 
     void populateCommandBuffer(VkCommandBuffer commandBuffer, int currentImage) override {

@@ -8,6 +8,10 @@ struct ObjectUniform {
     alignas(16) glm::mat4   nMat;
 };
 
+struct SourceUniform {
+    alignas(16) glm::mat4   mvpMat;
+};
+
 struct LightUniform {
     // FIX: Array of uint32_t, instead of glm::vec3, with switch statement inside fragment shader.
     alignas(16) glm::vec3   TYPE[MAX_LIGHTS]; // i := DIRECT, j := POINT, k = SPOT.
@@ -22,9 +26,14 @@ struct LightUniform {
 
 
 /* Vertex formats. */
-struct ToonVertex {
+struct ObjectVertex {
     glm::vec3   pos;
     glm::vec3   norm;
+    glm::vec2   UV;
+};
+
+struct SourceVertex {
+    glm::vec3   pos;
     glm::vec2   UV;
 };
 

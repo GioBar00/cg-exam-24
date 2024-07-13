@@ -4,43 +4,43 @@
             "format": "MGCG",
             "id": "player",
             "model": "models/dungeon/cast_Mesh.6268.mgcg",
-            "VD": "ToonVD"
+            "VD": "ObjectVD"
         },
         {
             "format": "MGCG",
             "id": "ground",
             "model": "models/dungeon/tunnel.003_Mesh.4991.mgcg",
-            "VD": "ToonVD"
+            "VD": "ObjectVD"
         },
         {
             "format": "MGCG",
             "id": "wall-line",
             "model": "models/dungeon/tunnel_Mesh.4672.mgcg",
-            "VD": "ToonVD"
+            "VD": "ObjectVD"
         },
         {
             "format": "MGCG",
             "id": "wall-angle",
             "model": "models/dungeon/tunnel.028_Mesh.7989.mgcg",
-            "VD": "ToonVD"
+            "VD": "ObjectVD"
         },
         {
             "format": "MGCG",
             "id": "light-i",
             "model": "models/dungeon/light.002_Mesh.6811.mgcg",
-            "VD": "ToonVD"
+            "VD": "ObjectVD"
         },
         {
             "format": "MGCG",
             "id": "light-ni-a",
             "model": "models/dungeon/light.009_Mesh.6851.mgcg",
-            "VD": "ToonVD"
+            "VD": "ObjectVD"
         },
         {
             "format": "MGCG",
             "id": "light-ni-b",
             "model": "models/dungeon/light.013_Mesh.7136.mgcg",
-            "VD": "ToonVD"
+            "VD": "ObjectVD"
         }
     ],
     "textures": [
@@ -52,7 +52,7 @@
     ],
     "instances": [
         {
-            "pipeline": "illumination",
+            "pipeline": "toon",
             "elements": [
                 {
                     "transform": [

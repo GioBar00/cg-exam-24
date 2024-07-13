@@ -1,4 +1,4 @@
-#define MAX_LIGHTS 256
+#define MAX_LIGHTS 32
 
 
 /* Uniform buffers. */
@@ -75,6 +75,7 @@ struct PipelineInstances {
 struct ObjectInstance {
     std::string I_id;
     SceneObjectType type;
+    bool isOnFire = false;
 
     std::string lType;
     glm::vec4 lColor;
@@ -404,6 +405,7 @@ class LevelSceneController : public SceneController {
     LevelScene *scene{};
     std::map<std::pair<int, int>, std::vector<ObjectInstance *>> myMap;
     ObjectInstance *player{};
+    ObjectInstance *torchWithPlayer = nullptr;
 
     constexpr static const float UNIT = 3.1f;
 
@@ -412,8 +414,11 @@ class LevelSceneController : public SceneController {
     const float min_zoom = 0.4f;
 
     const float camRotDuration = 1.f;
-    const float playerRotDuration = 0.5f;
-    const float playerMoveDuration = 1.f;
+    const float playerRotDuration = 0.3f;
+    const float playerMoveDuration = 0.7f;
+
+    const float playerFloatSpeed = 1.5f;
+    const float torchRotationSpeed = 0.5f;
 
 
     static void updateObjectBuffer(uint32_t currentImage, Instance *I, glm::mat4 ViewPrj, glm::mat4 baseTr,
@@ -443,6 +448,7 @@ class LevelSceneController : public SceneController {
         gubo->lightPos[idx] = obj->lPosition;
         gubo->lightCol[idx] = obj->lColor;
         gubo->NUMBER = idx + 1;
+        //TODO: set on/off if light is on fire
     }
 
 public:
@@ -520,7 +526,6 @@ public:
         static bool isPlayerMoving = false;
         static bool debounce = false;
 
-        // TODO: Add damping to zoom
         // Calculate Orthogonal Projection Matrix
         static float zoom = 0.2f;
         if (glm::abs(m.y) > 1e-5) {
@@ -637,14 +642,22 @@ public:
             }
         }
 
+        static bool bringingTorch = false;
+
         if (fire) {
             if (!isPlayerMoving && !isPlayerRotating && !debounce) {
                 debounce = true;
                 std::cout << "Fire\n";
-                // TODO: check interactions with other objects
-                for (ObjectInstance *obj: myMap[playerCoords]) {
+                for (ObjectInstance *obj: myMap[getAdjacentCell(playerCoords, playerRot)]) {
                     if (obj->type == SceneObjectType::SO_LIGHT) {
-                        // TODO: Interact with obj
+                        if (!bringingTorch) {
+                            bringingTorch = true;
+                            std::cout << "Bringing torch\n";
+                            torchWithPlayer = obj;
+                        } else if (!obj->isOnFire) {
+                            obj->isOnFire = true;
+                            std::cout << "Lighting torch\n";
+                        }
                         break;
                     }
                 }
@@ -658,10 +671,9 @@ public:
         glm::mat4 playerPosTr = glm::translate(glm::mat4(1.0f), currPlayerPos);
         ViewPrj = ViewPrj * glm::inverse(playerPosTr);
 
-        // TODO: global uniform buffers first
         LightUniform lubo{};
         lubo.eyeDir = glm::vec3(glm::inverse(View) * glm::vec4(0, 0, 1, 1));
-        std::cout << "EyePos: " << lubo.eyeDir.x << ", " << lubo.eyeDir.y << ", " << lubo.eyeDir.z << "\n";
+        // std::cout << "EyeDir: " << lubo.eyeDir.x << ", " << lubo.eyeDir.y << ", " << lubo.eyeDir.z << "\n";
         int idx = 0;
         for (auto& pair : myMap) {
             for (auto& obj : pair.second) {
@@ -671,13 +683,13 @@ public:
                 }
             }
         }
-        lubo.TYPE[idx] = glm::vec3(0, 0, 1);
-        lubo.lightPos[idx] = glm::vec3(0, 3, 0);
-        lubo.lightCol[idx] = glm::vec4(1, 1, 1, 1);
-        lubo.lightDir[idx] = glm::vec3(0, -1, 0);
-        lubo.cosIn = glm::cos(glm::radians(60.0f));
-        lubo.cosOut = glm::cos(glm::radians(120.0f));
-        lubo.NUMBER++;
+//        lubo.TYPE[idx] = glm::vec3(0, 0, 1);
+//        lubo.lightPos[idx] = glm::vec3(0, 3, 0);
+//        lubo.lightCol[idx] = glm::vec4(1, 1, 1, 1);
+//        lubo.lightDir[idx] = glm::vec3(0, -1, 0);
+//        lubo.cosIn = glm::cos(glm::radians(60.0f));
+//        lubo.cosOut = glm::cos(glm::radians(120.0f));
+//        lubo.NUMBER++;
 
         // TODO: calculate objects world matrices
         for (auto &pair: myMap) {
@@ -685,11 +697,31 @@ public:
                 glm::mat4 baseTr = glm::mat4(1.0f);
                 switch (obj->type) {
                     case SceneObjectType::SO_PLAYER:
-                        baseTr = playerPosTr * glm::rotate(glm::mat4(1.0f), glm::radians(currPlayerRot), glm::vec3(0, 1, 0));;
+                        static float heightAnimDelta = 0.f;
+                        // make player float up and down
+                        heightAnimDelta = heightAnimDelta + playerFloatSpeed * deltaT;
+                        // limit modulo to 2pi
+                        heightAnimDelta = glm::mod(heightAnimDelta, 2 * glm::pi<float>());
+                        baseTr = playerPosTr *
+                                glm::translate(glm::mat4(1.0f), glm::vec3(0, 0.15f * glm::sin(heightAnimDelta), 0)) *
+                                glm::rotate(glm::mat4(1.0f), glm::radians(currPlayerRot), glm::vec3(0, 1, 0));
+                        updateObjectBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj, baseTr, {&lubo}); // TODO: add global uniform buffers
+                        break;
                     case SceneObjectType::SO_GROUND:
                     case SceneObjectType::SO_WALL:
                     case SceneObjectType::SO_LIGHT:
                         // updateUniformBuffersEmission
+                        if (obj == torchWithPlayer) {
+                            static float torchRot = 0;
+                            torchRot += torchRotationSpeed * deltaT;
+                            // limit modulo to 2pi
+                            torchRot = glm::mod(torchRot, 2 * glm::pi<float>());
+                            baseTr = playerPosTr *
+                                    glm::rotate(glm::mat4(1.0f), torchRot, glm::vec3(0, 1, 0)) *
+                                    glm::translate(glm::mat4(1.0f), glm::vec3(0, 1, -1)) *
+                                    glm::rotate(glm::mat4(1.0f), glm::radians(180.0f), glm::vec3(0, 1, 0)) *
+                                    glm::inverse(scene->I[scene->InstanceIds[obj->I_id]]->Wm);
+                        }
                     case SceneObjectType::SO_OTHER:
                         updateObjectBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj, baseTr, {&lubo}); // TODO: add global uniform buffers
                         break;

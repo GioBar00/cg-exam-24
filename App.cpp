@@ -97,6 +97,7 @@ protected:
     }
 
     void pipelinesAndDescriptorSetsCleanup() override {
+        IlluminationP.cleanup();
         scenes[currSceneId]->pipelinesAndDescriptorSetsCleanup();
     }
 

@@ -66,7 +66,7 @@ protected:
             }
         );
 
-        IlluminationP.init(this, &ToonVD, "shaders/brdf/Toon.vert.spv", "shaders/brdf/Toon.frag.spv", {&LightDSL, &ToonDSL});
+        IlluminationP.init(this, &ToonVD, "shaders/Toon.vert.spv", "shaders/Toon.frag.spv", {&LightDSL, &ToonDSL});
 
 
         // Define vertex descriptor references per scene.

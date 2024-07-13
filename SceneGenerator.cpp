@@ -191,7 +191,7 @@ void applyConfig(vector<vector<string>> LEVEL, vector<vector<string>> LIGHT, uin
     fout.close();
 }
 
-void main() {
+int main() {
     tuple<uint16_t, uint16_t> O;
     vector<vector<string>> LEVEL = loadMap(FILE_PATH + "ROOM-00.txt", &O), LIGHT = loadMap(FILE_PATH + "LIGHT-00.txt", nullptr);
 
@@ -211,4 +211,5 @@ void main() {
         LIGHT = loadMap(FILE_PATH + "LIGHT-" + k + ".txt", nullptr);
         applyConfig(LEVEL, LIGHT, n, data, O, false);
     }
+    return 0;
 }

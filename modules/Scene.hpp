@@ -17,7 +17,7 @@ struct LightUniform {
     alignas(4)  float       cosIn;
     alignas(4)  float       cosOut;
     alignas(4)  uint32_t    NUMBER;
-    alignas(16) glm::vec3   eyePos;
+    alignas(16) glm::vec3   eyeDir;
 };
 
 
@@ -443,7 +443,6 @@ class LevelSceneController : public SceneController {
         gubo->lightPos[idx] = obj->lPosition;
         gubo->lightCol[idx] = obj->lColor;
         gubo->NUMBER = idx + 1;
-        //gubo->eyePos = glm::vec3(glm::inverse(View) * glm::vec4(0, 0, 0, 1));
     }
 
 public:
@@ -661,8 +660,8 @@ public:
 
         // TODO: global uniform buffers first
         LightUniform lubo{};
-        lubo.eyePos = glm::vec3(glm::inverse(View) * glm::vec4(0, 0, 10, 1));
-        std::cout << "EyePos: " << lubo.eyePos.x << ", " << lubo.eyePos.y << ", " << lubo.eyePos.z << "\n";
+        lubo.eyeDir = glm::vec3(glm::inverse(View) * glm::vec4(0, 0, 1, 1));
+        std::cout << "EyePos: " << lubo.eyeDir.x << ", " << lubo.eyeDir.y << ", " << lubo.eyeDir.z << "\n";
         int idx = 0;
         for (auto& pair : myMap) {
             for (auto& obj : pair.second) {
@@ -672,6 +671,13 @@ public:
                 }
             }
         }
+        lubo.TYPE[idx] = glm::vec3(0, 0, 1);
+        lubo.lightPos[idx] = glm::vec3(0, 3, 0);
+        lubo.lightCol[idx] = glm::vec4(1, 1, 1, 1);
+        lubo.lightDir[idx] = glm::vec3(0, -1, 0);
+        lubo.cosIn = glm::cos(glm::radians(60.0f));
+        lubo.cosOut = glm::cos(glm::radians(120.0f));
+        lubo.NUMBER++;
 
         // TODO: calculate objects world matrices
         for (auto &pair: myMap) {

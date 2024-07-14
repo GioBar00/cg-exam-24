@@ -6,7 +6,8 @@
 	float cosIn;
 	float cosOut;
 	uint NUMBER;
-	vec3 eyeDir;} lubo;
+	vec3 eyeDir;} lubo;layout(set = 1, binding = 2) uniform ArgsUBO {
+	bool diffuse;	bool specular;} aubo;
 
 layout(location = 0) in vec3 fragPos;
 layout(location = 1) in vec3 fragNorm;
@@ -42,7 +43,7 @@ vec3 spotCol(int idx, vec3 fragmentPos) {
 	vec3 Specular = mSpecular * vec3(pow(max(dot(V, -reflect(L, N)), 0.0f), 150.0f));
 	//vec3 Specular = vec3(pow(max(dot(V, -reflect(L, N)), 0.0f), 150.0f));
 	
-	return (Diffuse + (specular ? Specular : vec3(0)));
+	return (Diffuse + (aubo.specular ? Specular : vec3(0)));
 }
 
 void main() {

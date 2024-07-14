@@ -25,6 +25,11 @@ struct LightUniform {
     alignas(16) glm::vec3   eyeDir;
 };
 
+struct ArgsUniform {
+    alignas(4)  bool    diffuse;
+    alignas(4)  bool    specular;
+};
+
 
 /* Vertex formats. */
 struct ObjectVertex {
@@ -428,13 +433,19 @@ class LevelSceneController : public SceneController {
 
     static void updateObjectBuffer(uint32_t currentImage, Instance *I, glm::mat4 ViewPrj, glm::mat4 baseTr,
                                    const std::vector<void *> &gubos) {
-        ObjectUniform ubo{};
+        ObjectUniform oubo{};
 
-        ubo.mMat = baseTr * I->Wm;
-        ubo.nMat = glm::inverse(glm::transpose(ubo.mMat));
-        ubo.mvpMat = ViewPrj * ubo.mMat;
+        oubo.mMat = baseTr * I->Wm;
+        oubo.nMat = glm::inverse(glm::transpose(oubo.mMat));
+        oubo.mvpMat = ViewPrj * oubo.mMat;
 
-        I->DS[1]->map(currentImage, &ubo, 0);
+        ArgsUniform aubo{};
+
+        aubo.diffuse = true;
+        aubo.specular = false;
+
+        I->DS[1]->map(currentImage, &oubo, 0);
+        I->DS[1]->map(currentImage, &aubo, 2);
         I->DS[0]->map(currentImage, gubos[0], 0);
     }
 

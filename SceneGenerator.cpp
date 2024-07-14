@@ -129,6 +129,7 @@ void saveEntry(ordered_json jt, vector<ordered_json>* js, ordered_json root, str
     if (id == LIGHT_MODE) {
         j["type"] = root["type"];
         j["color"] = root["color"];
+        j["power"] = root["power"];
         j["where"] = array<float_t, 3> { T[3][0], T[3][1], T[3][2] };
     }
     (*js).push_back(j);

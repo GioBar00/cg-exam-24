@@ -14,11 +14,13 @@ struct SourceUniform {
 };
 
 struct LightUniform {
-    // FIX: Array of uint32_t, instead of glm::vec3, with switch statement inside fragment shader.
+    // FIXME: Array of uint32_t, instead of glm::vec3, with switch statement inside fragment shader.
     alignas(16) glm::vec3   TYPE[MAX_LIGHTS]; // i := DIRECT, j := POINT, k = SPOT.
     alignas(16) glm::vec3   lightPos[MAX_LIGHTS];
     alignas(16) glm::vec3   lightDir[MAX_LIGHTS];
     alignas(16) glm::vec4   lightCol[MAX_LIGHTS];
+    // FIXME: Array of uint32_t, instead of glm::vec3.
+    alignas(16) glm::vec3   lightPow[MAX_LIGHTS];
     alignas(4)  float       cosIn;
     alignas(4)  float       cosOut;
     alignas(4)  uint32_t    NUMBER;
@@ -93,6 +95,7 @@ struct ObjectInstance {
 
     std::string lType;
     glm::vec4 lColor;
+    float lPower;
     glm::vec3 lPosition;
 };
 
@@ -328,6 +331,7 @@ public:
                     if (oi->type == SceneObjectType::SO_LIGHT) {
                         oi->lType = is[j]["type"];
                         oi->lColor = glm::vec4(is[j]["color"][0], is[j]["color"][1], is[j]["color"][2], 1.0f);
+                        oi->lPower = is[j]["power"];
                         oi->lPosition = glm::vec3(is[j]["where"][0], is[j]["where"][1], is[j]["where"][2]);
                     }
                     std::pair<int, int> coords = {is[j]["coordinates"][0], is[j]["coordinates"][1]};
@@ -467,6 +471,7 @@ class LevelSceneController : public SceneController {
             gubo->TYPE[idx] = glm::vec3(0, 0, 1);
         gubo->lightPos[idx] = obj->lPosition;
         gubo->lightCol[idx] = obj->lColor;
+        gubo->lightPow[idx] = glm::vec3(obj->lPower);
         gubo->NUMBER = idx + 1;
     }
 

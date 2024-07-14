@@ -127,7 +127,8 @@
         "BONFIRE": {
             "model": "tunnel.002_Mesh.7094",
             "transform": [
-                { "translate": [ 0.6666, 0.08, 0.6666 ] },
+                { "translate": [ 0.6666, 0.0, 0.6666 ] },
+                { "translate": [ 0.0, 0.2, 0.0 ], "unit": "NONE" },
                 { "scale": [ 0.5, 0.5, 0.5 ] }
             ],
             "type": "POINT",

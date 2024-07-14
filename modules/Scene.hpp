@@ -339,6 +339,12 @@ public:
                         oi->lPower = is[j]["power"];
                         oi->lPosition = glm::vec3(is[j]["where"][0], is[j]["where"][1], is[j]["where"][2]);
                     }
+                    if (oi->type == SceneObjectType::SO_TORCH) {
+                        // TODO: FIX read from json
+                        oi->isOnFire = true;
+                    }
+                    if (oi->type == SceneObjectType::SO_LAMP)
+                        oi->isOnFire = true;
                     std::pair<int, int> coords = {is[j]["coordinates"][0], is[j]["coordinates"][1]};
                     SC->addObjectToMap(coords, oi);
                     std::cout << k << "." << j << "\t" << is[j]["id"] << ", " << is[j]["model"] << "("

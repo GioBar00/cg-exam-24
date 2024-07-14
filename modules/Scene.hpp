@@ -8,23 +8,40 @@ struct ObjectUniform {
     alignas(16) glm::mat4   nMat;
 };
 
+struct SourceUniform {
+    alignas(16) glm::mat4   mvpMat;
+    alignas(16) glm::vec4   lightCol;
+};
+
 struct LightUniform {
-    // FIX: Array of uint32_t, instead of glm::vec3, with switch statement inside fragment shader.
+    // FIXME: Array of uint32_t, instead of glm::vec3, with switch statement inside fragment shader.
     alignas(16) glm::vec3   TYPE[MAX_LIGHTS]; // i := DIRECT, j := POINT, k = SPOT.
     alignas(16) glm::vec3   lightPos[MAX_LIGHTS];
     alignas(16) glm::vec3   lightDir[MAX_LIGHTS];
     alignas(16) glm::vec4   lightCol[MAX_LIGHTS];
+    // FIXME: Array of uint32_t, instead of glm::vec3.
+    alignas(16) glm::vec3   lightPow[MAX_LIGHTS];
     alignas(4)  float       cosIn;
     alignas(4)  float       cosOut;
     alignas(4)  uint32_t    NUMBER;
     alignas(16) glm::vec3   eyeDir;
 };
 
+struct ArgsUniform {
+    alignas(4)  bool    diffuse;
+    alignas(4)  bool    specular;
+};
+
 
 /* Vertex formats. */
-struct ToonVertex {
+struct ObjectVertex {
     glm::vec3   pos;
     glm::vec3   norm;
+    glm::vec2   UV;
+};
+
+struct SourceVertex {
+    glm::vec3   pos;
     glm::vec2   UV;
 };
 
@@ -78,6 +95,7 @@ struct ObjectInstance {
 
     std::string lType;
     glm::vec4 lColor;
+    float lPower;
     glm::vec3 lPosition;
 };
 
@@ -313,6 +331,7 @@ public:
                     if (oi->type == SceneObjectType::SO_LIGHT) {
                         oi->lType = is[j]["type"];
                         oi->lColor = glm::vec4(is[j]["color"][0], is[j]["color"][1], is[j]["color"][2], 1.0f);
+                        oi->lPower = is[j]["power"];
                         oi->lPosition = glm::vec3(is[j]["where"][0], is[j]["where"][1], is[j]["where"][2]);
                     }
                     std::pair<int, int> coords = {is[j]["coordinates"][0], is[j]["coordinates"][1]};
@@ -418,19 +437,29 @@ class LevelSceneController : public SceneController {
 
     static void updateObjectBuffer(uint32_t currentImage, Instance *I, glm::mat4 ViewPrj, glm::mat4 baseTr,
                                    const std::vector<void *> &gubos) {
-        ObjectUniform ubo{};
+        ObjectUniform oubo{};
 
-        ubo.mMat = baseTr * I->Wm;
-        ubo.nMat = glm::inverse(glm::transpose(ubo.mMat));
-        ubo.mvpMat = ViewPrj * ubo.mMat;
+        oubo.mMat = baseTr * I->Wm;
+        oubo.nMat = glm::inverse(glm::transpose(oubo.mMat));
+        oubo.mvpMat = ViewPrj * oubo.mMat;
 
-        I->DS[1]->map(currentImage, &ubo, 0);
+        ArgsUniform aubo{};
+
+        aubo.diffuse = true;
+        aubo.specular = false;
+
+        I->DS[1]->map(currentImage, &oubo, 0);
+        I->DS[1]->map(currentImage, &aubo, 2);
         I->DS[0]->map(currentImage, gubos[0], 0);
     }
 
-    static auto interpolate(auto start, auto target, float timeI) {
-        timeI = (3.0f * timeI * timeI) - (2.0f * timeI * timeI * timeI);
-        return glm::mix(start, target, timeI);
+    static void updateSourceBuffer(uint32_t currentImage, Instance* I, ObjectInstance* obj, glm::mat4 ViewPrj, glm::mat4 baseTr) {
+        SourceUniform ubo{};
+
+        ubo.mvpMat = ViewPrj * (baseTr * I->Wm);
+        ubo.lightCol = obj->lColor + 0.1f * glm::vec4(1, 1, 0, 1);
+
+        I->DS[0]->map(currentImage, &ubo, 0);
     }
 
     static void updateLightBuffer(uint32_t currentImage, Instance* I, ObjectInstance* obj, glm::mat4 View, LightUniform* gubo, int idx) {
@@ -442,7 +471,13 @@ class LevelSceneController : public SceneController {
             gubo->TYPE[idx] = glm::vec3(0, 0, 1);
         gubo->lightPos[idx] = obj->lPosition;
         gubo->lightCol[idx] = obj->lColor;
+        gubo->lightPow[idx] = glm::vec3(obj->lPower);
         gubo->NUMBER = idx + 1;
+    }
+
+    static auto interpolate(auto start, auto target, float timeI) {
+        timeI = (3.0f * timeI * timeI) - (2.0f * timeI * timeI * timeI);
+        return glm::mix(start, target, timeI);
     }
 
 public:
@@ -658,7 +693,6 @@ public:
         glm::mat4 playerPosTr = glm::translate(glm::mat4(1.0f), currPlayerPos);
         ViewPrj = ViewPrj * glm::inverse(playerPosTr);
 
-        // TODO: global uniform buffers first
         LightUniform lubo{};
         lubo.eyeDir = glm::vec3(glm::inverse(View) * glm::vec4(0, 0, 1, 1));
         std::cout << "EyePos: " << lubo.eyeDir.x << ", " << lubo.eyeDir.y << ", " << lubo.eyeDir.z << "\n";
@@ -685,13 +719,20 @@ public:
                 glm::mat4 baseTr = glm::mat4(1.0f);
                 switch (obj->type) {
                     case SceneObjectType::SO_PLAYER:
-                        baseTr = playerPosTr * glm::rotate(glm::mat4(1.0f), glm::radians(currPlayerRot), glm::vec3(0, 1, 0));;
+                        baseTr = playerPosTr * glm::rotate(glm::mat4(1.0f), glm::radians(currPlayerRot), glm::vec3(0, 1, 0));
+                        updateObjectBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj, baseTr, {&lubo});
+                        break;
                     case SceneObjectType::SO_GROUND:
+                        updateObjectBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj, baseTr, {&lubo});
+                        break;
                     case SceneObjectType::SO_WALL:
+                        updateObjectBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj, baseTr, {&lubo});
+                        break;
                     case SceneObjectType::SO_LIGHT:
-                        // updateUniformBuffersEmission
+                        updateSourceBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], obj, ViewPrj, baseTr);
+                        break;
                     case SceneObjectType::SO_OTHER:
-                        updateObjectBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj, baseTr, {&lubo}); // TODO: add global uniform buffers
+                        updateObjectBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj, baseTr, {&lubo});
                         break;
                 }
             }

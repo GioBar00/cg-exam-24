@@ -100,6 +100,7 @@ struct ObjectInstance {
 
     std::string lType;
     glm::vec4 lColor;
+    glm::vec3 lDirection;
     float lPower;
     glm::vec3 lPosition;
 };
@@ -423,7 +424,8 @@ public:
         light1->type = SceneObjectType::SO_LIGHT;
         light1->lType = "SPOT";
         light1->lColor = glm::vec4(1, 1, 1, 1);
-        light1->lPower = 1.0f;
+        light1->lDirection = glm::vec3(0, -1, 0);
+        light1->lPower = 10.0f;
         light1->lPosition = glm::vec3(0, 3, 0);
         SC->addObjectToMap({0, 0}, light1);
 
@@ -507,6 +509,7 @@ class LevelSceneController : public SceneController {
         else if (obj->lType == "SPOT")
             gubo->TYPE[idx] = glm::vec3(0, 0, 1);
         gubo->lightPos[idx] = lPosition;
+        gubo->lightDir[idx] = glm::vec3(obj->lDirection);
         gubo->lightCol[idx] = obj->lColor;
         gubo->lightPow[idx] = glm::vec3(obj->lPower);
         gubo->NUMBER = idx + 1;
@@ -786,6 +789,8 @@ public:
                 idx++;
             }
         }
+        lubo.cosIn = glm::cos(glm::radians(30.0f));
+        lubo.cosOut = glm::cos(glm::radians(45.0f));
 
         for (auto &pair: myMap) {
             for (auto &obj: pair.second) {

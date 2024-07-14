@@ -102,7 +102,6 @@ protected:
     }
 
     void localCleanup() override {
-        // TODO: Cleanup all Descriptor set layouts and Pipelines
         for (const auto &sceneId: sceneIds) {
             if (scenes[sceneId] != nullptr) {
                 scenes[sceneId]->localCleanup();

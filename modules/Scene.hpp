@@ -477,13 +477,19 @@ public:
         glm::vec2 input = glm::normalize(glm::vec2(rotatedM.x, rotatedM.z));
         float newPlayerRot = -1;
         if (input.y > 0.5f) {
-            newPlayerRot = 180;
+            newPlayerRot = glm::pi<float>();
         } else if (input.y < -0.5f) {
-            newPlayerRot = 0;
+            if (playerRot == 3 * glm::pi<float>() / 2)
+                newPlayerRot = 2 * glm::pi<float>();
+            else
+                newPlayerRot = 0.f;
         } else if (input.x > 0.5f) {
-            newPlayerRot = 270;
+            if (playerRot == 0.0f)
+                newPlayerRot = -glm::pi<float>() / 2;
+            else
+                newPlayerRot = 3 * glm::pi<float>() / 2;
         } else if (input.x < -0.5f) {
-            newPlayerRot = 90;
+            newPlayerRot = glm::pi<float>() / 2;
         }
 
         if (newPlayerRot != playerRot) {
@@ -510,11 +516,11 @@ public:
         int z = playerCoords.second;
         if (playerRot == 0) {
             z++;
-        } else if (playerRot == 90) {
+        } else if (playerRot == glm::pi<float>() / 2) {
             x--;
-        } else if (playerRot == 180) {
+        } else if (playerRot == glm::pi<float>()) {
             z--;
-        } else if (playerRot == 270) {
+        } else if (playerRot == 3 * glm::pi<float>() / 2) {
             x++;
         }
         return {x, z};
@@ -631,6 +637,8 @@ public:
             } else if (isPlayerRotating) {
                 if (elapsed > playerRotDuration) {
                     // player stopped rotating
+                    // mod playerRot to 0-2pi
+                    playerRot = glm::mod(playerRot, 2 * glm::pi<float>());
                     currPlayerRot = playerRot_old = playerRot;
                     isPlayerRotating = false;
                     std::cout << "Player ENDED rotating to " << playerRot << "\n";
@@ -704,7 +712,7 @@ public:
                         heightAnimDelta = glm::mod(heightAnimDelta, 2 * glm::pi<float>());
                         baseTr = playerPosTr *
                                 glm::translate(glm::mat4(1.0f), glm::vec3(0, 0.15f * glm::sin(heightAnimDelta), 0)) *
-                                glm::rotate(glm::mat4(1.0f), glm::radians(currPlayerRot), glm::vec3(0, 1, 0));
+                                glm::rotate(glm::mat4(1.0f), currPlayerRot, glm::vec3(0, 1, 0));
                         updateObjectBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj, baseTr, {&lubo}); // TODO: add global uniform buffers
                         break;
                     case SceneObjectType::SO_GROUND:

@@ -1,58 +1,101 @@
 {
     "models": [
         {
-            "format": "MGCG",
             "id": "player",
             "model": "models/dungeon/cast_Mesh.6268.mgcg",
-            "VD": "ObjectVD"
+            "format": "MGCG",
+            "VD": "object",
+            "P": "toon"
         },
         {
-            "format": "MGCG",
             "id": "ground",
             "model": "models/dungeon/tunnel.003_Mesh.4991.mgcg",
-            "VD": "ObjectVD"
+            "format": "MGCG",
+            "VD": "object",
+            "P": "phong"
         },
         {
-            "format": "MGCG",
             "id": "wall-line",
             "model": "models/dungeon/tunnel_Mesh.4672.mgcg",
-            "VD": "ObjectVD"
+            "format": "MGCG",
+            "VD": "object",
+            "P": "phong"
         },
         {
-            "format": "MGCG",
             "id": "wall-angle",
             "model": "models/dungeon/tunnel.028_Mesh.7989.mgcg",
-            "VD": "ObjectVD"
+            "format": "MGCG",
+            "VD": "object",
+            "P": "phong"
         },
         {
-            "format": "MGCG",
             "id": "light-i",
             "model": "models/dungeon/light.002_Mesh.6811.mgcg",
-            "VD": "ObjectVD"
+            "format": "MGCG",
+            "VD": "source",
+            "P": "emission"
         },
         {
-            "format": "MGCG",
             "id": "light-ni-a",
             "model": "models/dungeon/light.009_Mesh.6851.mgcg",
-            "VD": "ObjectVD"
+            "format": "MGCG",
+            "VD": "source",
+            "P": "emission"
         },
         {
-            "format": "MGCG",
             "id": "light-ni-b",
             "model": "models/dungeon/light.013_Mesh.7136.mgcg",
-            "VD": "ObjectVD"
+            "format": "MGCG",
+            "VD": "source",
+            "P": "emission"
         }
     ],
     "textures": [
         {
-            "format": "C",
             "id": "tex",
-            "texture": "textures/dungeon/Textures_Dungeon.png"
+            "texture": "textures/dungeon/Textures_Dungeon.png",
+            "format": "C"
         }
     ],
     "instances": [
         {
             "pipeline": "toon",
+            "elements": [
+                {
+                    "transform": [
+                        -1.0,
+                        0.0,
+                        -8.742277657347586e-08,
+                        0.0,
+                        0.0,
+                        1.0,
+                        0.0,
+                        1.0,
+                        8.742277657347586e-08,
+                        0.0,
+                        -1.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        0,
+                        0
+                    ],
+                    "orientation": 0,
+                    "model": "player",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "player-p0p0",
+                    "label": "SPAWN"
+                }
+            ]
+        },
+        {
+            "pipeline": "phong",
             "elements": [
                 {
                     "transform": [
@@ -1420,48 +1463,6 @@
                 },
                 {
                     "transform": [
-                        -4.371138828673793e-08,
-                        0.0,
-                        1.0,
-                        -12.932300567626953,
-                        0.0,
-                        0.9999999403953552,
-                        0.0,
-                        1.5499999523162842,
-                        -1.0,
-                        0.0,
-                        -4.371138828673793e-08,
-                        -10.33229923248291,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -6,
-                        5
-                    ],
-                    "orientation": 90.0,
-                    "model": "light-i",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "light-i-n6p5",
-                    "label": "LIGHT",
-                    "type": "POINT",
-                    "color": [
-                        1.0,
-                        0.5,
-                        0.0
-                    ],
-                    "where": [
-                        -12.932300567626953,
-                        1.5499999523162842,
-                        -10.33229923248291
-                    ]
-                },
-                {
-                    "transform": [
                         0.5,
                         0.0,
                         0.0,
@@ -1831,48 +1832,6 @@
                     ],
                     "id": "wall-line-p6p5",
                     "label": "WALL"
-                },
-                {
-                    "transform": [
-                        1.1924880638503055e-08,
-                        0.0,
-                        -1.0,
-                        12.932300567626953,
-                        0.0,
-                        1.0,
-                        0.0,
-                        1.5499999523162842,
-                        1.0,
-                        0.0,
-                        1.1924880638503055e-08,
-                        -10.33229923248291,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        6,
-                        5
-                    ],
-                    "orientation": 270.0,
-                    "model": "light-i",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "light-i-p6p5",
-                    "label": "LIGHT",
-                    "type": "POINT",
-                    "color": [
-                        1.0,
-                        0.5,
-                        0.0
-                    ],
-                    "where": [
-                        12.932300567626953,
-                        1.5499999523162842,
-                        -10.33229923248291
-                    ]
                 },
                 {
                     "transform": [
@@ -3395,37 +3354,6 @@
                 },
                 {
                     "transform": [
-                        -1.0,
-                        0.0,
-                        -8.742277657347586e-08,
-                        0.0,
-                        0.0,
-                        1.0,
-                        0.0,
-                        1.0,
-                        8.742277657347586e-08,
-                        0.0,
-                        -1.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        0,
-                        0
-                    ],
-                    "orientation": 0,
-                    "model": "player",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "player-p0p0",
-                    "label": "SPAWN"
-                },
-                {
-                    "transform": [
                         0.5,
                         0.0,
                         0.0,
@@ -4604,48 +4532,6 @@
                 },
                 {
                     "transform": [
-                        1.1924880638503055e-08,
-                        0.0,
-                        -1.0,
-                        -3.874380111694336,
-                        0.0,
-                        1.0,
-                        0.0,
-                        1.5499999523162842,
-                        1.0,
-                        0.0,
-                        1.1924880638503055e-08,
-                        -20.66459846496582,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        -2,
-                        10
-                    ],
-                    "orientation": 270.0,
-                    "model": "light-ni-a",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "light-ni-a-n2p10",
-                    "label": "LIGHT",
-                    "type": "POINT",
-                    "color": [
-                        0.0,
-                        0.5,
-                        1.0
-                    ],
-                    "where": [
-                        -3.874380111694336,
-                        1.5499999523162842,
-                        -20.66459846496582
-                    ]
-                },
-                {
-                    "transform": [
                         -2.1855694143368964e-08,
                         0.0,
                         1.0,
@@ -4674,48 +4560,6 @@
                     ],
                     "id": "wall-line-p2p10",
                     "label": "WALL"
-                },
-                {
-                    "transform": [
-                        -4.371138828673793e-08,
-                        0.0,
-                        1.0,
-                        3.999380111694336,
-                        0.0,
-                        0.9999999403953552,
-                        0.0,
-                        1.5499999523162842,
-                        -1.0,
-                        0.0,
-                        -4.371138828673793e-08,
-                        -20.66459846496582,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "coordinates": [
-                        2,
-                        10
-                    ],
-                    "orientation": 90.0,
-                    "model": "light-ni-b",
-                    "texture": [
-                        "tex"
-                    ],
-                    "id": "light-ni-b-p2p10",
-                    "label": "LIGHT",
-                    "type": "POINT",
-                    "color": [
-                        0.0,
-                        1.0,
-                        0.0
-                    ],
-                    "where": [
-                        3.999380111694336,
-                        1.5499999523162842,
-                        -20.66459846496582
-                    ]
                 },
                 {
                     "transform": [
@@ -5336,6 +5180,179 @@
                     ],
                     "id": "wall-line-p7p9",
                     "label": "WALL"
+                }
+            ]
+        },
+        {
+            "pipeline": "emission",
+            "elements": [
+                {
+                    "transform": [
+                        -4.371138828673793e-08,
+                        0.0,
+                        1.0,
+                        -12.932300567626953,
+                        0.0,
+                        0.9999999403953552,
+                        0.0,
+                        1.5499999523162842,
+                        -1.0,
+                        0.0,
+                        -4.371138828673793e-08,
+                        -10.33229923248291,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        -6,
+                        5
+                    ],
+                    "orientation": 90.0,
+                    "model": "light-i",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "light-i-n6p5",
+                    "label": "LIGHT",
+                    "type": "POINT",
+                    "color": [
+                        1.0,
+                        0.5,
+                        0.0
+                    ],
+                    "where": [
+                        -12.932300567626953,
+                        1.5499999523162842,
+                        -10.33229923248291
+                    ]
+                },
+                {
+                    "transform": [
+                        1.1924880638503055e-08,
+                        0.0,
+                        -1.0,
+                        12.932300567626953,
+                        0.0,
+                        1.0,
+                        0.0,
+                        1.5499999523162842,
+                        1.0,
+                        0.0,
+                        1.1924880638503055e-08,
+                        -10.33229923248291,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        6,
+                        5
+                    ],
+                    "orientation": 270.0,
+                    "model": "light-i",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "light-i-p6p5",
+                    "label": "LIGHT",
+                    "type": "POINT",
+                    "color": [
+                        1.0,
+                        0.5,
+                        0.0
+                    ],
+                    "where": [
+                        12.932300567626953,
+                        1.5499999523162842,
+                        -10.33229923248291
+                    ]
+                },
+                {
+                    "transform": [
+                        1.1924880638503055e-08,
+                        0.0,
+                        -1.0,
+                        -3.874380111694336,
+                        0.0,
+                        1.0,
+                        0.0,
+                        1.5499999523162842,
+                        1.0,
+                        0.0,
+                        1.1924880638503055e-08,
+                        -20.66459846496582,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        -2,
+                        10
+                    ],
+                    "orientation": 270.0,
+                    "model": "light-ni-a",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "light-ni-a-n2p10",
+                    "label": "LIGHT",
+                    "type": "POINT",
+                    "color": [
+                        0.0,
+                        0.5,
+                        1.0
+                    ],
+                    "where": [
+                        -3.874380111694336,
+                        1.5499999523162842,
+                        -20.66459846496582
+                    ]
+                },
+                {
+                    "transform": [
+                        -4.371138828673793e-08,
+                        0.0,
+                        1.0,
+                        3.999380111694336,
+                        0.0,
+                        0.9999999403953552,
+                        0.0,
+                        1.5499999523162842,
+                        -1.0,
+                        0.0,
+                        -4.371138828673793e-08,
+                        -20.66459846496582,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "coordinates": [
+                        2,
+                        10
+                    ],
+                    "orientation": 90.0,
+                    "model": "light-ni-b",
+                    "texture": [
+                        "tex"
+                    ],
+                    "id": "light-ni-b-p2p10",
+                    "label": "LIGHT",
+                    "type": "POINT",
+                    "color": [
+                        0.0,
+                        1.0,
+                        0.0
+                    ],
+                    "where": [
+                        3.999380111694336,
+                        1.5499999523162842,
+                        -20.66459846496582
+                    ]
                 }
             ]
         }

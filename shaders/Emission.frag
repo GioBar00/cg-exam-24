@@ -6,4 +6,4 @@ layout(location = 0) out vec4 outColor;
 layout(set = 0, binding = 1) uniform sampler2D tex;
 
 void main() {
-	vec3 Albedo = texture(tex, fragUV).rgb;	outColor = vec4(Albedo, 1.0f);}
+	vec3 Albedo = texture(tex, fragUV).rgb;	outColor = vec4(0.25 * Albedo, 1.0f);}

@@ -437,9 +437,12 @@ class LevelSceneController : public SceneController {
         I->DS[0]->map(currentImage, gubos[0], 0);
     }
 
-    static auto interpolate(auto start, auto target, float timeI) {
-        timeI = (3.0f * timeI * timeI) - (2.0f * timeI * timeI * timeI);
-        return glm::mix(start, target, timeI);
+    static void updateSourceBuffer(uint32_t currentImage, Instance* I, glm::mat4 ViewPrj, glm::mat4 baseTr) {
+        SourceUniform ubo{};
+
+        ubo.mvpMat = ViewPrj * (baseTr * I->Wm);
+
+        I->DS[0]->map(currentImage, &ubo, 0);
     }
 
     static void updateLightBuffer(uint32_t currentImage, Instance* I, ObjectInstance* obj, glm::mat4 View, LightUniform* gubo, int idx) {
@@ -452,6 +455,11 @@ class LevelSceneController : public SceneController {
         gubo->lightPos[idx] = obj->lPosition;
         gubo->lightCol[idx] = obj->lColor;
         gubo->NUMBER = idx + 1;
+    }
+
+    static auto interpolate(auto start, auto target, float timeI) {
+        timeI = (3.0f * timeI * timeI) - (2.0f * timeI * timeI * timeI);
+        return glm::mix(start, target, timeI);
     }
 
 public:
@@ -694,13 +702,20 @@ public:
                 glm::mat4 baseTr = glm::mat4(1.0f);
                 switch (obj->type) {
                     case SceneObjectType::SO_PLAYER:
-                        baseTr = playerPosTr * glm::rotate(glm::mat4(1.0f), glm::radians(currPlayerRot), glm::vec3(0, 1, 0));;
+                        baseTr = playerPosTr * glm::rotate(glm::mat4(1.0f), glm::radians(currPlayerRot), glm::vec3(0, 1, 0));
+                        updateObjectBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj, baseTr, {&lubo});
+                        break;
                     case SceneObjectType::SO_GROUND:
+                        updateObjectBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj, baseTr, {&lubo});
+                        break;
                     case SceneObjectType::SO_WALL:
+                        updateObjectBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj, baseTr, {&lubo});
+                        break;
                     case SceneObjectType::SO_LIGHT:
-                        // updateUniformBuffersEmission
+                        updateSourceBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj, baseTr);
+                        break;
                     case SceneObjectType::SO_OTHER:
-                        updateObjectBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj, baseTr, {&lubo}); // TODO: add global uniform buffers
+                        updateObjectBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj, baseTr, {&lubo});
                         break;
                 }
             }

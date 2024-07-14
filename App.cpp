@@ -84,8 +84,8 @@ protected:
 
         // Define vertex descriptor references per scene.
         VertexDescriptorRef ObjectVDR{}, SourceVDR{};
-        ObjectVDR.init("ObjectVD", &ObjectVD);
-        SourceVDR.init("SourceVD", &SourceVD);
+        ObjectVDR.init("object", &ObjectVD);
+        SourceVDR.init("source", &SourceVD);
         std::vector<VertexDescriptorRef> SL1VDRs = { ObjectVDR, SourceVDR };
 
         // Define pipeline references per scene.
@@ -115,6 +115,9 @@ protected:
     }
 
     void pipelinesAndDescriptorSetsCleanup() override {
+        ToonP.cleanup();
+        PhongP.cleanup();
+        SourceP.cleanup();
         scenes[currSceneId]->pipelinesAndDescriptorSetsCleanup();
     }
 
@@ -126,6 +129,7 @@ protected:
                 free(scenes[sceneId]);
             }
         }
+
         ObjectDSL.cleanup();
         SourceDSL.cleanup();
         LightDSL.cleanup();

@@ -184,8 +184,22 @@ void applyConfig(vector<vector<string>> LEVEL, vector<vector<string>> LIGHT, uin
     std::ifstream fin(reset ? TEMPLATE_PATH : RETURN_PATH);
     ordered_json out = ordered_json::parse(fin);
     fin.close();
-    for (auto x : objs)
-        out["instances"][0]["elements"].push_back(x);
+    for (auto x : objs) {
+        for (auto y : out["models"].get<vector<ordered_json>>()) {
+            if (x["model"].get<string>() == y["id"].get<string>()) {
+                vector<ordered_json> tmp = out["instances"].get<vector<ordered_json>>();
+                ordered_json z;
+                for (uint32_t it = 0; it < tmp.size(); it++) {
+                    z = tmp[it];
+                    if (y["P"].get<string>() == z["pipeline"].get<string>()) {
+                        out["instances"][it]["elements"].push_back(x);
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+    }
     std::ofstream fout(RETURN_PATH, std::ofstream::trunc);
     fout << out.dump(4) << endl;
     fout.close();

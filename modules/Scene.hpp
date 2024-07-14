@@ -336,18 +336,16 @@ public:
                     auto *oi = new ObjectInstance();
                     oi->I_id = is[j]["id"];
                     oi->type = static_cast<SceneObjectType>(str2enum[is[j]["label"]]);
-                    // FIXME: Load SO_LIGHT
-                    if (oi->type == SceneObjectType::SO_TORCH || oi->type == SceneObjectType::SO_LAMP) {
+                    // TODO: Load SO_LIGHT maybe (?)
+                    if (oi->type == SceneObjectType::SO_TORCH || oi->type == SceneObjectType::SO_LAMP || oi->type == SceneObjectType::SO_BONFIRE) {
                         oi->lType = is[j]["type"];
                         oi->lColor = glm::vec4(is[j]["color"][0], is[j]["color"][1], is[j]["color"][2], 1.0f);
                         oi->lPower = is[j]["power"];
                         oi->lPosition = glm::vec3(is[j]["where"][0], is[j]["where"][1], is[j]["where"][2]);
                     }
-                    if (oi->type == SceneObjectType::SO_TORCH) {
-                        // TODO: FIX read from json
+                    if (oi->type == SceneObjectType::SO_TORCH)
                         oi->isOnFire = false;
-                    }
-                    if (oi->type == SceneObjectType::SO_LAMP)
+                    if (oi->type == SceneObjectType::SO_LAMP || oi->type == SceneObjectType::SO_BONFIRE)
                         oi->isOnFire = true;
                     std::pair<int, int> coords = {is[j]["coordinates"][0], is[j]["coordinates"][1]};
                     SC->addObjectToMap(coords, oi);
@@ -418,6 +416,17 @@ public:
             std::cout << std::flush;
             return 1;
         }
+
+        // Add static lights in scene
+        auto light1 = new ObjectInstance();
+        light1->type = SceneObjectType::SO_LIGHT;
+        light1->lType = "SPOT";
+        light1->lColor = glm::vec4(1, 1, 1, 1);
+        light1->lPower = 1.0f;
+        light1->lPosition = glm::vec3(0, 3, 0);
+        SC->addObjectToMap({0, 0}, light1);
+
+
         std::cout << "Leaving scene loading and creation\n";
         return 0;
     }
@@ -655,7 +664,7 @@ public:
             } else {
                 bool canMove = true;
                 for (ObjectInstance *obj: myMap[getAdjacentCell(playerCoords, playerRot)]) {
-                    if (obj->type == SceneObjectType::SO_WALL) {
+                    if (obj->type == SceneObjectType::SO_WALL || obj->type == SceneObjectType::SO_BONFIRE) {
                         canMove = false;
                         std::cout << "Player CANNOT move to " << playerCoords.first << ", " << playerCoords.second
                                   << "\n";
@@ -713,15 +722,20 @@ public:
                 std::cout << "Fire\n";
                 for (ObjectInstance *obj: myMap[getAdjacentCell(playerCoords, playerRot)]) {
                     if (obj->type == SceneObjectType::SO_TORCH) {
-                        if (!bringingTorch && obj->isOnFire) {
+                        if (!bringingTorch) {
                             bringingTorch = true;
                             std::cout << "Bringing torch\n";
                             torchWithPlayer = obj;
-                        } else if (!obj->isOnFire) {
+                        } else if (torchWithPlayer->isOnFire && !obj->isOnFire) {
                             obj->isOnFire = true;
-                            std::cout << "Lighting torch\n";
+                            std::cout << "Lighting torch on wall\n";
                         }
                         break;
+                    } else if (obj->type == SceneObjectType::SO_BONFIRE) {
+                        if (bringingTorch && !torchWithPlayer->isOnFire) {
+                            torchWithPlayer->isOnFire = true;
+                            std::cout << "Lighting torch from bonfire\n";
+                        }
                     }
                 }
             }
@@ -754,9 +768,11 @@ public:
         for (auto &pair: myMap) {
             for (auto &obj: pair.second) {
                 if (obj->type != SceneObjectType::SO_LIGHT &&
-                    !(obj->type == SceneObjectType::SO_TORCH && obj->isOnFire) && obj->type != SceneObjectType::SO_LAMP)
+                    !(obj->type == SceneObjectType::SO_TORCH && obj->isOnFire) &&
+                    obj->type != SceneObjectType::SO_LAMP && obj->type != SceneObjectType::SO_BONFIRE)
                     continue;
-                if (obj->type == SceneObjectType::SO_TORCH || obj->type == SceneObjectType::SO_LAMP) {
+                if (obj->type == SceneObjectType::SO_TORCH || obj->type == SceneObjectType::SO_LAMP ||
+                    obj->type == SceneObjectType::SO_BONFIRE) {
                     if (glm::distance(currPlayerPos, obj->lPosition) > lightRenderDistance)
                         continue;
                 }
@@ -769,13 +785,6 @@ public:
                 idx++;
             }
         }
-//        lubo.TYPE[idx] = glm::vec3(0, 0, 1);
-//        lubo.lightPos[idx] = glm::vec3(0, 3, 0);
-//        lubo.lightCol[idx] = glm::vec4(1, 1, 1, 1);
-//        lubo.lightDir[idx] = glm::vec3(0, -1, 0);
-//        lubo.cosIn = glm::cos(glm::radians(60.0f));
-//        lubo.cosOut = glm::cos(glm::radians(120.0f));
-//        lubo.NUMBER++;
 
         for (auto &pair: myMap) {
             for (auto &obj: pair.second) {
@@ -792,6 +801,7 @@ public:
                                  glm::rotate(glm::mat4(1.0f), currPlayerRot, glm::vec3(0, 1, 0));
                     case SceneObjectType::SO_GROUND:
                     case SceneObjectType::SO_WALL:
+                    case SceneObjectType::SO_BONFIRE:
                     case SceneObjectType::SO_OTHER:
                         updateObjectBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj, baseTr,
                                            {&lubo});

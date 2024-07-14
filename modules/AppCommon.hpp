@@ -33,6 +33,8 @@ enum class SceneObjectType {
     SO_GROUND,
     SO_WALL,
     SO_LIGHT,
+    SO_TORCH,
+    SO_LAMP,
     SO_OTHER,
     // TODO: Add more scene objects depending on requirements (different shaders or interactions)
 };

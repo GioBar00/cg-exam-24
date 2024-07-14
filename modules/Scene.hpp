@@ -249,6 +249,7 @@ public:
             {"LIGHT",  SceneObjectType::SO_LIGHT},
             {"TORCH",  SceneObjectType::SO_TORCH},
             {"LAMP",   SceneObjectType::SO_LAMP},
+            {"BONFIRE",SceneObjectType::SO_BONFIRE},
             {"OTHER",  SceneObjectType::SO_OTHER}
     };
 
@@ -801,7 +802,6 @@ public:
                                  glm::rotate(glm::mat4(1.0f), currPlayerRot, glm::vec3(0, 1, 0));
                     case SceneObjectType::SO_GROUND:
                     case SceneObjectType::SO_WALL:
-                    case SceneObjectType::SO_BONFIRE:
                     case SceneObjectType::SO_OTHER:
                         updateObjectBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj, baseTr,
                                            {&lubo});
@@ -810,6 +810,7 @@ public:
                         if (obj == torchWithPlayer) {
                             baseTr = torchPlTr;
                         }
+                    case SceneObjectType::SO_BONFIRE:
                     case SceneObjectType::SO_LAMP:
                         updateSourceBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], obj, ViewPrj, baseTr);
                         break;

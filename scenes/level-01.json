@@ -5215,7 +5215,7 @@
                         "tex"
                     ],
                     "id": "light-i-n6p5",
-                    "label": "LIGHT",
+                    "label": "TORCH",
                     "type": "POINT",
                     "color": [
                         1.0,
@@ -5258,7 +5258,7 @@
                         "tex"
                     ],
                     "id": "light-i-p6p5",
-                    "label": "LIGHT",
+                    "label": "TORCH",
                     "type": "POINT",
                     "color": [
                         1.0,
@@ -5301,7 +5301,7 @@
                         "tex"
                     ],
                     "id": "light-ni-a-n2p10",
-                    "label": "LIGHT",
+                    "label": "LAMP",
                     "type": "POINT",
                     "color": [
                         0.0,
@@ -5344,7 +5344,7 @@
                         "tex"
                     ],
                     "id": "light-ni-b-p2p10",
-                    "label": "LIGHT",
+                    "label": "LAMP",
                     "type": "POINT",
                     "color": [
                         0.0,

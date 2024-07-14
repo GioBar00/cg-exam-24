@@ -56,7 +56,8 @@ protected:
         });
         SourceDSL.init(this, {
             {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,          VK_SHADER_STAGE_ALL_GRAPHICS,   sizeof(SourceUniform),  1},
-            {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,  VK_SHADER_STAGE_FRAGMENT_BIT,   0,                      1}
+            {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,  VK_SHADER_STAGE_FRAGMENT_BIT,   0,                      1},
+            {2, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,          VK_SHADER_STAGE_FRAGMENT_BIT,   sizeof(BooleanUniform), 1}
         });
         LightDSL.init(this, {
             {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,          VK_SHADER_STAGE_FRAGMENT_BIT,   sizeof(LightUniform),   1}
@@ -123,7 +124,6 @@ protected:
     }
 
     void localCleanup() override {
-        // TODO: Cleanup all Descriptor set layouts and Pipelines
         for (const auto &sceneId: sceneIds) {
             if (scenes[sceneId] != nullptr) {
                 scenes[sceneId]->localCleanup();

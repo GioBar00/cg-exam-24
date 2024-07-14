@@ -32,6 +32,10 @@ struct ArgsUniform {
     alignas(4) bool specular;
 };
 
+struct BooleanUniform {
+    alignas(4) bool isOn;
+};
+
 
 /* Vertex formats. */
 struct ObjectVertex {
@@ -341,7 +345,7 @@ public:
                     }
                     if (oi->type == SceneObjectType::SO_TORCH) {
                         // TODO: FIX read from json
-                        oi->isOnFire = true;
+                        oi->isOnFire = false;
                     }
                     if (oi->type == SceneObjectType::SO_LAMP)
                         oi->isOnFire = true;
@@ -476,7 +480,12 @@ class LevelSceneController : public SceneController {
         ubo.mvpMat = ViewPrj * (baseTr * I->Wm);
         ubo.lightCol = obj->lColor + 0.1f * glm::vec4(1, 1, 0, 1);
 
+        BooleanUniform pubo{};
+
+        pubo.isOn = obj->isOnFire;
+
         I->DS[0]->map(currentImage, &ubo, 0);
+        I->DS[0]->map(currentImage, &pubo, 2);
     }
 
     static void updateLightBuffer(uint32_t currentImage, ObjectInstance *obj,
@@ -771,9 +780,9 @@ public:
         for (auto &pair: myMap) {
             for (auto &obj: pair.second) {
                 glm::mat4 baseTr = glm::mat4(1.0f);
+                static float heightAnimDelta = 0.f;
                 switch (obj->type) {
                     case SceneObjectType::SO_PLAYER:
-                        static float heightAnimDelta = 0.f;
                         // make player float up and down
                         heightAnimDelta = heightAnimDelta + playerFloatSpeed * deltaT;
                         // limit modulo to 2pi

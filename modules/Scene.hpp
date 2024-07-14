@@ -10,6 +10,7 @@ struct ObjectUniform {
 
 struct SourceUniform {
     alignas(16) glm::mat4   mvpMat;
+    alignas(16) glm::vec4   lightCol;
 };
 
 struct LightUniform {
@@ -437,10 +438,11 @@ class LevelSceneController : public SceneController {
         I->DS[0]->map(currentImage, gubos[0], 0);
     }
 
-    static void updateSourceBuffer(uint32_t currentImage, Instance* I, glm::mat4 ViewPrj, glm::mat4 baseTr) {
+    static void updateSourceBuffer(uint32_t currentImage, Instance* I, ObjectInstance* obj, glm::mat4 ViewPrj, glm::mat4 baseTr) {
         SourceUniform ubo{};
 
         ubo.mvpMat = ViewPrj * (baseTr * I->Wm);
+        ubo.lightCol = obj->lColor + 0.1f * glm::vec4(1, 1, 0, 1);
 
         I->DS[0]->map(currentImage, &ubo, 0);
     }
@@ -675,7 +677,6 @@ public:
         glm::mat4 playerPosTr = glm::translate(glm::mat4(1.0f), currPlayerPos);
         ViewPrj = ViewPrj * glm::inverse(playerPosTr);
 
-        // TODO: global uniform buffers first
         LightUniform lubo{};
         lubo.eyeDir = glm::vec3(glm::inverse(View) * glm::vec4(0, 0, 1, 1));
         std::cout << "EyePos: " << lubo.eyeDir.x << ", " << lubo.eyeDir.y << ", " << lubo.eyeDir.z << "\n";
@@ -712,7 +713,7 @@ public:
                         updateObjectBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj, baseTr, {&lubo});
                         break;
                     case SceneObjectType::SO_LIGHT:
-                        updateSourceBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj, baseTr);
+                        updateSourceBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], obj, ViewPrj, baseTr);
                         break;
                     case SceneObjectType::SO_OTHER:
                         updateObjectBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj, baseTr, {&lubo});

@@ -16,7 +16,7 @@ enum {
     LIGHT_MODE = -2
 };
 
-const float_t UNIT = 3.1f, OFFSET = 0.1f;
+const float_t UNIT = 3.0f, OFFSET = 0.1f;
 
 vector<vector<string>> loadMap(string file, tuple<uint16_t, uint16_t>* O) {
     std::ifstream f(file);
@@ -214,9 +214,8 @@ int main() {
     parseConfig(&data);
 
     applyConfig(LEVEL, LIGHT, 0, data, O, true);
-    // TODO: "on"/"off" flag at "light"?
 
-    uint8_t ROOMS = 1;
+    uint8_t ROOMS = 4;
     string k;
     for (uint8_t n = 1; n <= ROOMS; n++) {
         k = std::to_string(n);

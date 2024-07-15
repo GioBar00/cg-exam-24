@@ -5,7 +5,7 @@ using namespace std;
 using json = nlohmann::json;
 using ordered_json = nlohmann::ordered_json;
 
-#define FILE_PATH string("levels/parts/")
+#define FILE_PATH string("levels/tutorial/")
 #define CONFIG_PATH "levels/properties.json"
 #define MODEL_PATH string("models/dungeon/")
 #define TEMPLATE_PATH "models/scene.json"
@@ -215,7 +215,7 @@ int main() {
 
     applyConfig(LEVEL, LIGHT, 0, data, O, true);
 
-    uint8_t ROOMS = 4;
+    uint8_t ROOMS = 2;
     string k;
     for (uint8_t n = 1; n <= ROOMS; n++) {
         k = std::to_string(n);

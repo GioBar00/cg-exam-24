@@ -137,7 +137,7 @@ void saveEntry(ordered_json jt, vector<ordered_json>* js, ordered_json root, con
         j["type"] = root["type"];
         j["color"] = root["color"];
         j["power"] = root["power"];
-        j["where"] = array<float_t, 3> { T[3][0], T[3][1], T[3][2] };
+        j["where"] = array<float_t, 3> { T[3][0] + glm::cos(glm::radians(orient + 90)) * root["lumen-transform"][0].get<float_t>(), T[3][1] + root["lumen-transform"][1].get<float_t>(), T[3][2] + glm::sin(glm::radians(orient + 90)) * root["lumen-transform"][2].get<float_t>() };
     }
     (*js).push_back(j);
 }

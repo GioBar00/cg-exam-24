@@ -5,7 +5,7 @@ using namespace std;
 using json = nlohmann::json;
 using ordered_json = nlohmann::ordered_json;
 
-#define FILE_PATH string("levels/parts/")
+#define FILE_PATH string("levels/tutorial/")
 #define CONFIG_PATH "levels/properties.json"
 #define MODEL_PATH string("models/dungeon/")
 #define TEMPLATE_PATH "models/scene.json"
@@ -16,7 +16,7 @@ enum {
     LIGHT_MODE = -2
 };
 
-const float_t UNIT = 3.1f, OFFSET = 0.1f;
+const float_t UNIT = 3.0f, OFFSET = 0.1f;
 
 vector<vector<string>> loadMap(string file, tuple<uint16_t, uint16_t>* O) {
     std::ifstream f(file);
@@ -214,9 +214,8 @@ int main() {
     parseConfig(&data);
 
     applyConfig(LEVEL, LIGHT, 0, data, O, true);
-    // TODO: "on"/"off" flag at "light"?
 
-    uint8_t ROOMS = 1;
+    uint8_t ROOMS = 2;
     string k;
     for (uint8_t n = 1; n <= ROOMS; n++) {
         k = std::to_string(n);

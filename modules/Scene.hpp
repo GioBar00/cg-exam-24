@@ -451,13 +451,13 @@ class LevelSceneController : public SceneController {
     std::map<std::pair<int, int>, std::vector<ObjectInstance *>> myMap;
     ObjectInstance *torchWithPlayer = nullptr;
 
-    constexpr static const float UNIT = 3.1f;
+    constexpr static const float UNIT = 3.0f;
 
-    const float lightRenderDistance = 30.0f;
+    const float lightRenderDistance = 40.0f;
 
     const float zoom_speed = 1.0f;
     const float max_zoom = 8.0f;
-    const float min_zoom = 0.4f;
+    const float min_zoom = 1.5f;
 
     const float camRotDuration = 1.f;
     const float playerRotDuration = 0.3f;

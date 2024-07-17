@@ -251,6 +251,7 @@ public:
             {"TORCH",  SceneObjectType::SO_TORCH},
             {"LAMP",   SceneObjectType::SO_LAMP},
             {"BONFIRE",SceneObjectType::SO_BONFIRE},
+            {"TRAPDOOR",SceneObjectType::SO_TRAPDOOR},
             {"OTHER",  SceneObjectType::SO_OTHER}
     };
 
@@ -474,6 +475,9 @@ class LevelSceneController : public SceneController {
     const float playerFloatSpeed = 1.5f;
     const float torchRotationSpeed = 0.5f;
 
+    uint numLitTorches = 0;
+    uint numTorches = 0;
+
 
     static void updateObjectBuffer(uint32_t currentImage, Instance *I, glm::mat4 ViewPrj, glm::mat4 baseTr,
                                    const std::vector<void *> &gubos, bool spec) {
@@ -535,6 +539,9 @@ public:
 
     void addObjectToMap(std::pair<int, int> coords, ObjectInstance *obj) override {
         myMap[coords].push_back(obj);
+        if (obj->type == SceneObjectType::SO_TORCH) {
+            numTorches++;
+        }
     }
 
     void localCleanup() override {
@@ -678,7 +685,7 @@ public:
                 for (ObjectInstance *obj: myMap[getAdjacentCell(playerCoords, playerRot)]) {
                     if (obj->type == SceneObjectType::SO_WALL || obj->type == SceneObjectType::SO_BONFIRE) {
                         canMove = false;
-                        std::cout << "Player CANNOT move to " << playerCoords.first << ", " << playerCoords.second
+                        std::cout << "Player CANNOT move to " << getAdjacentCell(playerCoords, playerRot).first << ", " << getAdjacentCell(playerCoords, playerRot).second
                                   << "\n";
                         break;
                     }
@@ -705,6 +712,25 @@ public:
                     currPlayerPos = playerPos_old = playerPos;
                     isPlayerMoving = false;
                     std::cout << "Player ENDED moving to " << playerCoords.first << ", " << playerCoords.second << "\n";
+                    // Check end of level
+                    bool changeLevel = false;
+                    for (ObjectInstance *obj: myMap[playerCoords]) {
+                        if (obj->type == SceneObjectType::SO_TRAPDOOR) {
+                            changeLevel = true;
+                            break;
+                        }
+                    }
+                    if (changeLevel) {
+                        // Check if all torches are lit
+                        if (numLitTorches == numTorches) {
+                            std::cout << "Changing level\n";
+                            // TODO: Change level
+                        }
+                        else {
+                            // TODO: tell player to light all torches
+                            std::cout << "Light all torches: " << numLitTorches << "/" << numTorches << "\n";
+                        }
+                    }
                 } else {
                     // moving to the next cell
                     currPlayerPos = interpolate(playerPos_old, playerPos, elapsed / playerMoveDuration);
@@ -732,7 +758,9 @@ public:
             if (!isPlayerMoving && !isPlayerRotating && !debounce) {
                 debounce = true;
                 std::cout << "Fire\n";
+                std::cout << "Objects in cell: " << getAdjacentCell(playerCoords, playerRot).first << ", " << getAdjacentCell(playerCoords, playerRot).second << "\n";
                 for (ObjectInstance *obj: myMap[getAdjacentCell(playerCoords, playerRot)]) {
+                    std::cout << "Found object of type " << sceneObjectTypes[obj->type] << "\n";
                     if (obj->type == SceneObjectType::SO_TORCH) {
                         if (!bringingTorch) {
                             bringingTorch = true;
@@ -741,12 +769,16 @@ public:
                         } else if (torchWithPlayer->isOnFire && !obj->isOnFire) {
                             obj->isOnFire = true;
                             std::cout << "Lighting torch on wall\n";
+                            numLitTorches++;
+                            std::cout << "Lit torches: " << numLitTorches << "/" << numTorches << "\n";
                         }
                         break;
                     } else if (obj->type == SceneObjectType::SO_BONFIRE) {
                         if (bringingTorch && !torchWithPlayer->isOnFire) {
                             torchWithPlayer->isOnFire = true;
                             std::cout << "Lighting torch from bonfire\n";
+                            numLitTorches++;
+                            std::cout << "Lit torches: " << numLitTorches << "/" << numTorches << "\n";
                         }
                     }
                 }
@@ -814,6 +846,7 @@ public:
                                  glm::translate(glm::mat4(1.0f), glm::vec3(0, 0.15f * glm::sin(heightAnimDelta), 0)) *
                                  glm::rotate(glm::mat4(1.0f), currPlayerRot, glm::vec3(0, 1, 0));
                     case SceneObjectType::SO_GROUND:
+                    case SceneObjectType::SO_TRAPDOOR:
                     case SceneObjectType::SO_WALL:
                         updateObjectBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj, baseTr,
                                            {&lubo}, false);

@@ -5,11 +5,11 @@ using namespace std;
 using json = nlohmann::json;
 using ordered_json = nlohmann::ordered_json;
 
-#define FILE_PATH string("levels/tutorial/")
+#define FILE_PATH string("levels/showcase/")
 #define CONFIG_PATH "levels/properties.json"
 #define MODEL_PATH string("models/dungeon/")
 #define TEMPLATE_PATH "models/scene.json"
-#define RETURN_PATH "scenes/level-01.json"
+#define RETURN_PATH "scenes/level-02.json"
 
 enum {
     NO_ID = -1,
@@ -168,7 +168,7 @@ void applyConfig(vector<vector<string>> LEVEL, vector<vector<string>> LIGHT, vec
             }
             else if (test == "E") {
                 M = transform(structure, "TRAPDOOR", NO_ID, tuple(j - get<1>(O), -mod * rows + i - get<0>(O)), nullptr, nullptr);
-                saveEntry(jtemplate, &objs, structure["TRAPDOOR"], "GROUND", M, tuple(j - get<1>(O), -(-mod * rows + i - get<0>(O))), NO_ID, (float_t)NULL);
+                saveEntry(jtemplate, &objs, structure["TRAPDOOR"], "TRAPDOOR", M, tuple(j - get<1>(O), -(-mod * rows + i - get<0>(O))), NO_ID, (float_t)NULL);
             }
             else if (test[0] == 'W') {
                 if (test[1] == 'L') {

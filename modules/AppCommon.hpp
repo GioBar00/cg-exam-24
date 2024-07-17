@@ -36,6 +36,19 @@ enum class SceneObjectType {
     SO_TORCH,
     SO_LAMP,
     SO_BONFIRE,
+    SO_TRAPDOOR,
     SO_OTHER,
     // TODO: Add more scene objects depending on requirements (different shaders or interactions)
+};
+
+std::map<SceneObjectType, std::string> sceneObjectTypes = {
+        {SceneObjectType::SO_PLAYER, "SO_PLAYER"},
+        {SceneObjectType::SO_GROUND, "SO_GROUND"},
+        {SceneObjectType::SO_WALL, "SO_WALL"},
+        {SceneObjectType::SO_LIGHT, "SO_LIGHT"},
+        {SceneObjectType::SO_TORCH, "SO_TORCH"},
+        {SceneObjectType::SO_LAMP, "SO_LAMP"},
+        {SceneObjectType::SO_BONFIRE, "SO_BONFIRE"},
+        {SceneObjectType::SO_TRAPDOOR, "SO_TRAPDOOR"},
+        {SceneObjectType::SO_OTHER, "SO_OTHER"}
 };

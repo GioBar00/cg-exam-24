@@ -24,6 +24,14 @@
                 { "scale": [ 0.5, 0.5, 0.5 ] }
             ]
         },
+        "TRAPDOOR": {
+            "variant": false,
+            "model": "prop.009_Mesh.970",
+            "transform": [
+                { "translate": [ 0.6666, 0.0, 0.6666 ] },
+                { "scale": [ 2.0, 2.0, 2.0 ] }
+            ]
+        },
         "WALL_LINE": {
             "variant": true,
             "model": "tunnel_Mesh.4672",
@@ -111,14 +119,6 @@
                     ]
                 }
             ]
-        },
-        "TRAPDOOR": {
-            "variant": false,
-            "model": "prop.009_Mesh.970",
-            "transform": [
-                { "translate": [ 0.6666, 0.0, 0.6666 ] },
-                { "scale": [ 2.0, 2.0, 2.0 ] }
-            ]
         }
     },
     "light": {
@@ -166,6 +166,15 @@
         }
     },
     "addon": {
+        "ROAD": {
+            "variant": false,
+            "model": "stone.011_Mesh.6783",
+            "transform": [
+                { "translate": [ 0.6666, 0.0, 0.6666 ] },
+                { "scale": [ 0.5, 0.5, 0.5 ] },
+                { "random": "ROTATION" }
+            ]
+        },
         "BARREL": {
             "model": "barrel.001_Mesh.4453",
             "transform": [

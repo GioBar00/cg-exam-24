@@ -195,7 +195,11 @@ void applyConfig(vector<vector<string>> LEVEL, vector<vector<string>> LIGHT, vec
                 saveEntry(jtemplate, &objs, light["BONFIRE"], "BONFIRE", M, tuple(j - get<1>(O), -(-mod * rows + i - get<0>(O))), LIGHT_MODE, (float_t)NULL);
             }
             test = ADDON[i][j];
-            if (test == "D") {
+            if (test == "R") {
+                M = transform(addon, "ROAD", NO_ID, tuple(j - get<1>(O), -mod * rows + i - get<0>(O)), nullptr, nullptr);
+                saveEntry(jtemplate, &objs, addon["ROAD"], "OTHER", M, tuple(j - get<1>(O), -(-mod * rows + i - get<0>(O))), NO_ID, (float_t)NULL);
+            }
+            else if (test == "D") {
                 M = transform(addon, "BARREL", NO_ID, tuple(j - get<1>(O), -mod * rows + i - get<0>(O)), nullptr, nullptr);
                 saveEntry(jtemplate, &objs, addon["BARREL"], "OTHER", M, tuple(j - get<1>(O), -(-mod * rows + i - get<0>(O))), NO_ID, (float_t)NULL);
             }

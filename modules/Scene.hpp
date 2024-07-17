@@ -15,7 +15,7 @@ struct SourceUniform {
 
 struct LightUniform {
     // FIXME: Array of uint32_t, instead of glm::vec3, with switch statement inside fragment shader.
-    alignas(16) glm::vec3 TYPE[MAX_LIGHTS]; // i := DIRECT, j := POINT, k = SPOT.
+    alignas(16) glm::vec3 TYPE[MAX_LIGHTS]; // i := DIRECT, j := POINT, k := SPOT.
     alignas(16) glm::vec3 lightPos[MAX_LIGHTS];
     alignas(16) glm::vec3 lightDir[MAX_LIGHTS];
     alignas(16) glm::vec4 lightCol[MAX_LIGHTS];
@@ -425,9 +425,17 @@ public:
         light1->lType = "SPOT";
         light1->lColor = glm::vec4(1, 1, 1, 1);
         light1->lDirection = glm::vec3(0, -1, 0);
-        light1->lPower = 10.0f;
+        light1->lPower = 5.0f;
         light1->lPosition = glm::vec3(0, 3, 0);
         SC->addObjectToMap({0, 0}, light1);
+
+        auto light2 = new ObjectInstance();
+        light2->type = SceneObjectType::SO_LIGHT;
+        light2->lType = "DIRECT";
+        light2->lColor = glm::vec4(1, 1, 1, 1);
+        light2->lDirection = glm::vec3(0, -0.7, -1);
+        light2->lPower = 0.15f;
+        SC->addObjectToMap({0, 0}, light2);
 
 
         std::cout << "Leaving scene loading and creation\n";
@@ -777,7 +785,7 @@ public:
                     continue;
                 if (obj->type == SceneObjectType::SO_TORCH || obj->type == SceneObjectType::SO_LAMP ||
                     obj->type == SceneObjectType::SO_BONFIRE) {
-                    if (glm::distance(currPlayerPos, obj->lPosition) > lightRenderDistance)
+                    if (glm::distance(currPlayerPos, obj->lPosition) > lightRenderDistance && obj->lType != "DIRECT")
                         continue;
                 }
                 glm::vec3 lPosition;

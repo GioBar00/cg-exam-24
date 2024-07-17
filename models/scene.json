@@ -4,6 +4,7 @@
         { "id": "ground", "model": "models/dungeon/tunnel.003_Mesh.4991.mgcg", "format": "MGCG", "VD": "object", "P": "phong" },
         { "id": "wall-line", "model": "models/dungeon/tunnel_Mesh.4672.mgcg", "format": "MGCG", "VD": "object", "P": "phong" },
         { "id": "wall-angle", "model": "models/dungeon/tunnel.028_Mesh.7989.mgcg", "format": "MGCG", "VD": "object", "P": "phong" },
+        { "id": "bonfire", "model": "models/dungeon/tunnel.002_Mesh.7094.mgcg", "format": "MGCG", "VD": "source", "P": "emission" },
         { "id": "light-i", "model": "models/dungeon/light.002_Mesh.6811.mgcg", "format": "MGCG", "VD": "source", "P": "emission" },
         { "id": "light-ni-a", "model": "models/dungeon/light.009_Mesh.6851.mgcg", "format": "MGCG", "VD": "source", "P": "emission" },
         { "id": "light-ni-b", "model": "models/dungeon/light.013_Mesh.7136.mgcg", "format": "MGCG", "VD": "source", "P": "emission" }

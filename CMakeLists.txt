@@ -66,9 +66,8 @@ add_custom_command(TARGET scene-gen POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_CURRENT_SOURCE_DIR}/models
         ${CMAKE_CURRENT_BINARY_DIR}/models
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_CURRENT_SOURCE_DIR}/scenes
-        ${CMAKE_CURRENT_BINARY_DIR}/scenes
+        # Create directory scenes
+        COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/scenes
 )
 
 # Set ADDITIONAL_CLEAN_FILES to the list of files to be cleaned adding the copied files

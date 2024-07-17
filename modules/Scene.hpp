@@ -100,6 +100,7 @@ struct ObjectInstance {
 
     std::string lType;
     glm::vec4 lColor;
+    glm::vec3 lDirection;
     float lPower;
     glm::vec3 lPosition;
 };
@@ -249,6 +250,7 @@ public:
             {"LIGHT",  SceneObjectType::SO_LIGHT},
             {"TORCH",  SceneObjectType::SO_TORCH},
             {"LAMP",   SceneObjectType::SO_LAMP},
+            {"BONFIRE",SceneObjectType::SO_BONFIRE},
             {"OTHER",  SceneObjectType::SO_OTHER}
     };
 
@@ -422,7 +424,8 @@ public:
         light1->type = SceneObjectType::SO_LIGHT;
         light1->lType = "SPOT";
         light1->lColor = glm::vec4(1, 1, 1, 1);
-        light1->lPower = 1.0f;
+        light1->lDirection = glm::vec3(0, -1, 0);
+        light1->lPower = 10.0f;
         light1->lPosition = glm::vec3(0, 3, 0);
         SC->addObjectToMap({0, 0}, light1);
 
@@ -506,6 +509,7 @@ class LevelSceneController : public SceneController {
         else if (obj->lType == "SPOT")
             gubo->TYPE[idx] = glm::vec3(0, 0, 1);
         gubo->lightPos[idx] = lPosition;
+        gubo->lightDir[idx] = glm::vec3(obj->lDirection);
         gubo->lightCol[idx] = obj->lColor;
         gubo->lightPow[idx] = glm::vec3(obj->lPower);
         gubo->NUMBER = idx + 1;
@@ -785,6 +789,8 @@ public:
                 idx++;
             }
         }
+        lubo.cosIn = glm::cos(glm::radians(30.0f));
+        lubo.cosOut = glm::cos(glm::radians(45.0f));
 
         for (auto &pair: myMap) {
             for (auto &obj: pair.second) {
@@ -801,7 +807,6 @@ public:
                                  glm::rotate(glm::mat4(1.0f), currPlayerRot, glm::vec3(0, 1, 0));
                     case SceneObjectType::SO_GROUND:
                     case SceneObjectType::SO_WALL:
-                    case SceneObjectType::SO_BONFIRE:
                     case SceneObjectType::SO_OTHER:
                         updateObjectBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj, baseTr,
                                            {&lubo});
@@ -810,6 +815,7 @@ public:
                         if (obj == torchWithPlayer) {
                             baseTr = torchPlTr;
                         }
+                    case SceneObjectType::SO_BONFIRE:
                     case SceneObjectType::SO_LAMP:
                         updateSourceBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], obj, ViewPrj, baseTr);
                         break;

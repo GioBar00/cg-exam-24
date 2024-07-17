@@ -16,7 +16,7 @@ enum {
     LIGHT_MODE = -2
 };
 
-const float_t UNIT = 3.0f, OFFSET = 0.1f;
+const float_t UNIT = 3.0f, OFFSET = 0.1f, RAND = 0.2f;
 
 vector<vector<string>> loadMap(string file, tuple<uint16_t, uint16_t>* O) {
     std::ifstream f(file);
@@ -90,6 +90,13 @@ glm::mat4 transform(ordered_json root, string type, uint8_t id, tuple<int16_t, i
             array<float_t, 3> v = x[t].get<array<float_t, 3>>();
             T = glm::scale(T, glm::vec3(v[0], v[1], v[2]));
         }
+        else if (t == "random") {
+            string f = x[t].get<string>();
+            if (f == "TRANSLATION")
+                T = glm::translate(T, RAND * glm::vec3(-1.0f + 2 * ((float)rand() / RAND_MAX), 0.0f, -1.0 + 2 * ((float)rand() / RAND_MAX)));
+            else if (f == "ROTATION")
+                T = glm::rotate(T, glm::radians(360.0f * ((float)rand() / RAND_MAX)), glm::vec3(0, 1, 0));
+        }
     }
     return T;
 }
@@ -135,12 +142,12 @@ void saveEntry(ordered_json jt, vector<ordered_json>* js, ordered_json root, con
     (*js).push_back(j);
 }
 
-void applyConfig(vector<vector<string>> LEVEL, vector<vector<string>> LIGHT, uint8_t mod, ordered_json data, tuple<uint16_t, uint16_t> O, bool reset) {
+void applyConfig(vector<vector<string>> LEVEL, vector<vector<string>> LIGHT, vector<vector<string>> ADDON, uint8_t mod, ordered_json data, tuple<uint16_t, uint16_t> O, bool reset) {
     std::ifstream ft(TEMPLATE_PATH);
     ordered_json jtemplate = ordered_json::parse(ft);
     ft.close();
     vector<ordered_json> objs;
-    ordered_json structure = data["structure"], light = data["light"];
+    ordered_json structure = data["structure"], light = data["light"], addon = data["addon"];
     glm::mat4 inheritTrans;
     float_t inheritRot;
     string test;
@@ -158,6 +165,10 @@ void applyConfig(vector<vector<string>> LEVEL, vector<vector<string>> LIGHT, uin
             else if (test == "G") {
                 M = transform(structure, "GROUND", NO_ID, tuple(j - get<1>(O), -mod * rows + i - get<0>(O)), nullptr, nullptr); // Stack sublevels on rows.
                 saveEntry(jtemplate, &objs, structure["GROUND"], "GROUND", M, tuple(j - get<1>(O), -(-mod * rows + i - get<0>(O))), NO_ID, (float_t)NULL);
+            }
+            else if (test == "E") {
+                M = transform(structure, "TRAPDOOR", NO_ID, tuple(j - get<1>(O), -mod * rows + i - get<0>(O)), nullptr, nullptr);
+                saveEntry(jtemplate, &objs, structure["TRAPDOOR"], "GROUND", M, tuple(j - get<1>(O), -(-mod * rows + i - get<0>(O))), NO_ID, (float_t)NULL);
             }
             else if (test[0] == 'W') {
                 if (test[1] == 'L') {
@@ -179,10 +190,30 @@ void applyConfig(vector<vector<string>> LEVEL, vector<vector<string>> LIGHT, uin
                 M = transform(light, "LAMP_" + string(1, test[1]), NO_ID, tuple(INT16_MAX, INT16_MAX), nullptr, &inheritRot) * inheritTrans;
                 M = glm::rotate(M, glm::radians(inheritRot), glm::vec3(0, 1, 0));
                 saveEntry(jtemplate, &objs, light["LAMP_" + string(1, test[1])], "LAMP", M, tuple(j - get<1>(O), -(-mod * rows + i - get<0>(O))), LIGHT_MODE, inheritRot);
-            } else if(test[0] == 'B') {
+            } else if(test == "B") {
                 M = transform(light, "BONFIRE", NO_ID, tuple(j - get<1>(O), -mod * rows + i - get<0>(O)), nullptr, nullptr);
-                M = glm::rotate(M, glm::radians(45.0f), glm::vec3(0, 1, 0));
                 saveEntry(jtemplate, &objs, light["BONFIRE"], "BONFIRE", M, tuple(j - get<1>(O), -(-mod * rows + i - get<0>(O))), LIGHT_MODE, (float_t)NULL);
+            }
+            test = ADDON[i][j];
+            if (test == "D") {
+                M = transform(addon, "BARREL", NO_ID, tuple(j - get<1>(O), -mod * rows + i - get<0>(O)), nullptr, nullptr);
+                saveEntry(jtemplate, &objs, addon["BARREL"], "OTHER", M, tuple(j - get<1>(O), -(-mod * rows + i - get<0>(O))), NO_ID, (float_t)NULL);
+            }
+            else if (test == "C") {
+                M = transform(addon, "CHEST", NO_ID, tuple(j - get<1>(O), -mod * rows + i - get<0>(O)), nullptr, nullptr);
+                saveEntry(jtemplate, &objs, addon["CHEST"], "OTHER", M, tuple(j - get<1>(O), -(-mod * rows + i - get<0>(O))), NO_ID, (float_t)NULL);
+            }
+            else if (test == "M") {
+                M = transform(addon, "CRYSTAL", NO_ID, tuple(j - get<1>(O), -mod * rows + i - get<0>(O)), nullptr, nullptr);
+                saveEntry(jtemplate, &objs, addon["CRYSTAL"], "OTHER", M, tuple(j - get<1>(O), -(-mod * rows + i - get<0>(O))), NO_ID, (float_t)NULL);
+            }
+            else if (test == "P") {
+                M = transform(addon, "POT", NO_ID, tuple(j - get<1>(O), -mod * rows + i - get<0>(O)), nullptr, nullptr);
+                saveEntry(jtemplate, &objs, addon["POT"], "OTHER", M, tuple(j - get<1>(O), -(-mod * rows + i - get<0>(O))), NO_ID, (float_t)NULL);
+            }
+            else if (test == "F") {
+                M = transform(addon, "SKULL", NO_ID, tuple(j - get<1>(O), -mod * rows + i - get<0>(O)), nullptr, nullptr);
+                saveEntry(jtemplate, &objs, addon["SKULL"], "OTHER", M, tuple(j - get<1>(O), -(-mod * rows + i - get<0>(O))), NO_ID, (float_t)NULL);
             }
         }
     }
@@ -212,12 +243,14 @@ void applyConfig(vector<vector<string>> LEVEL, vector<vector<string>> LIGHT, uin
 
 int main() {
     tuple<uint16_t, uint16_t> O;
-    vector<vector<string>> LEVEL = loadMap(FILE_PATH + "ROOM-00.txt", &O), LIGHT = loadMap(FILE_PATH + "LIGHT-00.txt", nullptr);
+    vector<vector<string>> LEVEL = loadMap(FILE_PATH + "ROOM-00.txt", &O), LIGHT = loadMap(FILE_PATH + "LIGHT-00.txt", nullptr), ADDON = loadMap(FILE_PATH + "ADDON-00.txt", nullptr);
 
     ordered_json data = NULL;
     parseConfig(&data);
 
-    applyConfig(LEVEL, LIGHT, 0, data, O, true);
+    srand(42);
+
+    applyConfig(LEVEL, LIGHT, ADDON, 0, data, O, true);
 
     uint8_t ROOMS = 2;
     string k;
@@ -227,7 +260,8 @@ int main() {
             k = string(1, '0') + k;
         LEVEL = loadMap(FILE_PATH + "ROOM-" + k + ".txt", nullptr);
         LIGHT = loadMap(FILE_PATH + "LIGHT-" + k + ".txt", nullptr);
-        applyConfig(LEVEL, LIGHT, n, data, O, false);
+        ADDON = loadMap(FILE_PATH + "ADDON-" + k + ".txt", nullptr);
+        applyConfig(LEVEL, LIGHT, ADDON, n, data, O, false);
     }
     return 0;
 }

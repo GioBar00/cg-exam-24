@@ -3,16 +3,16 @@
 enum class SceneId {
     SCENE_MAIN_MENU,
     SCENE_LEVEL_1,
+    SCENE_LEVEL_2
     // Future expansion
-//    SCENE_LEVEL_2,
 //    SCENE_GAME_OVER
 };
 
 static const SceneId sceneIds[] = {
         SceneId::SCENE_MAIN_MENU,
         SceneId::SCENE_LEVEL_1,
+        SceneId::SCENE_LEVEL_2
         // Future expansion
-//        SceneId::SCENE_LEVEL_2,
 //        SceneId::SCENE_GAME_OVER
 };
 
@@ -22,8 +22,8 @@ typedef std::unordered_map<SceneId, std::string> SceneIdMap_t;
 const SceneIdMap_t sceneFiles = {
 //        {SCENE_MAIN_MENU, "../scenes/main-menu.json"},
         {SceneId::SCENE_LEVEL_1, "../scenes/level-01.json"},
+        {SceneId::SCENE_LEVEL_2, "../scenes/level-02.json"}
         // Future expansion
-//      {SCENE_LEVEL_2, "Level 2"},
 //      {SCENE_GAME_OVER, "Game Over"}
 };
 

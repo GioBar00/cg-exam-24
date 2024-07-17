@@ -476,7 +476,7 @@ class LevelSceneController : public SceneController {
 
 
     static void updateObjectBuffer(uint32_t currentImage, Instance *I, glm::mat4 ViewPrj, glm::mat4 baseTr,
-                                   const std::vector<void *> &gubos) {
+                                   const std::vector<void *> &gubos, bool spec) {
         ObjectUniform oubo{};
 
         oubo.mMat = baseTr * I->Wm;
@@ -486,7 +486,7 @@ class LevelSceneController : public SceneController {
         ArgsUniform aubo{};
 
         aubo.diffuse = true;
-        aubo.specular = false;
+        aubo.specular = spec;
 
         I->DS[1]->map(currentImage, &oubo, 0);
         I->DS[1]->map(currentImage, &aubo, 2);
@@ -815,9 +815,12 @@ public:
                                  glm::rotate(glm::mat4(1.0f), currPlayerRot, glm::vec3(0, 1, 0));
                     case SceneObjectType::SO_GROUND:
                     case SceneObjectType::SO_WALL:
+                        updateObjectBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj, baseTr,
+                                           {&lubo}, false);
+                        break;
                     case SceneObjectType::SO_OTHER:
                         updateObjectBuffer(currentImage, scene->I[scene->InstanceIds[obj->I_id]], ViewPrj, baseTr,
-                                           {&lubo});
+                                           {&lubo}, true);
                         break;
                     case SceneObjectType::SO_TORCH:
                         if (obj == torchWithPlayer) {

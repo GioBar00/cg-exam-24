@@ -2,12 +2,19 @@
     "models": [
         { "id": "player", "model": "models/dungeon/cast_Mesh.6268.mgcg", "format": "MGCG", "VD": "object", "P": "toon" },
         { "id": "ground", "model": "models/dungeon/tunnel.003_Mesh.4991.mgcg", "format": "MGCG", "VD": "object", "P": "phong" },
+        { "id": "trapdoor", "model": "models/dungeon/prop.009_Mesh.970.mgcg", "format": "MGCG", "VD": "object", "P": "phong" },
+        { "id": "road", "model": "models/dungeon/stone.011_Mesh.6783.mgcg", "format": "MGCG", "VD": "object", "P": "phong" },
         { "id": "wall-line", "model": "models/dungeon/tunnel_Mesh.4672.mgcg", "format": "MGCG", "VD": "object", "P": "phong" },
         { "id": "wall-angle", "model": "models/dungeon/tunnel.028_Mesh.7989.mgcg", "format": "MGCG", "VD": "object", "P": "phong" },
         { "id": "bonfire", "model": "models/dungeon/tunnel.002_Mesh.7094.mgcg", "format": "MGCG", "VD": "source", "P": "emission" },
         { "id": "light-i", "model": "models/dungeon/light.002_Mesh.6811.mgcg", "format": "MGCG", "VD": "source", "P": "emission" },
         { "id": "light-ni-a", "model": "models/dungeon/light.009_Mesh.6851.mgcg", "format": "MGCG", "VD": "source", "P": "emission" },
-        { "id": "light-ni-b", "model": "models/dungeon/light.013_Mesh.7136.mgcg", "format": "MGCG", "VD": "source", "P": "emission" }
+        { "id": "light-ni-b", "model": "models/dungeon/light.013_Mesh.7136.mgcg", "format": "MGCG", "VD": "source", "P": "emission" },
+        { "id": "addon-a", "model": "models/dungeon/barrel.001_Mesh.4453.mgcg", "format": "MGCG", "VD": "object", "P": "phong" },
+        { "id": "addon-b", "model": "models/dungeon/box.006_Mesh.216.mgcg", "format": "MGCG", "VD": "object", "P": "phong" },
+        { "id": "addon-c", "model": "models/dungeon/decoration.011_Mesh.7123.mgcg", "format": "MGCG", "VD": "object", "P": "phong" },
+        { "id": "addon-d", "model": "models/dungeon/prop_Mesh.8089.mgcg", "format": "MGCG", "VD": "object", "P": "phong" },
+        { "id": "addon-e", "model": "models/dungeon/bones.029_Mesh.5843.mgcg", "format": "MGCG", "VD": "object", "P": "phong" }
     ],
     "textures": [
         { "id": "tex", "texture": "textures/dungeon/Textures_Dungeon.png", "format": "C" }

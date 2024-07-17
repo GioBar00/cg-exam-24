@@ -24,6 +24,14 @@
                 { "scale": [ 0.5, 0.5, 0.5 ] }
             ]
         },
+        "TRAPDOOR": {
+            "variant": false,
+            "model": "prop.009_Mesh.970",
+            "transform": [
+                { "translate": [ 0.6666, 0.0, 0.6666 ] },
+                { "scale": [ 2.0, 2.0, 2.0 ] }
+            ]
+        },
         "WALL_LINE": {
             "variant": true,
             "model": "tunnel_Mesh.4672",
@@ -129,6 +137,7 @@
             "transform": [
                 { "translate": [ 0.6666, 0.0, 0.6666 ] },
                 { "translate": [ 0.0, 0.2, 0.0 ], "unit": "NONE" },
+                { "rotate": 45.0 },
                 { "scale": [ 0.5, 0.5, 0.5 ] }
             ],
             "type": "POINT",
@@ -156,7 +165,54 @@
             "power": 5.0
         }
     },
-    "addons": {
-
+    "addon": {
+        "ROAD": {
+            "variant": false,
+            "model": "stone.011_Mesh.6783",
+            "transform": [
+                { "translate": [ 0.6666, 0.0, 0.6666 ] },
+                { "scale": [ 0.5, 0.5, 0.5 ] },
+                { "random": "ROTATION" }
+            ]
+        },
+        "BARREL": {
+            "model": "barrel.001_Mesh.4453",
+            "transform": [
+                { "translate": [ 0.6666, 0.0, 0.6666 ] },
+                { "translate": [ 0.0, 0.38, 0.0 ], "unit": "NONE" },
+                { "random": "ROTATION" }
+            ]
+        },
+        "CHEST": {
+            "model": "box.006_Mesh.216",
+            "transform": [
+                { "translate": [ 0.6666, 0.0, 0.6666 ] },
+                { "translate": [ 0.0, 0.22, 0.0 ], "unit": "NONE" },
+                { "random": "ROTATION" }
+            ]
+        },
+        "CRYSTAL": {
+            "model": "decoration.011_Mesh.7123",
+            "transform": [
+                { "translate": [ 0.6666, 0.0, 0.6666 ] },
+                { "translate": [ 0.0, 0.3, 0.0 ], "unit": "NONE" },
+                { "random": "ROTATION" }
+            ]
+        },
+        "POT": {
+            "model": "prop_Mesh.8089",
+            "transform": [
+                { "translate": [ 0.6666, 0.0, 0.6666 ] },
+                { "translate": [ 0.0, 0.45, 0.0 ], "unit": "NONE" },
+                { "random": "ROTATION" }
+            ]
+        },
+        "SKULL": {
+            "model": "bones.029_Mesh.5843",
+            "transform": [
+                { "translate": [ 0.6666, 0.0, 0.6666 ] },
+                { "random": "ROTATION" }
+            ]
+        }
     }
 }

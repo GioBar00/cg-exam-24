@@ -59,8 +59,8 @@ struct TextMaker {
 		createTextPipeline();
 		createTextModelAndTexture();
 		
-		BP->DPSZs.texturesInPool += 1;
-		BP->DPSZs.setsInPool += 1;
+		//BP->DPSZs.texturesInPool += 1;
+		//BP->DPSZs.setsInPool += 1;
 	}
 
 

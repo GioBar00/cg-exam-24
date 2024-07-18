@@ -244,15 +244,15 @@ public:
 class LevelScene : public Scene {
 public:
     std::map<std::string, SceneObjectType> str2enum = {
-            {"PLAYER", SceneObjectType::SO_PLAYER},
-            {"GROUND", SceneObjectType::SO_GROUND},
-            {"WALL",   SceneObjectType::SO_WALL},
-            {"LIGHT",  SceneObjectType::SO_LIGHT},
-            {"TORCH",  SceneObjectType::SO_TORCH},
-            {"LAMP",   SceneObjectType::SO_LAMP},
-            {"BONFIRE",SceneObjectType::SO_BONFIRE},
-            {"TRAPDOOR",SceneObjectType::SO_TRAPDOOR},
-            {"OTHER",  SceneObjectType::SO_OTHER}
+            { "PLAYER",     SceneObjectType::SO_PLAYER },
+            { "GROUND",     SceneObjectType::SO_GROUND },
+            { "WALL",       SceneObjectType::SO_WALL },
+            { "LIGHT",      SceneObjectType::SO_LIGHT },
+            { "TORCH",      SceneObjectType::SO_TORCH },
+            { "LAMP",       SceneObjectType::SO_LAMP },
+            { "BONFIRE",    SceneObjectType::SO_BONFIRE },
+            { "TRAPDOOR",   SceneObjectType::SO_TRAPDOOR },
+            { "OTHER",      SceneObjectType::SO_OTHER }
     };
 
     int init(BaseProject *_BP, std::vector<VertexDescriptorRef> &VDRs,
@@ -393,9 +393,9 @@ public:
             }
 
             // Request  xInPool
-            BP->requestSetsInPool(setsInPool);
+            BP->requestSetsInPool(setsInPool + 1); // TODO: Remove hardcoded text pools cardinality.
             BP->requestUniformBlocksInPool(uniformBlocksInPool);
-            BP->requestTexturesInPool(texturesInPool);
+            BP->requestTexturesInPool(texturesInPool + 1); // TODO: Remove hardcoded text pools cardinality.
 
             std::cout << "Creating instances\n";
             I = (Instance **) calloc(InstanceCount, sizeof(Instance *));
@@ -475,8 +475,8 @@ class LevelSceneController : public SceneController {
     const float playerFloatSpeed = 1.5f;
     const float torchRotationSpeed = 0.5f;
 
-    uint numLitTorches = 0;
-    uint numTorches = 0;
+    unsigned int numLitTorches = 0;
+    unsigned int numTorches = 0;
 
     bool isCameraRotating = false;
     bool isPlayerRotating = false;

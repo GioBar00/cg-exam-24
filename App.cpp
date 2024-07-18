@@ -1,6 +1,7 @@
 #include "modules/Starter.hpp"
 #include "modules/AppCommon.hpp"
 #include "modules/Scene.hpp"
+#include "modules/TextMaker.hpp"
 
 
 class App : public BaseProject {
@@ -16,6 +17,12 @@ protected:
 
     /* Pipelines. */
     Pipeline ToonP, PhongP, SourceP;
+
+    /* Texts. */
+    std::vector<SingleText> out = {
+        { 1, {"Hello, World!", "", "", ""}, 0, 0 }
+    };
+    TextMaker txt;
 
 
     /* Scenes */
@@ -85,6 +92,8 @@ protected:
         PhongP.init(this, &ObjectVD, "shaders/Shader.vert.spv", "shaders/Phong.frag.spv", {&LightDSL, &ObjectDSL});
         SourceP.init(this, &SourceVD, "shaders/Emission.vert.spv", "shaders/Emission.frag.spv", {&SourceDSL});
 
+        txt.init(this, &out);
+
 
         // Define vertex descriptor references per scene.
         VertexDescriptorRef ObjectVDR{}, SourceVDR{};
@@ -115,6 +124,7 @@ protected:
         ToonP.create();
         PhongP.create();
         SourceP.create();
+        txt.pipelinesAndDescriptorSetsInit();
         scenes[currSceneId]->pipelinesAndDescriptorSetsInit();
     }
 
@@ -122,6 +132,7 @@ protected:
         ToonP.cleanup();
         PhongP.cleanup();
         SourceP.cleanup();
+        txt.pipelinesAndDescriptorSetsCleanup();
         scenes[currSceneId]->pipelinesAndDescriptorSetsCleanup();
     }
 
@@ -140,9 +151,12 @@ protected:
         ToonP.destroy();
         PhongP.destroy();
         SourceP.destroy();
+
+        txt.localCleanup();
     }
 
     void populateCommandBuffer(VkCommandBuffer commandBuffer, int currentImage) override {
+        txt.populateCommandBuffer(commandBuffer, currentImage);
         scenes[currSceneId]->populateCommandBuffer(commandBuffer, currentImage);
     }
 

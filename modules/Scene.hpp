@@ -457,7 +457,7 @@ public:
 /* SCENE CONTROLLERS */
 class LevelSceneController : public SceneController {
     LevelScene *scene{};
-    std::map<std::pair<int, int>, std::vector<ObjectInstance *>> myMap;
+    std::map<std::pair<int, int>, std::vector<ObjectInstance *>> myMap = {};
     ObjectInstance *torchWithPlayer = nullptr;
 
     constexpr static const float UNIT = 3.0f;
@@ -469,8 +469,8 @@ class LevelSceneController : public SceneController {
     const float min_zoom = 1.5f;
 
     const float camRotDuration = 1.f;
-    const float playerRotDuration = 0.3f;
-    const float playerMoveDuration = 0.7f;
+    const float playerRotDuration = 0.1f;
+    const float playerMoveDuration = 0.1f;
 
     const float playerFloatSpeed = 1.5f;
     const float torchRotationSpeed = 0.5f;
@@ -478,6 +478,34 @@ class LevelSceneController : public SceneController {
     uint numLitTorches = 0;
     uint numTorches = 0;
 
+    bool isCameraRotating = false;
+    bool isPlayerRotating = false;
+    bool isPlayerMoving = false;
+    bool debounce = false;
+
+    float zoom = 0.2f;
+
+    std::chrono::high_resolution_clock::time_point camStartTime = std::chrono::high_resolution_clock::now();
+    float currProjRot = 0;
+    float projRot_old = 0;
+    float projRot = 0;
+
+    // Player attributes
+    std::chrono::high_resolution_clock::time_point playerStartTime = std::chrono::high_resolution_clock::now();
+    std::pair<int, int> playerCoords = {0, 0};
+    float currPlayerRot = 0.0f;
+    float playerRot_old = 0.0f;
+    float playerRot = 0.0f;
+
+    glm::vec3 currPlayerPos = glm::vec3(playerCoords.first, 0.0f, playerCoords.second);
+    glm::vec3 playerPos_old = glm::vec3(playerCoords.first, 0.0f, playerCoords.second);
+    glm::vec3 playerPos = glm::vec3(playerCoords.first, 0.0f, playerCoords.second);
+
+    bool bringingTorch = false;
+    float torchRot = 0;
+    glm::mat4 torchPlTr = glm::mat4(1.0f);
+
+    float heightAnimDelta = 0.f;
 
     static void updateObjectBuffer(uint32_t currentImage, Instance *I, glm::mat4 ViewPrj, glm::mat4 baseTr,
                                    const std::vector<void *> &gubos, bool spec) {
@@ -610,13 +638,7 @@ public:
     }
 
     void updateUniformBuffer(uint32_t currentImage, float deltaT, glm::vec3 m, glm::vec3 r, bool fire) override {
-        static bool isCameraRotating = false;
-        static bool isPlayerRotating = false;
-        static bool isPlayerMoving = false;
-        static bool debounce = false;
-
         // Calculate Orthogonal Projection Matrix
-        static float zoom = 0.2f;
         if (glm::abs(m.y) > 1e-5) {
             zoom = glm::clamp(zoom + m.y * zoom_speed * deltaT, 0.0f, 1.0f);
             std::cout << "Zoom: " << zoom << "\n";
@@ -631,10 +653,6 @@ public:
                         glm::ortho(-halfWidth, halfWidth, -halfWidth / Ar, halfWidth / Ar, nearPlane, farPlane);
 
         // Calculate View Matrix
-        static std::chrono::time_point camStartTime = std::chrono::high_resolution_clock::now();
-        static float currProjRot = 0;
-        static float projRot_old = 0;
-        static float projRot = 0;
         if (!isCameraRotating) {
             // check r.z to move camera
             if (glm::abs(r.z) > 0.5f) {
@@ -663,16 +681,6 @@ public:
 
         glm::mat4 ViewPrj = Prj * View;
 
-        // Player attributes
-        static std::chrono::time_point playerStartTime = std::chrono::high_resolution_clock::now();
-        static std::pair<int, int> playerCoords = {0, 0};
-        static float currPlayerRot = 0.0f;
-        static float playerRot_old = 0.0f;
-        static float playerRot = 0.0f;
-
-        static glm::vec3 currPlayerPos = glm::vec3(playerCoords.first, 0.0f, playerCoords.second);
-        static glm::vec3 playerPos_old = glm::vec3(playerCoords.first, 0.0f, playerCoords.second);
-        static glm::vec3 playerPos = glm::vec3(playerCoords.first, 0.0f, playerCoords.second);
 
         if (!isPlayerMoving && !isPlayerRotating && !isCameraRotating && glm::length(glm::vec2(m.x, m.z)) > 0.5f) {
             if (updatePlayerRotPos(m, projRot, playerRot, playerPos)) {
@@ -724,7 +732,8 @@ public:
                         // Check if all torches are lit
                         if (numLitTorches == numTorches) {
                             std::cout << "Changing level\n";
-                            // TODO: Change level
+                            scene->BP->changeScene(SceneId::SCENE_LEVEL_2);
+                            return;
                         }
                         else {
                             // TODO: tell player to light all torches
@@ -751,8 +760,6 @@ public:
                 }
             }
         }
-
-        static bool bringingTorch = false;
 
         if (fire) {
             if (!isPlayerMoving && !isPlayerRotating && !debounce) {
@@ -792,9 +799,8 @@ public:
         glm::mat4 playerPosTr = glm::translate(glm::mat4(1.0f), currPlayerPos);
         ViewPrj = ViewPrj * glm::inverse(playerPosTr);
 
-        static glm::mat4 torchPlTr = glm::mat4(1.0f);
+
         if (torchWithPlayer) {
-            static float torchRot = 0;
             torchRot += torchRotationSpeed * deltaT;
             // limit modulo to 2pi
             torchRot = glm::mod(torchRot, 2 * glm::pi<float>());
@@ -835,7 +841,6 @@ public:
         for (auto &pair: myMap) {
             for (auto &obj: pair.second) {
                 glm::mat4 baseTr = glm::mat4(1.0f);
-                static float heightAnimDelta = 0.f;
                 switch (obj->type) {
                     case SceneObjectType::SO_PLAYER:
                         // make player float up and down
@@ -902,7 +907,9 @@ static Scene *getNewSceneById(SceneId sceneId) {
             mmsc->setScene(mms);
             return mms;
         }
-        case SceneId::SCENE_LEVEL_1: {
+        case SceneId::SCENE_LEVEL_1:
+        case SceneId::SCENE_LEVEL_2:
+        {
             auto ls = new LevelScene();
             auto lsc = new LevelSceneController();
             ls->setSceneController(lsc);
@@ -910,7 +917,7 @@ static Scene *getNewSceneById(SceneId sceneId) {
             return ls;
         }
             // Future expansion
-//        case SceneId::SCENE_LEVEL_2:
+//        case SceneId::SCENE_LEVEL_3:
 //            return new LevelScene();
         default:
             return nullptr;

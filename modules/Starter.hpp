@@ -378,6 +378,8 @@ struct PoolSizes {
     int setsInPool = 0;
 };
 
+enum class SceneId;
+
 // MAIN !
 class BaseProject {
     friend class VertexDescriptor;
@@ -426,6 +428,8 @@ public:
     float getAr() {
         return Ar;
     }
+
+    virtual void changeScene(SceneId newSceneId) = 0;
 
 protected:
     uint32_t windowWidth;
@@ -1772,6 +1776,10 @@ protected:
 
         cleanupSwapChain();
 
+        createSwapChainAndAll();
+    }
+
+    void createSwapChainAndAll() {
         createSwapChain();
         createImageViews();
         createRenderPass();

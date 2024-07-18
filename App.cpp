@@ -100,8 +100,8 @@ protected:
         // TODO: Add all SceneVDRs and ScenePRs to the maps
         SceneVDRs[SceneId::SCENE_LEVEL_1] = SL1VDRs;
         ScenePRs[SceneId::SCENE_LEVEL_1] = SL1PRs;
-//        SceneVDRs[SceneId::SCENE_LEVEL_2] = SL2VDRs;
-//        ScenePRs[SceneId::SCENE_LEVEL_2] = SL2PRs;
+        SceneVDRs[SceneId::SCENE_LEVEL_2] = SL1VDRs;
+        ScenePRs[SceneId::SCENE_LEVEL_2] = SL1PRs;
 
 
         // Set the first scene
@@ -154,12 +154,28 @@ protected:
         scenes[currSceneId]->SC->updateUniformBuffer(currentImage, deltaT, m, r, fire);
     }
 
-    void changeScene(SceneId newSceneId) {
+    void changeScene(SceneId newSceneId) override {
         if (scenes[currSceneId] != nullptr) {
-            scenes[currSceneId]->pipelinesAndDescriptorSetsCleanup();
-        }
+            int width = 0, height = 0;
+            glfwGetFramebufferSize(window, &width, &height);
 
-        if (scenes[newSceneId] == nullptr) {
+            while (width == 0 || height == 0) {
+                glfwGetFramebufferSize(window, &width, &height);
+                glfwWaitEvents();
+            }
+            cleanupSwapChain();
+            scenes[currSceneId]->localCleanup();
+            free(scenes[currSceneId]);
+            scenes[currSceneId] = nullptr;
+
+            currSceneId = newSceneId;
+
+            scenes[currSceneId] = getNewSceneById(currSceneId);
+            scenes[currSceneId]->init(this, SceneVDRs.find(currSceneId)->second, ScenePRs.find(currSceneId)->second,
+                                     sceneFiles.find(currSceneId)->second);
+            createSwapChainAndAll();
+            std::cout << "Scene changed to " << sceneFiles.find(currSceneId)->second << std::endl;
+        } else {
             scenes[newSceneId] = getNewSceneById(newSceneId);
             scenes[newSceneId]->init(this, SceneVDRs.find(newSceneId)->second, ScenePRs.find(newSceneId)->second,
                                      sceneFiles.find(newSceneId)->second);

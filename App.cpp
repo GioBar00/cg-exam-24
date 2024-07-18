@@ -25,7 +25,9 @@ protected:
 
 
     // Application config.
-    SceneId currSceneId;
+    SceneId newSceneId;
+
+    bool changingScene = false;
 
     void setWindowParameters() override {
         windowWidth = 1200;
@@ -154,33 +156,50 @@ protected:
         scenes[currSceneId]->SC->updateUniformBuffer(currentImage, deltaT, m, r, fire);
     }
 
-    void changeScene(SceneId newSceneId) override {
+    void changeScene(SceneId _newSceneId) override {
+        changingScene = true;
         if (scenes[currSceneId] != nullptr) {
-            int width = 0, height = 0;
-            glfwGetFramebufferSize(window, &width, &height);
+            framebufferResized = true;
+        }
+        scenes[_newSceneId] = getNewSceneById(_newSceneId);
+        scenes[_newSceneId]->init(this, SceneVDRs.find(_newSceneId)->second, ScenePRs.find(_newSceneId)->second,
+                                  sceneFiles.find(_newSceneId)->second);
+        newSceneId = _newSceneId;
+    }
 
-            while (width == 0 || height == 0) {
-                glfwGetFramebufferSize(window, &width, &height);
-                glfwWaitEvents();
-            }
-            cleanupSwapChain();
+protected:
+    void recreateSwapChain() override {
+        int width = 0, height = 0;
+        glfwGetFramebufferSize(window, &width, &height);
+
+        while (width == 0 || height == 0) {
+            glfwGetFramebufferSize(window, &width, &height);
+            glfwWaitEvents();
+        }
+
+        vkDeviceWaitIdle(device);
+
+        cleanupSwapChain();
+
+        if (changingScene) {
             scenes[currSceneId]->localCleanup();
             free(scenes[currSceneId]);
             scenes[currSceneId] = nullptr;
-
             currSceneId = newSceneId;
-
-            scenes[currSceneId] = getNewSceneById(currSceneId);
-            scenes[currSceneId]->init(this, SceneVDRs.find(currSceneId)->second, ScenePRs.find(currSceneId)->second,
-                                     sceneFiles.find(currSceneId)->second);
-            createSwapChainAndAll();
-            std::cout << "Scene changed to " << sceneFiles.find(currSceneId)->second << std::endl;
-        } else {
-            scenes[newSceneId] = getNewSceneById(newSceneId);
-            scenes[newSceneId]->init(this, SceneVDRs.find(newSceneId)->second, ScenePRs.find(newSceneId)->second,
-                                     sceneFiles.find(newSceneId)->second);
+            changingScene = false;
         }
-        currSceneId = newSceneId;
+
+        createSwapChain();
+        createImageViews();
+        createRenderPass();
+        createColorResources();
+        createDepthResources();
+        createFramebuffers();
+        createDescriptorPool();
+
+        pipelinesAndDescriptorSetsInit();
+
+        createCommandBuffers();
     }
 
 };

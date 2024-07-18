@@ -732,8 +732,13 @@ public:
                         // Check if all torches are lit
                         if (numLitTorches == numTorches) {
                             std::cout << "Changing level\n";
-                            scene->BP->changeScene(SceneId::SCENE_LEVEL_2);
-                            return;
+                            // FIXME: change to end screen if level 2
+                            SceneId nextScene;
+                            if (scene->BP->currSceneId == SceneId::SCENE_LEVEL_1)
+                                nextScene = SceneId::SCENE_LEVEL_2;
+                            else
+                                nextScene = SceneId::SCENE_LEVEL_1;
+                            scene->BP->changeScene(nextScene);
                         }
                         else {
                             // TODO: tell player to light all torches

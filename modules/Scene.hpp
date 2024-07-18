@@ -130,6 +130,55 @@ public:
 };
 
 class Scene {
+protected:
+    void addModel(const std::string &id, const std::string &vid, std::vector<unsigned char> vertices, std::vector<unsigned int> indices) {
+        MeshIds[id] = ModelCount;
+        M[ModelCount] = new Model();
+        int mainStride = VDIds[vid]->Bindings[0].stride;
+        M[ModelCount]->vertices = std::move(vertices);
+        M[ModelCount]->indices = std::move(indices);
+        M[ModelCount]->initMesh(BP, VDIds[vid]);
+        ModelCount++;
+        vertices.clear();
+        indices.clear();
+    }
+
+    void addTexture(const std::string &id, const std::string &path) {
+        TextureIds[id] = TextureCount;
+        T[TextureCount] = new Texture();
+        T[TextureCount]->init(BP, path);
+        TextureCount++;
+    }
+
+    void addInstance(const std::string &id, const std::string &mid, const std::string &tid, int &setsInPool, int &uniformBlocksInPool, int &texturesInPool) {
+        int instanceIdx = PI[PipelineInstanceCount].InstanceCount;
+        PI[PipelineInstanceCount].I[instanceIdx].id = new std::string(id);
+        PI[PipelineInstanceCount].I[instanceIdx].Mid = MeshIds[mid];
+        PI[PipelineInstanceCount].I[instanceIdx].NTx = 1;
+        PI[PipelineInstanceCount].I[instanceIdx].Tid = (int *) calloc(PI[0].I[instanceIdx].NTx, sizeof(int));
+        PI[PipelineInstanceCount].I[instanceIdx].Tid[0] = TextureIds[tid];
+        PI[PipelineInstanceCount].I[instanceIdx].Wm = glm::mat4(1.0f);
+        PI[PipelineInstanceCount].I[instanceIdx].PI = &PI[PipelineInstanceCount];
+        PI[PipelineInstanceCount].I[instanceIdx].D = &PI[PipelineInstanceCount].P->P->D;
+        PI[PipelineInstanceCount].I[instanceIdx].NDs = PI[PipelineInstanceCount].I[instanceIdx].D->size();
+        setsInPool += PI[PipelineInstanceCount].I[instanceIdx].NDs;
+
+        for (int h = 0; h < PI[PipelineInstanceCount].I[instanceIdx].NDs; h++) {
+            DescriptorSetLayout *DSL = (*PI[PipelineInstanceCount].I[instanceIdx].D)[h];
+            int DSLsize = DSL->Bindings.size();
+
+            for (int l = 0; l < DSLsize; l++) {
+                if (DSL->Bindings[l].type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER) {
+                    uniformBlocksInPool += 1;
+                } else {
+                    texturesInPool += 1;
+                }
+            }
+        }
+
+        PI[PipelineInstanceCount].InstanceCount++;
+        InstanceCount++;
+    }
 public:
 
     BaseProject *BP{};
@@ -292,7 +341,7 @@ public:
             ModelCount = ms.size();
             std::cout << "Models count: " << ModelCount << "\n";
 
-            M = (Model **) calloc(ModelCount, sizeof(Model *));
+            M = (Model **) calloc(ModelCount + 1, sizeof(Model *)); // +1 for the skybox
             for (int k = 0; k < ModelCount; k++) {
                 MeshIds[ms[k]["id"]] = k;
                 std::string MT = ms[k]["format"].template get<std::string>();
@@ -302,12 +351,33 @@ public:
                 M[k]->init(BP, VDIds[VDN], ms[k]["model"], (MT[0] == 'O') ? OBJ : ((MT[0] == 'G') ? GLTF : MGCG));
             }
 
+            // Skybox model
+            std::vector<unsigned char> vertices{};
+            std::vector<unsigned int> indices{};
+
+            // background model
+            int mainStride = VDIds["skybox"]->Bindings[0].stride;
+            std::vector<unsigned char> vertex(mainStride, 0);
+            auto myVertex = (MenuVertex *) (&vertex[0]);
+            for (int i = -1; i <= +1; i += 2) {
+                for (int j = -1; j <= +1; j += 2) {
+                    myVertex->pos = {i, j};
+                    myVertex->UV = {(float) (i + 1) / 2, (float) (j + 1) / 2};
+                    vertices.insert(vertices.end(), vertex.begin(), vertex.end());
+                }
+            }
+            indices = {
+                    0, 1, 2,
+                    1, 2, 3
+            };
+            addModel("skybox", "skybox", vertices, indices);
+
             // TEXTURES
             nlohmann::json ts = js["textures"];
             TextureCount = ts.size();
             std::cout << "Textures count: " << TextureCount << "\n";
 
-            T = (Texture **) calloc(TextureCount, sizeof(Texture *));
+            T = (Texture **) calloc(TextureCount + 1, sizeof(Texture *)); // +1 for the skybox
             for (int k = 0; k < TextureCount; k++) {
                 TextureIds[ts[k]["id"]] = k;
                 std::string TT = ts[k]["format"].template get<std::string>();
@@ -323,11 +393,14 @@ public:
                 std::cout << ts[k]["id"] << "(" << k << ") " << TT << "\n";
             }
 
+            // Skybox texture
+            addTexture("skybox", "textures/deep-fold.png"); // Credits: https://deep-fold.itch.io/space-background-generator
+
             // INSTANCES
             nlohmann::json pis = js["instances"];
             PipelineInstanceCount = pis.size();
             std::cout << "Pipeline Instances count: " << PipelineInstanceCount << "\n";
-            PI = (PipelineInstances *) calloc(PipelineInstanceCount, sizeof(PipelineInstances));
+            PI = (PipelineInstances *) calloc(PipelineInstanceCount + 1, sizeof(PipelineInstances)); // +1 for the skybox
             InstanceCount = 0;
             int setsInPool = 0;
             int uniformBlocksInPool = 0;
@@ -400,6 +473,15 @@ public:
                 }
             }
 
+            // Skybox pipeline instance + instance
+            PI[PipelineInstanceCount].P = PipelineIds["skybox"];
+            PI[PipelineInstanceCount].InstanceCount = 0;
+            PI[PipelineInstanceCount].I = (Instance *) calloc(1, sizeof(Instance));
+
+            // background instance 1
+            addInstance("skybox-ist1", "skybox", "skybox", setsInPool, uniformBlocksInPool, texturesInPool);
+            PipelineInstanceCount++;
+
             // Request xInPool
             BP->requestSetsInPool(setsInPool);
             BP->requestUniformBlocksInPool(uniformBlocksInPool);
@@ -454,54 +536,6 @@ public:
 };
 
 class MainMenuScene : public Scene {
-protected:
-    void addModel(const std::string &id, std::vector<unsigned char> vertices, std::vector<unsigned int> indices) {
-        MeshIds[id] = ModelCount;
-        M[ModelCount] = new Model();
-        int mainStride = VDIds["menu"]->Bindings[0].stride;
-        M[ModelCount]->vertices = std::move(vertices);
-        M[ModelCount]->indices = std::move(indices);
-        M[ModelCount]->initMesh(BP, VDIds["menu"]);
-        ModelCount++;
-        vertices.clear();
-        indices.clear();
-    }
-
-    void addTexture(const std::string &id, const std::string &path) {
-        TextureIds[id] = TextureCount;
-        T[TextureCount] = new Texture();
-        T[TextureCount]->init(BP, path);
-        TextureCount++;
-    }
-
-    void addInstance(const std::string &id, const std::string &mid, const std::string &tid, int &setsInPool, int &uniformBlocksInPool, int &texturesInPool) {
-        PI[0].I[InstanceCount].id = new std::string(id);
-        PI[0].I[InstanceCount].Mid = MeshIds[mid];
-        PI[0].I[InstanceCount].NTx = 1;
-        PI[0].I[InstanceCount].Tid = (int *) calloc(PI[0].I[InstanceCount].NTx, sizeof(int));
-        PI[0].I[InstanceCount].Tid[0] = TextureIds[tid];
-        PI[0].I[InstanceCount].Wm = glm::mat4(1.0f);
-        PI[0].I[InstanceCount].PI = &PI[0];
-        PI[0].I[InstanceCount].D = &PI[0].P->P->D;
-        PI[0].I[InstanceCount].NDs = PI[0].I[InstanceCount].D->size();
-        setsInPool += PI[0].I[InstanceCount].NDs;
-
-        for (int h = 0; h < PI[0].I[InstanceCount].NDs; h++) {
-            DescriptorSetLayout *DSL = (*PI[0].I[InstanceCount].D)[h];
-            int DSLsize = DSL->Bindings.size();
-
-            for (int l = 0; l < DSLsize; l++) {
-                if (DSL->Bindings[l].type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER) {
-                    uniformBlocksInPool += 1;
-                } else {
-                    texturesInPool += 1;
-                }
-            }
-        }
-
-        InstanceCount++;
-    }
-
 public:
     int init(BaseProject *bp, std::vector<VertexDescriptorRef> &VDRs,
              std::vector<PipelineRef> &PRs, const std::string &file) override {
@@ -516,7 +550,7 @@ public:
 
         // MODELS
         ModelCount = 0;
-        M = (Model **) calloc(ModelCount, sizeof(Model *));
+        M = (Model **) calloc(1, sizeof(Model *)); // TODO: change to correct number
         std::vector<unsigned char> vertices{};
         std::vector<unsigned int> indices{};
 
@@ -535,36 +569,38 @@ public:
                 0, 1, 2,
                 1, 2, 3
         };
-        addModel("background", vertices, indices);
+        addModel("background", "menu", vertices, indices);
         // TODO: define the other models: button, cursor
 
         // TEXTURES
         TextureCount = 0;
-        T = (Texture **) calloc(TextureCount, sizeof(Texture *));
+        T = (Texture **) calloc(1, sizeof(Texture *)); // TODO: change to correct number
         // background texture
         addTexture("background", "textures/deep-fold.png"); // Credits: https://deep-fold.itch.io/space-background-generator
         // TODO: define the other textures: button, cursor
 
         // INSTANCES
-        PipelineInstanceCount = 1;
-        PI = (PipelineInstances *) calloc(PipelineInstanceCount, sizeof(PipelineInstances));
+        PipelineInstanceCount = 0;
+        PI = (PipelineInstances *) calloc(1, sizeof(PipelineInstances));
         InstanceCount = 0;
         int setsInPool = 0;
         int uniformBlocksInPool = 0;
         int texturesInPool = 0;
         // background instance
-        PI[0].P = PipelineIds["menu"];
-        PI[0].InstanceCount = 1; // TODO: calculate the number of instances: 1 background, 1 cursor, 2 buttons => 4 instances
-        PI[0].I = (Instance *) calloc(PI[0].InstanceCount, sizeof(Instance));
+        PI[PipelineInstanceCount].P = PipelineIds["menu"];
+        PI[PipelineInstanceCount].InstanceCount = 0;
+        PI[PipelineInstanceCount].I = (Instance *) calloc(1, sizeof(Instance)); // TODO: calculate the number of instances: 1 background, 1 cursor, 2 buttons => 4 instances
 
         // background instance 1
         addInstance("background-ist1", "background", "background", setsInPool, uniformBlocksInPool, texturesInPool);
         // TODO: define the other instances: cursor, buttons
 
+        PipelineInstanceCount++;
+
         // Request xInPool
-        BP->requestSetsInPool(setsInPool + 2);
-        BP->requestUniformBlocksInPool(uniformBlocksInPool + 2);
-        BP->requestTexturesInPool(texturesInPool + 2);
+        BP->requestSetsInPool(setsInPool);
+        BP->requestUniformBlocksInPool(uniformBlocksInPool);
+        BP->requestTexturesInPool(texturesInPool);
 
         std::cout << "Creating instances\n";
         I = (Instance **) calloc(InstanceCount, sizeof(Instance *));

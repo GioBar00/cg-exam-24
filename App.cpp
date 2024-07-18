@@ -10,15 +10,15 @@ class App : public BaseProject {
 protected:
 
     /* Descriptor set layouts. */
-    DescriptorSetLayout ObjectDSL, SourceDSL, LightDSL, MenuDSL;
+    DescriptorSetLayout ObjectDSL, SourceDSL, LightDSL, BackgroundDSL;
 
 
     /* Vertex descriptors. */
-    VertexDescriptor ObjectVD, SourceVD, MenuVD;
+    VertexDescriptor ObjectVD, SourceVD, BackgroundVD;
 
 
     /* Pipelines. */
-    Pipeline ToonP, PhongP, SourceP, MenuP;
+    Pipeline ToonP, PhongP, SourceP, MenuP, SkyboxP;
 
 
     /* Texts. */
@@ -75,7 +75,7 @@ protected:
         LightDSL.init(this, {
             {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,          VK_SHADER_STAGE_FRAGMENT_BIT,   sizeof(LightUniform),   1}
 		});
-        MenuDSL.init(this, {
+        BackgroundDSL.init(this, {
             {0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,  VK_SHADER_STAGE_FRAGMENT_BIT,   0,  1},
         });
 
@@ -94,7 +94,7 @@ protected:
                 {0, 1, VK_FORMAT_R32G32_SFLOAT,     offsetof(SourceVertex, UV),     sizeof(glm::vec2),  UV}
             }
         );
-        MenuVD.init(this, {
+        BackgroundVD.init(this, {
                 {0, sizeof(MenuVertex), VK_VERTEX_INPUT_RATE_VERTEX}
             }, {
                 {0, 0, VK_FORMAT_R32G32_SFLOAT, offsetof(MenuVertex, pos),  sizeof(glm::vec2),  POSITION},
@@ -105,8 +105,11 @@ protected:
         ToonP.init(this, &ObjectVD, "shaders/Shader.vert.spv", "shaders/Toon.frag.spv", {&LightDSL, &ObjectDSL});
         PhongP.init(this, &ObjectVD, "shaders/Shader.vert.spv", "shaders/Phong.frag.spv", {&LightDSL, &ObjectDSL});
         SourceP.init(this, &SourceVD, "shaders/Emission.vert.spv", "shaders/Emission.frag.spv", {&SourceDSL});
-        MenuP.init(this, &MenuVD, "shaders/Menu.vert.spv", "shaders/Menu.frag.spv", {&MenuDSL});
+        MenuP.init(this, &BackgroundVD, "shaders/Menu.vert.spv", "shaders/Menu.frag.spv", {&BackgroundDSL});
         MenuP.setAdvancedFeatures(VK_COMPARE_OP_LESS_OR_EQUAL, VK_POLYGON_MODE_FILL, VK_CULL_MODE_NONE, true);
+        SkyboxP.init(this, &BackgroundVD, "shaders/Background.vert.spv", "shaders/Background.frag.spv", {&BackgroundDSL});
+        SkyboxP.setAdvancedFeatures(VK_COMPARE_OP_LESS_OR_EQUAL, VK_POLYGON_MODE_FILL, VK_CULL_MODE_NONE, true);
+
 
         std::string s = " ";
         out[0].l[0] = (char *) malloc(s.size() + 1);
@@ -115,20 +118,22 @@ protected:
         txt.init(this, &out);
 
         // Define vertex descriptor references per scene.
-        VertexDescriptorRef ObjectVDR{}, SourceVDR{}, MenuVDR{};
+        VertexDescriptorRef ObjectVDR{}, SourceVDR{}, MenuVDR{}, SkyboxVDR{};
         ObjectVDR.init("object", &ObjectVD);
         SourceVDR.init("source", &SourceVD);
-        std::vector<VertexDescriptorRef> LevelSceneVDRs = {ObjectVDR, SourceVDR };
+        SkyboxVDR.init("skybox", &BackgroundVD);
+        std::vector<VertexDescriptorRef> LevelSceneVDRs = { ObjectVDR, SourceVDR, SkyboxVDR };
 
-        MenuVDR.init("menu", &MenuVD);
+        MenuVDR.init("menu", &BackgroundVD);
         std::vector<VertexDescriptorRef> MenuVDRs = { MenuVDR };
 
         // Define pipeline references per scene.
-        PipelineRef ToonPR{}, PhongPR{}, SourcePR{}, MenuPR{};
+        PipelineRef ToonPR{}, PhongPR{}, SourcePR{}, MenuPR{}, SkyboxPR{};
         ToonPR.init("toon", &ToonP);
         PhongPR.init("phong", &PhongP);
         SourcePR.init("emission", &SourceP);
-        std::vector<PipelineRef> LevelScenePRs = {ToonPR, PhongPR, SourcePR };
+        SkyboxPR.init("skybox", &SkyboxP);
+        std::vector<PipelineRef> LevelScenePRs = { ToonPR, PhongPR, SourcePR, SkyboxPR };
 
         MenuPR.init("menu", &MenuP);
         std::vector<PipelineRef> MenuPRs = { MenuPR };
@@ -142,7 +147,7 @@ protected:
 
 
         // Set the first scene
-        currSceneId = SceneId::SCENE_MAIN_MENU;
+        currSceneId = SceneId::SCENE_LEVEL_1;
         changeScene(currSceneId);
         changingScene = false;
     }
@@ -153,6 +158,7 @@ protected:
         SourceP.create();
         txt.pipelinesAndDescriptorSetsInit();
         MenuP.create();
+        SkyboxP.create();
         scenes[currSceneId]->pipelinesAndDescriptorSetsInit();
     }
 
@@ -162,6 +168,7 @@ protected:
         SourceP.cleanup();
         txt.pipelinesAndDescriptorSetsCleanup();
         MenuP.cleanup();
+        SkyboxP.cleanup();
         scenes[currSceneId]->pipelinesAndDescriptorSetsCleanup();
     }
 
@@ -176,19 +183,19 @@ protected:
         ObjectDSL.cleanup();
         SourceDSL.cleanup();
         LightDSL.cleanup();
-        MenuDSL.cleanup();
+        BackgroundDSL.cleanup();
 
         ToonP.destroy();
         PhongP.destroy();
         SourceP.destroy();
         MenuP.destroy();
+        SkyboxP.destroy();
 
         txt.localCleanup();
     }
 
     void populateCommandBuffer(VkCommandBuffer commandBuffer, int currentImage) override {
         txt.populateCommandBuffer(commandBuffer, currentImage);
-        MenuP.bind(commandBuffer);
         scenes[currSceneId]->populateCommandBuffer(commandBuffer, currentImage);
     }
 

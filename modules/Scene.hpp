@@ -1,3 +1,5 @@
+#include <utility>
+
 #define MAX_LIGHTS 32
 
 
@@ -451,6 +453,54 @@ public:
 };
 
 class MainMenuScene : public Scene {
+protected:
+    void addModel(const std::string &id, std::vector<unsigned char> vertices, std::vector<unsigned int> indices) {
+        MeshIds[id] = ModelCount;
+        M[ModelCount] = new Model();
+        int mainStride = VDIds["menu"]->Bindings[0].stride;
+        M[ModelCount]->vertices = std::move(vertices);
+        M[ModelCount]->indices = std::move(indices);
+        M[ModelCount]->initMesh(BP, VDIds["menu"]);
+        ModelCount++;
+        vertices.clear();
+        indices.clear();
+    }
+
+    void addTexture(const std::string &id, const std::string &path) {
+        TextureIds[id] = TextureCount;
+        T[TextureCount] = new Texture();
+        T[TextureCount]->init(BP, path);
+        TextureCount++;
+    }
+
+    void addInstance(const std::string &id, const std::string &mid, const std::string &tid, int &setsInPool, int &uniformBlocksInPool, int &texturesInPool) {
+        PI[0].I[InstanceCount].id = new std::string(id);
+        PI[0].I[InstanceCount].Mid = MeshIds[mid];
+        PI[0].I[InstanceCount].NTx = 1;
+        PI[0].I[InstanceCount].Tid = (int *) calloc(PI[0].I[InstanceCount].NTx, sizeof(int));
+        PI[0].I[InstanceCount].Tid[0] = TextureIds[tid];
+        PI[0].I[InstanceCount].Wm = glm::mat4(1.0f);
+        PI[0].I[InstanceCount].PI = &PI[0];
+        PI[0].I[InstanceCount].D = &PI[0].P->P->D;
+        PI[0].I[InstanceCount].NDs = PI[0].I[InstanceCount].D->size();
+        setsInPool += PI[0].I[InstanceCount].NDs;
+
+        for (int h = 0; h < PI[0].I[InstanceCount].NDs; h++) {
+            DescriptorSetLayout *DSL = (*PI[0].I[InstanceCount].D)[h];
+            int DSLsize = DSL->Bindings.size();
+
+            for (int l = 0; l < DSLsize; l++) {
+                if (DSL->Bindings[l].type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER) {
+                    uniformBlocksInPool += 1;
+                } else {
+                    texturesInPool += 1;
+                }
+            }
+        }
+
+        InstanceCount++;
+    }
+
 public:
     int init(BaseProject *bp, std::vector<VertexDescriptorRef> &VDRs,
              std::vector<PipelineRef> &PRs, const std::string &file) override {
@@ -464,10 +514,12 @@ public:
         }
 
         // MODELS
-        ModelCount = 1;
+        ModelCount = 0;
         M = (Model **) calloc(ModelCount, sizeof(Model *));
-        MeshIds["background"] = 0;
-        M[0] = new Model();
+        std::vector<unsigned char> vertices{};
+        std::vector<unsigned int> indices{};
+
+        // background model
         int mainStride = VDIds["menu"]->Bindings[0].stride;
         std::vector<unsigned char> vertex(mainStride, 0);
         auto myVertex = (MenuVertex *) (&vertex[0]);
@@ -475,22 +527,21 @@ public:
             for (int j = -1; j <= +1; j += 2) {
                 myVertex->pos = {i, j};
                 myVertex->UV = {(float) (i + 1) / 2, (float) (j + 1) / 2};
-                M[0]->vertices.insert(M[0]->vertices.end(), vertex.begin(), vertex.end());
+                vertices.insert(vertices.end(), vertex.begin(), vertex.end());
             }
         }
-        M[0]->indices = {
+        indices = {
                 0, 1, 2,
                 1, 2, 3
         };
-        M[0]->initMesh(BP, VDIds["menu"]);
+        addModel("background", vertices, indices);
         // TODO: define the other models: button, cursor
 
         // TEXTURES
-        TextureCount = 1;
+        TextureCount = 0;
         T = (Texture **) calloc(TextureCount, sizeof(Texture *));
-        TextureIds["background"] = 0;
-        T[0] = new Texture();
-        T[0]->init(BP, "textures/deep-fold.png"); // Credits: https://deep-fold.itch.io/space-background-generator
+        // background texture
+        addTexture("background", "textures/deep-fold.png"); // Credits: https://deep-fold.itch.io/space-background-generator
         // TODO: define the other textures: button, cursor
 
         // INSTANCES
@@ -502,34 +553,11 @@ public:
         int texturesInPool = 0;
         // background instance
         PI[0].P = PipelineIds["menu"];
-        PI[0].InstanceCount = 1; // TODO: calculate the number of instances: 1 background, 1 cursor, 2 buttons
+        PI[0].InstanceCount = 1; // TODO: calculate the number of instances: 1 background, 1 cursor, 2 buttons => 4 instances
         PI[0].I = (Instance *) calloc(PI[0].InstanceCount, sizeof(Instance));
 
-        PI[0].I[0].id = new std::string("background-ist1");
-        PI[0].I[0].Mid = MeshIds["background"];
-        PI[0].I[0].NTx = 1;
-        PI[0].I[0].Tid = (int *) calloc(PI[0].I[0].NTx, sizeof(int));
-        PI[0].I[0].Tid[0] = TextureIds["background"];
-        PI[0].I[0].Wm = glm::mat4(1.0f);
-
-        PI[0].I[0].PI = &PI[0];
-        PI[0].I[0].D = &PI[0].P->P->D;
-        PI[0].I[0].NDs = PI[0].I[0].D->size();
-        setsInPool += PI[0].I[0].NDs;
-
-        for (int h = 0; h < PI[0].I[0].NDs; h++) {
-            DescriptorSetLayout *DSL = (*PI[0].I[0].D)[h];
-            int DSLsize = DSL->Bindings.size();
-
-            for (int l = 0; l < DSLsize; l++) {
-                if (DSL->Bindings[l].type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER) {
-                    uniformBlocksInPool += 1;
-                } else {
-                    texturesInPool += 1;
-                }
-            }
-        }
-        InstanceCount++;
+        // background instance 1
+        addInstance("background-ist1", "background", "background", setsInPool, uniformBlocksInPool, texturesInPool);
         // TODO: define the other instances: cursor, buttons
 
         // Request xInPool

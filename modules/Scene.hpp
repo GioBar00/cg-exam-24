@@ -469,8 +469,8 @@ class LevelSceneController : public SceneController {
     const float min_zoom = 1.5f;
 
     const float camRotDuration = 1.f;
-    const float playerRotDuration = 0.1f;
-    const float playerMoveDuration = 0.1f;
+    const float playerRotDuration = 0.3f;
+    const float playerMoveDuration = 0.7f;
 
     const float playerFloatSpeed = 1.5f;
     const float torchRotationSpeed = 0.5f;

@@ -79,7 +79,7 @@ struct TextMaker {
 
 
  	void createTextPipeline() {
-		P.init(BP, &VD, "shaders/TextVert.spv", "shaders/TextFrag.spv", {&DSL});
+		P.init(BP, &VD, "shaders/Text.vert.spv", "shaders/Text.frag.spv", {&DSL});
 		P.setAdvancedFeatures(VK_COMPARE_OP_LESS_OR_EQUAL, VK_POLYGON_MODE_FILL,
  								    VK_CULL_MODE_NONE, true);
  	}

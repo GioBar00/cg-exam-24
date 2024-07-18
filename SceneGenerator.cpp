@@ -5,11 +5,11 @@ using namespace std;
 using json = nlohmann::json;
 using ordered_json = nlohmann::ordered_json;
 
-#define FILE_PATH string("levels/showcase/")
+#define FILE_PATH string("levels/tutorial/")
 #define CONFIG_PATH "levels/properties.json"
 #define MODEL_PATH string("models/dungeon/")
 #define TEMPLATE_PATH "models/scene.json"
-#define RETURN_PATH "scenes/level-02.json"
+#define RETURN_PATH "scenes/level-01.json"
 
 enum {
     NO_ID = -1,

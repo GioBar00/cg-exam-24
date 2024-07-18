@@ -1,7 +1,9 @@
 #include "modules/Starter.hpp"
 #include "modules/AppCommon.hpp"
-#include "modules/Scene.hpp"
 #include "modules/TextMaker.hpp"
+#include "modules/Scene.hpp"
+
+#define HIDE_TEXT false
 
 
 class App : public BaseProject {
@@ -21,7 +23,7 @@ protected:
 
     /* Texts. */
     std::vector<SingleText> out = {
-        { 1, {"Hello, World!", "", "", ""}, 0, 0 }
+        { 0, {nullptr, nullptr, nullptr, nullptr}, 0, 0 }
     };
     TextMaker txt;
 
@@ -36,6 +38,7 @@ protected:
     SceneId newSceneId;
 
     bool changingScene = false;
+    bool updateText = false;
 
     void setWindowParameters() override {
         windowWidth = 1200;
@@ -105,8 +108,11 @@ protected:
         MenuP.init(this, &MenuVD, "shaders/Menu.vert.spv", "shaders/Menu.frag.spv", {&MenuDSL});
         MenuP.setAdvancedFeatures(VK_COMPARE_OP_LESS_OR_EQUAL, VK_POLYGON_MODE_FILL, VK_CULL_MODE_NONE, true);
 
+        std::string s = " ";
+        out[0].l[0] = (char *) malloc(s.size() + 1);
+        strcpy(out[0].l[0], s.c_str());
+        out[0].usedLines = 1;
         txt.init(this, &out);
-
 
         // Define vertex descriptor references per scene.
         VertexDescriptorRef ObjectVDR{}, SourceVDR{}, MenuVDR{};
@@ -138,6 +144,7 @@ protected:
         // Set the first scene
         currSceneId = SceneId::SCENE_MAIN_MENU;
         changeScene(currSceneId);
+        changingScene = false;
     }
 
     void pipelinesAndDescriptorSetsInit() override {
@@ -206,6 +213,43 @@ protected:
         newSceneId = _newSceneId;
     }
 
+    void changeText(std::string newText, int line) override {
+        if (HIDE_TEXT)
+            return;
+        if (line >= 4 || line < 0)
+            throw std::runtime_error("Line number out of bounds.");
+        if (newText.empty()) {
+            if (out[0].l[line] != nullptr) {
+                free(out[0].l[line]);
+                out[0].l[line] = nullptr;
+            }
+            if (line < out[0].usedLines - 1) {
+                // move all lines
+                for (int i = line; i < out[0].usedLines - 1; i++) {
+                    out[0].l[i] = out[0].l[i + 1];
+                    out[0].l[out[0].usedLines - 1] = nullptr;
+                }
+            }
+            if (out[0].usedLines > 1)
+                out[0].usedLines--;
+        } else {
+            if (line > out[0].usedLines) {
+                line = out[0].usedLines;
+            }
+            if (out[0].l[line] != nullptr) {
+                free(out[0].l[line]);
+                out[0].l[line] = nullptr;
+            }
+            out[0].l[line] = (char *) malloc(newText.size() + 1);
+            strcpy(out[0].l[line], newText.c_str());
+            if (line == out[0].usedLines) {
+                out[0].usedLines++;
+            }
+        }
+        updateText = true;
+        framebufferResized = true;
+    }
+
 protected:
     void recreateSwapChain() override {
         int width = 0, height = 0;
@@ -226,6 +270,11 @@ protected:
             scenes[currSceneId] = nullptr;
             currSceneId = newSceneId;
             changingScene = false;
+        }
+
+        if (updateText) {
+            txt.updateTexts();
+            updateText = false;
         }
 
         createSwapChain();

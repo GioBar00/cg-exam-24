@@ -1,5 +1,3 @@
-#include <utility>
-
 #define MAX_LIGHTS 32
 
 
@@ -123,6 +121,8 @@ public:
     }
 
     virtual void addObjectToMap(std::pair<int, int> coords, ObjectInstance *obj) = 0;
+
+    virtual void init() = 0;
 
     virtual void localCleanup() = 0;
 
@@ -401,9 +401,9 @@ public:
             }
 
             // Request xInPool
-            BP->requestSetsInPool(setsInPool);
+            BP->requestSetsInPool(setsInPool + 1);
             BP->requestUniformBlocksInPool(uniformBlocksInPool);
-            BP->requestTexturesInPool(texturesInPool);
+            BP->requestTexturesInPool(texturesInPool + 1);
 
             std::cout << "Creating instances\n";
             I = (Instance **) calloc(InstanceCount, sizeof(Instance *));
@@ -446,6 +446,7 @@ public:
         light2->lPower = 0.15f;
         SC->addObjectToMap({0, 0}, light2);
 
+        SC->init();
 
         std::cout << "Leaving scene loading and creation\n";
         return 0;
@@ -600,6 +601,7 @@ class LevelSceneController : public SceneController {
     const float camRotDuration = 1.f;
     const float playerRotDuration = 0.3f;
     const float playerMoveDuration = 0.7f;
+    const float infoTextDuration = 2.0f;
 
     const float playerFloatSpeed = 1.5f;
     const float torchRotationSpeed = 0.5f;
@@ -635,6 +637,9 @@ class LevelSceneController : public SceneController {
     glm::mat4 torchPlTr = glm::mat4(1.0f);
 
     float heightAnimDelta = 0.f;
+
+    std::chrono::high_resolution_clock::time_point infoTextStartTime = std::chrono::high_resolution_clock::now();
+    bool infoTextActive = false;
 
     static void updateObjectBuffer(uint32_t currentImage, Instance *I, glm::mat4 ViewPrj, glm::mat4 baseTr,
                                    const std::vector<void *> &gubos, bool spec) {
@@ -699,6 +704,11 @@ public:
         if (obj->type == SceneObjectType::SO_TORCH) {
             numTorches++;
         }
+    }
+
+    void init() override {
+        // set text for torches
+        scene->BP->changeText("Lit Torches: " + std::to_string(numLitTorches) + "/" + std::to_string(numTorches), 0);
     }
 
     void localCleanup() override {
@@ -823,8 +833,7 @@ public:
                     if (obj->type == SceneObjectType::SO_WALL || obj->type == SceneObjectType::SO_BONFIRE) {
                         canMove = false;
                         std::cout << "Player CANNOT move to " << getAdjacentCell(playerCoords, playerRot).first << ", "
-                                  << getAdjacentCell(playerCoords, playerRot).second
-                                  << "\n";
+                                  << getAdjacentCell(playerCoords, playerRot).second << "\n";
                         break;
                     }
                 }
@@ -870,8 +879,10 @@ public:
                                 nextScene = SceneId::SCENE_LEVEL_1;
                             scene->BP->changeScene(nextScene);
                         } else {
-                            // TODO: tell player to light all torches
                             std::cout << "Light all torches: " << numLitTorches << "/" << numTorches << "\n";
+                            scene->BP->changeText("Light all torches!", 1);
+                            infoTextStartTime = std::chrono::high_resolution_clock::now();
+                            infoTextActive = true;
                         }
                     }
                 } else {
@@ -913,6 +924,8 @@ public:
                             std::cout << "Lighting torch on wall\n";
                             numLitTorches++;
                             std::cout << "Lit torches: " << numLitTorches << "/" << numTorches << "\n";
+                            scene->BP->changeText("Lit Torches: " + std::to_string(numLitTorches) + "/" + std::to_string(numTorches), 0);
+
                         }
                         break;
                     } else if (obj->type == SceneObjectType::SO_BONFIRE) {
@@ -921,6 +934,7 @@ public:
                             std::cout << "Lighting torch from bonfire\n";
                             numLitTorches++;
                             std::cout << "Lit torches: " << numLitTorches << "/" << numTorches << "\n";
+                            scene->BP->changeText("Lit Torches: " + std::to_string(numLitTorches) + "/" + std::to_string(numTorches), 0);
                         }
                     }
                 }
@@ -928,6 +942,16 @@ public:
         } else if (debounce) {
             debounce = false;
             std::cout << "Debounce\n";
+        }
+
+        // check info text
+        if (infoTextActive) {
+            auto currTime = std::chrono::high_resolution_clock::now();
+            float elapsed = std::chrono::duration<float>(currTime - infoTextStartTime).count();
+            if (elapsed > infoTextDuration) {
+                infoTextActive = false;
+                scene->BP->changeText("", 1);
+            }
         }
 
         // make camera follow player
@@ -958,7 +982,7 @@ public:
                     continue;
                 if (obj->type == SceneObjectType::SO_TORCH || obj->type == SceneObjectType::SO_LAMP ||
                     obj->type == SceneObjectType::SO_BONFIRE) {
-                    if (glm::distance(currPlayerPos, obj->lPosition) > lightRenderDistance && obj->lType != "DIRECT")
+                    if (obj->lType != "DIRECT" && obj != torchWithPlayer && glm::distance(currPlayerPos, obj->lPosition) > lightRenderDistance)
                         continue;
                 }
                 glm::vec3 lPosition;
@@ -1022,6 +1046,10 @@ public:
 
     void addObjectToMap(std::pair<int, int> coords, ObjectInstance *obj) override {
         throw std::runtime_error("MainMenuSceneController::addObjectToMap not implemented");
+    }
+
+    void init() override {
+
     }
 
     void localCleanup() override {

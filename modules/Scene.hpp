@@ -131,7 +131,8 @@ public:
 
 class Scene {
 protected:
-    void addModel(const std::string &id, const std::string &vid, std::vector<unsigned char> vertices, std::vector<unsigned int> indices) {
+    void addModel(const std::string &id, const std::string &vid, std::vector<unsigned char> vertices,
+                  std::vector<unsigned int> indices) {
         MeshIds[id] = ModelCount;
         M[ModelCount] = new Model();
         int mainStride = VDIds[vid]->Bindings[0].stride;
@@ -150,7 +151,8 @@ protected:
         TextureCount++;
     }
 
-    void addInstance(const std::string &id, const std::string &mid, const std::string &tid, int &setsInPool, int &uniformBlocksInPool, int &texturesInPool) {
+    void addInstance(const std::string &id, const std::string &mid, const std::string &tid, int &setsInPool,
+                     int &uniformBlocksInPool, int &texturesInPool) {
         int instanceIdx = PI[PipelineInstanceCount].InstanceCount;
         PI[PipelineInstanceCount].I[instanceIdx].id = new std::string(id);
         PI[PipelineInstanceCount].I[instanceIdx].Mid = MeshIds[mid];
@@ -179,6 +181,7 @@ protected:
         PI[PipelineInstanceCount].InstanceCount++;
         InstanceCount++;
     }
+
 public:
 
     BaseProject *BP{};
@@ -394,13 +397,15 @@ public:
             }
 
             // Skybox texture
-            addTexture("skybox", "textures/deep-fold.png"); // Credits: https://deep-fold.itch.io/space-background-generator
+            addTexture("skybox",
+                       "textures/deep-fold.png"); // Credits: https://deep-fold.itch.io/space-background-generator
 
             // INSTANCES
             nlohmann::json pis = js["instances"];
             PipelineInstanceCount = pis.size();
             std::cout << "Pipeline Instances count: " << PipelineInstanceCount << "\n";
-            PI = (PipelineInstances *) calloc(PipelineInstanceCount + 1, sizeof(PipelineInstances)); // +1 for the skybox
+            PI = (PipelineInstances *) calloc(PipelineInstanceCount + 1,
+                                              sizeof(PipelineInstances)); // +1 for the skybox
             InstanceCount = 0;
             int setsInPool = 0;
             int uniformBlocksInPool = 0;
@@ -576,7 +581,8 @@ public:
         TextureCount = 0;
         T = (Texture **) calloc(1, sizeof(Texture *)); // TODO: change to correct number
         // background texture
-        addTexture("background", "textures/deep-fold.png"); // Credits: https://deep-fold.itch.io/space-background-generator
+        addTexture("background",
+                   "textures/deep-fold.png"); // Credits: https://deep-fold.itch.io/space-background-generator
         // TODO: define the other textures: button, cursor
 
         // INSTANCES
@@ -589,7 +595,8 @@ public:
         // background instance
         PI[PipelineInstanceCount].P = PipelineIds["menu"];
         PI[PipelineInstanceCount].InstanceCount = 0;
-        PI[PipelineInstanceCount].I = (Instance *) calloc(1, sizeof(Instance)); // TODO: calculate the number of instances: 1 background, 1 cursor, 2 buttons => 4 instances
+        PI[PipelineInstanceCount].I = (Instance *) calloc(1,
+                                                          sizeof(Instance)); // TODO: calculate the number of instances: 1 background, 1 cursor, 2 buttons => 4 instances
 
         // background instance 1
         addInstance("background-ist1", "background", "background", setsInPool, uniformBlocksInPool, texturesInPool);
@@ -638,6 +645,27 @@ class LevelSceneController : public SceneController {
     const float playerRotDuration = 0.3f;
     const float playerMoveDuration = 0.7f;
     const float infoTextDuration = 2.0f;
+    const float lightAnimDuration = 4.0f;
+
+    const std::vector<float> lightPowerFactors = {0.90349378, 1.0, 0.89005709, 0.83026667, 0.96448817, 0.91940343,
+                                                  0.87150715, 0.79691722, 0.83897976, 0.71733054, 0.78296689,
+                                                  0.73759316, 0.5090553, 0.68889212, 0.54618451, 0.55351021, 0.35401893,
+                                                  0.38169283, 0.29692011, 0.29330835, 0.37485463, 0.37761337,
+                                                  0.20597098, 0.23552444, 0.30538038, 0.25490031, 0.14550135,
+                                                  0.22760572, 0.17034215, 0.31292324, 0.37629342, 0.34939741,
+                                                  0.44170797, 0.48384355, 0.50728683, 0.49999774, 0.58976117,
+                                                  0.57345022, 0.62231734, 0.70364078, 0.81867557, 0.83183688,
+                                                  0.82859017, 0.948519, 0.96955134, 0.86614905, 0.88532677, 0.78713641,
+                                                  0.84083218, 0.95735339, 0.90842888, 0.98662138, 0.72541265,
+                                                  0.97545904, 0.93948324, 0.89309977, 0.86549708, 0.82654344,
+                                                  0.67434097, 0.73970837, 0.75666505, 0.65085962, 0.49935446,
+                                                  0.65700794, 0.55786411, 0.41534514, 0.38588968, 0.33129121,
+                                                  0.21273922, 0.37692862, 0.36292544, 0.25494925, 0.3042671, 0.29094114,
+                                                  0.28025327, 0.0562532, 0.24699983, 0.24301981, 0.21985722, 0.26196244,
+                                                  0.42582341, 0.43435639, 0.36770523, 0.56848837, 0.6095129, 0.48639306,
+                                                  0.62991897, 0.6031358, 0.5060762, 0.83442878, 0.82949084, 0.75172799,
+                                                  0.89596749, 1.0, 0.87537598, 0.88267387, 0.92284276, 0.82195823,
+                                                  0.94065499, 0.96114116};
 
     const float playerFloatSpeed = 1.5f;
     const float torchRotationSpeed = 0.5f;
@@ -677,6 +705,9 @@ class LevelSceneController : public SceneController {
     std::chrono::high_resolution_clock::time_point infoTextStartTime = std::chrono::high_resolution_clock::now();
     bool infoTextActive = false;
 
+    std::chrono::high_resolution_clock::time_point lightAnimStartTime = std::chrono::high_resolution_clock::now();
+    bool animatingLights = false;
+
     static void updateObjectBuffer(uint32_t currentImage, Instance *I, glm::mat4 ViewPrj, glm::mat4 baseTr,
                                    const std::vector<void *> &gubos, bool spec) {
         ObjectUniform oubo{};
@@ -711,7 +742,7 @@ class LevelSceneController : public SceneController {
     }
 
     static void updateLightBuffer(uint32_t currentImage, ObjectInstance *obj,
-                                  glm::vec3 lPosition, LightUniform *gubo, int idx) {
+                                  glm::vec3 lPosition, LightUniform *gubo, int idx, float powerFactor) {
         if (obj->lType == "DIRECT")
             gubo->TYPE[idx] = glm::vec3(1, 0, 0);
         else if (obj->lType == "POINT")
@@ -721,7 +752,7 @@ class LevelSceneController : public SceneController {
         gubo->lightPos[idx] = lPosition;
         gubo->lightDir[idx] = glm::vec3(obj->lDirection);
         gubo->lightCol[idx] = obj->lColor;
-        gubo->lightPow[idx] = glm::vec3(obj->lPower);
+        gubo->lightPow[idx] = glm::vec3(obj->lPower * powerFactor);
         gubo->NUMBER = idx + 1;
     }
 
@@ -960,7 +991,9 @@ public:
                             std::cout << "Lighting torch on wall\n";
                             numLitTorches++;
                             std::cout << "Lit torches: " << numLitTorches << "/" << numTorches << "\n";
-                            scene->BP->changeText("Lit Torches: " + std::to_string(numLitTorches) + "/" + std::to_string(numTorches), 0);
+                            scene->BP->changeText(
+                                    "Lit Torches: " + std::to_string(numLitTorches) + "/" + std::to_string(numTorches),
+                                    0);
 
                         }
                         break;
@@ -970,7 +1003,9 @@ public:
                             std::cout << "Lighting torch from bonfire\n";
                             numLitTorches++;
                             std::cout << "Lit torches: " << numLitTorches << "/" << numTorches << "\n";
-                            scene->BP->changeText("Lit Torches: " + std::to_string(numLitTorches) + "/" + std::to_string(numTorches), 0);
+                            scene->BP->changeText(
+                                    "Lit Torches: " + std::to_string(numLitTorches) + "/" + std::to_string(numTorches),
+                                    0);
                         }
                     }
                 }
@@ -987,6 +1022,29 @@ public:
             if (elapsed > infoTextDuration) {
                 infoTextActive = false;
                 scene->BP->changeText("", 1);
+            }
+        }
+
+        // check light animation
+        float currPowerFactor = 1.0f;
+        if (animatingLights) {
+            auto currTime = std::chrono::high_resolution_clock::now();
+            float elapsed = std::chrono::duration<float>(currTime - lightAnimStartTime).count();
+            if (elapsed > lightAnimDuration) {
+                animatingLights = false;
+                lightAnimStartTime = std::chrono::high_resolution_clock::now();
+                std::cout << "Light animation ENDED\n";
+            } else {
+                currPowerFactor = lightPowerFactors[(int) (elapsed / lightAnimDuration * lightPowerFactors.size())];
+            }
+        } else {
+            auto currTime = std::chrono::high_resolution_clock::now();
+            float elapsed = std::chrono::duration<float>(currTime - lightAnimStartTime).count();
+            // randomly animate lights with probability 0.01 after 5 seconds
+            if (static_cast <float> (rand()) / static_cast <float> (RAND_MAX) < 0.001 && elapsed > 5.0f) {
+                animatingLights = true;
+                lightAnimStartTime = std::chrono::high_resolution_clock::now();
+                std::cout << "Light animation STARTED\n";
             }
         }
 
@@ -1018,7 +1076,8 @@ public:
                     continue;
                 if (obj->type == SceneObjectType::SO_TORCH || obj->type == SceneObjectType::SO_LAMP ||
                     obj->type == SceneObjectType::SO_BONFIRE) {
-                    if (obj->lType != "DIRECT" && obj != torchWithPlayer && glm::distance(currPlayerPos, obj->lPosition) > lightRenderDistance)
+                    if (obj->lType != "DIRECT" && obj != torchWithPlayer &&
+                        glm::distance(currPlayerPos, obj->lPosition) > lightRenderDistance)
                         continue;
                 }
                 glm::vec3 lPosition;
@@ -1026,7 +1085,8 @@ public:
                     lPosition = glm::vec3(torchPlTr * glm::vec4(obj->lPosition, 1.0f));
                 else
                     lPosition = obj->lPosition;
-                updateLightBuffer(currentImage, obj, lPosition, &lubo, idx);
+                updateLightBuffer(currentImage, obj, lPosition, &lubo, idx,
+                                  obj->type == SceneObjectType::SO_LIGHT ? 1.0f : currPowerFactor);
                 idx++;
             }
         }

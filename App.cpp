@@ -4,19 +4,35 @@
 #include "modules/TextMaker.hpp"
 
 
+const uint32_t w = 1200, h = 900;
+
+
+struct MenuVertex {
+    glm::vec2 pos;
+    glm::vec2 UV;
+}; // TODO: Uniform containing w/h at frag?
+
+
 class App : public BaseProject {
 protected:
 
     /* Descriptor set layouts. */
-    DescriptorSetLayout ObjectDSL, SourceDSL, LightDSL;
+    DescriptorSetLayout ObjectDSL, SourceDSL, LightDSL, MenuDSL;
 
 
     /* Vertex descriptors. */
-    VertexDescriptor ObjectVD, SourceVD;
+    VertexDescriptor ObjectVD, SourceVD, MenuVD;
 
 
     /* Pipelines. */
-    Pipeline ToonP, PhongP, SourceP;
+    Pipeline ToonP, PhongP, SourceP, MenuP;
+
+
+    /* Models and textures. */
+    Model MenuM;
+    Texture MenuT;
+    DescriptorSet MenuDS;
+
 
     /* Texts. */
     std::vector<SingleText> out = {
@@ -37,8 +53,8 @@ protected:
     bool changingScene = false;
 
     void setWindowParameters() override {
-        windowWidth = 1200;
-        windowHeight = 900;
+        windowWidth = w;
+        windowHeight = h;
         windowTitle = "CG24 @ PoliMi";
         windowResizable = GLFW_FALSE;
         initialBackgroundColor = {0.05f, 0.05f, 0.05f, 1.0f};
@@ -71,6 +87,9 @@ protected:
         LightDSL.init(this, {
             {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,          VK_SHADER_STAGE_FRAGMENT_BIT,   sizeof(LightUniform),   1}
 		});
+        MenuDSL.init(this, {
+            {0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,  VK_SHADER_STAGE_FRAGMENT_BIT,   0,  1},
+        });
 
         ObjectVD.init(this, {
                 {0, sizeof(ObjectVertex), VK_VERTEX_INPUT_RATE_VERTEX}
@@ -87,12 +106,38 @@ protected:
                 {0, 1, VK_FORMAT_R32G32_SFLOAT,     offsetof(SourceVertex, UV),     sizeof(glm::vec2),  UV}
             }
         );
+        MenuVD.init(this, {
+                {0, sizeof(MenuVertex), VK_VERTEX_INPUT_RATE_VERTEX}
+            }, {
+                {0, 0, VK_FORMAT_R32G32_SFLOAT, offsetof(MenuVertex, pos),  sizeof(glm::vec2),  POSITION},
+                {0, 1, VK_FORMAT_R32G32_SFLOAT, offsetof(MenuVertex, UV),   sizeof(glm::vec2),  UV}
+            }
+        );
 
         ToonP.init(this, &ObjectVD, "shaders/Shader.vert.spv", "shaders/Toon.frag.spv", {&LightDSL, &ObjectDSL});
         PhongP.init(this, &ObjectVD, "shaders/Shader.vert.spv", "shaders/Phong.frag.spv", {&LightDSL, &ObjectDSL});
         SourceP.init(this, &SourceVD, "shaders/Emission.vert.spv", "shaders/Emission.frag.spv", {&SourceDSL});
+        MenuP.init(this, &MenuVD, "shaders/Menu.vert.spv", "shaders/Menu.frag.spv", {&MenuDSL});
+
 
         txt.init(this, &out);
+
+        int mainStride = MenuVD.Bindings[0].stride;
+        std::vector<unsigned char> vertex(mainStride, 0);
+        MenuVertex* myVertex = (MenuVertex*)(&vertex[0]);
+        for (int i = -1; i <= +1; i += 2) {
+            for (int j = -1; j <= +1; j += 2) {
+                myVertex->pos = { i, j };
+                myVertex->UV = { 0, 0 }; // TODO.
+                MenuM.vertices.insert(MenuM.vertices.end(), vertex.begin(), vertex.end());
+            }
+        }
+        MenuM.indices = {
+            0, 1, 2,
+            2, 1, 3
+        };
+        MenuM.initMesh(this, &MenuVD);
+        MenuT.init(this, "textures/dungeon/Textures_Dungeon.png"); // TODO.
 
 
         // Define vertex descriptor references per scene.
@@ -125,6 +170,8 @@ protected:
         PhongP.create();
         SourceP.create();
         txt.pipelinesAndDescriptorSetsInit();
+        MenuP.create();
+        MenuDS.init(this, &MenuDSL, {&MenuT});
         scenes[currSceneId]->pipelinesAndDescriptorSetsInit();
     }
 
@@ -133,6 +180,8 @@ protected:
         PhongP.cleanup();
         SourceP.cleanup();
         txt.pipelinesAndDescriptorSetsCleanup();
+        MenuP.cleanup();
+        MenuDS.cleanup();
         scenes[currSceneId]->pipelinesAndDescriptorSetsCleanup();
     }
 
@@ -144,19 +193,28 @@ protected:
             }
         }
 
+        MenuM.cleanup();
+        MenuT.cleanup();
+
         ObjectDSL.cleanup();
         SourceDSL.cleanup();
         LightDSL.cleanup();
+        MenuDSL.cleanup();
 
         ToonP.destroy();
         PhongP.destroy();
         SourceP.destroy();
+        MenuP.destroy();
 
         txt.localCleanup();
     }
 
     void populateCommandBuffer(VkCommandBuffer commandBuffer, int currentImage) override {
         txt.populateCommandBuffer(commandBuffer, currentImage);
+        MenuP.bind(commandBuffer);
+        MenuM.bind(commandBuffer);
+        MenuDS.bind(commandBuffer, MenuP, 0, currentImage);
+        vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(MenuM.indices.size()), 1, 0, 0, 0);
         scenes[currSceneId]->populateCommandBuffer(commandBuffer, currentImage);
     }
 

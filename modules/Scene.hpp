@@ -393,9 +393,9 @@ public:
             }
 
             // Request  xInPool
-            BP->requestSetsInPool(setsInPool + 1); // TODO: Remove hardcoded text pools cardinality.
+            BP->requestSetsInPool(setsInPool + 2); // TODO: Remove hardcoded text pools cardinality.
             BP->requestUniformBlocksInPool(uniformBlocksInPool);
-            BP->requestTexturesInPool(texturesInPool + 1); // TODO: Remove hardcoded text pools cardinality.
+            BP->requestTexturesInPool(texturesInPool + 2); // TODO: Remove hardcoded text pools cardinality.
 
             std::cout << "Creating instances\n";
             I = (Instance **) calloc(InstanceCount, sizeof(Instance *));

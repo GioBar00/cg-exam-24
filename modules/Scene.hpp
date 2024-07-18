@@ -49,6 +49,11 @@ struct SourceVertex {
     glm::vec2 UV;
 };
 
+struct MenuVertex {
+    glm::vec2 pos;
+    glm::vec2 UV;
+};
+
 
 /* SCENES */
 struct PipelineInstances;
@@ -244,15 +249,15 @@ public:
 class LevelScene : public Scene {
 public:
     std::map<std::string, SceneObjectType> str2enum = {
-            { "PLAYER",     SceneObjectType::SO_PLAYER },
-            { "GROUND",     SceneObjectType::SO_GROUND },
-            { "WALL",       SceneObjectType::SO_WALL },
-            { "LIGHT",      SceneObjectType::SO_LIGHT },
-            { "TORCH",      SceneObjectType::SO_TORCH },
-            { "LAMP",       SceneObjectType::SO_LAMP },
-            { "BONFIRE",    SceneObjectType::SO_BONFIRE },
-            { "TRAPDOOR",   SceneObjectType::SO_TRAPDOOR },
-            { "OTHER",      SceneObjectType::SO_OTHER }
+            {"PLAYER",   SceneObjectType::SO_PLAYER},
+            {"GROUND",   SceneObjectType::SO_GROUND},
+            {"WALL",     SceneObjectType::SO_WALL},
+            {"LIGHT",    SceneObjectType::SO_LIGHT},
+            {"TORCH",    SceneObjectType::SO_TORCH},
+            {"LAMP",     SceneObjectType::SO_LAMP},
+            {"BONFIRE",  SceneObjectType::SO_BONFIRE},
+            {"TRAPDOOR", SceneObjectType::SO_TRAPDOOR},
+            {"OTHER",    SceneObjectType::SO_OTHER}
     };
 
     int init(BaseProject *_BP, std::vector<VertexDescriptorRef> &VDRs,
@@ -300,7 +305,7 @@ public:
             TextureCount = ts.size();
             std::cout << "Textures count: " << TextureCount << "\n";
 
-            T = (Texture **) calloc(ModelCount, sizeof(Texture *));
+            T = (Texture **) calloc(TextureCount, sizeof(Texture *));
             for (int k = 0; k < TextureCount; k++) {
                 TextureIds[ts[k]["id"]] = k;
                 std::string TT = ts[k]["format"].template get<std::string>();
@@ -316,7 +321,7 @@ public:
                 std::cout << ts[k]["id"] << "(" << k << ") " << TT << "\n";
             }
 
-            // INSTANCES TextureCount
+            // INSTANCES
             nlohmann::json pis = js["instances"];
             PipelineInstanceCount = pis.size();
             std::cout << "Pipeline Instances count: " << PipelineInstanceCount << "\n";
@@ -340,7 +345,8 @@ public:
                     oi->I_id = is[j]["id"];
                     oi->type = static_cast<SceneObjectType>(str2enum[is[j]["label"]]);
                     // TODO: Load SO_LIGHT maybe (?)
-                    if (oi->type == SceneObjectType::SO_TORCH || oi->type == SceneObjectType::SO_LAMP || oi->type == SceneObjectType::SO_BONFIRE) {
+                    if (oi->type == SceneObjectType::SO_TORCH || oi->type == SceneObjectType::SO_LAMP ||
+                        oi->type == SceneObjectType::SO_BONFIRE) {
                         oi->lType = is[j]["type"];
                         oi->lColor = glm::vec4(is[j]["color"][0], is[j]["color"][1], is[j]["color"][2], 1.0f);
                         oi->lPower = is[j]["power"];
@@ -392,10 +398,10 @@ public:
                 }
             }
 
-            // Request  xInPool
-            BP->requestSetsInPool(setsInPool + 2); // TODO: Remove hardcoded text pools cardinality.
+            // Request xInPool
+            BP->requestSetsInPool(setsInPool);
             BP->requestUniformBlocksInPool(uniformBlocksInPool);
-            BP->requestTexturesInPool(texturesInPool + 2); // TODO: Remove hardcoded text pools cardinality.
+            BP->requestTexturesInPool(texturesInPool);
 
             std::cout << "Creating instances\n";
             I = (Instance **) calloc(InstanceCount, sizeof(Instance *));
@@ -449,7 +455,102 @@ public:
     int init(BaseProject *bp, std::vector<VertexDescriptorRef> &VDRs,
              std::vector<PipelineRef> &PRs, const std::string &file) override {
         BP = bp;
-        // TODO: Implement the MainMenuScene
+
+        for (auto &VDR: VDRs) {
+            VDIds[*VDR.id] = VDR.VD;
+        }
+        for (auto &PR: PRs) {
+            PipelineIds[*PR.id] = &PR;
+        }
+
+        // MODELS
+        ModelCount = 1;
+        M = (Model **) calloc(ModelCount, sizeof(Model *));
+        MeshIds["background"] = 0;
+        M[0] = new Model();
+        int mainStride = VDIds["menu"]->Bindings[0].stride;
+        std::vector<unsigned char> vertex(mainStride, 0);
+        auto myVertex = (MenuVertex *) (&vertex[0]);
+        for (int i = -1; i <= +1; i += 2) {
+            for (int j = -1; j <= +1; j += 2) {
+                myVertex->pos = {i, j};
+                myVertex->UV = {(float) (i + 1) / 2, (float) (j + 1) / 2};
+                M[0]->vertices.insert(M[0]->vertices.end(), vertex.begin(), vertex.end());
+            }
+        }
+        M[0]->indices = {
+                0, 1, 2,
+                1, 2, 3
+        };
+        M[0]->initMesh(BP, VDIds["menu"]);
+        // TODO: define the other models: button, cursor
+
+        // TEXTURES
+        TextureCount = 1;
+        T = (Texture **) calloc(TextureCount, sizeof(Texture *));
+        TextureIds["background"] = 0;
+        T[0] = new Texture();
+        T[0]->init(BP, "textures/deep-fold.png"); // Credits: https://deep-fold.itch.io/space-background-generator
+        // TODO: define the other textures: button, cursor
+
+        // INSTANCES
+        PipelineInstanceCount = 1;
+        PI = (PipelineInstances *) calloc(PipelineInstanceCount, sizeof(PipelineInstances));
+        InstanceCount = 0;
+        int setsInPool = 0;
+        int uniformBlocksInPool = 0;
+        int texturesInPool = 0;
+        // background instance
+        PI[0].P = PipelineIds["menu"];
+        PI[0].InstanceCount = 1; // TODO: calculate the number of instances: 1 background, 1 cursor, 2 buttons
+        PI[0].I = (Instance *) calloc(PI[0].InstanceCount, sizeof(Instance));
+
+        PI[0].I[0].id = new std::string("background-ist1");
+        PI[0].I[0].Mid = MeshIds["background"];
+        PI[0].I[0].NTx = 1;
+        PI[0].I[0].Tid = (int *) calloc(PI[0].I[0].NTx, sizeof(int));
+        PI[0].I[0].Tid[0] = TextureIds["background"];
+        PI[0].I[0].Wm = glm::mat4(1.0f);
+
+        PI[0].I[0].PI = &PI[0];
+        PI[0].I[0].D = &PI[0].P->P->D;
+        PI[0].I[0].NDs = PI[0].I[0].D->size();
+        setsInPool += PI[0].I[0].NDs;
+
+        for (int h = 0; h < PI[0].I[0].NDs; h++) {
+            DescriptorSetLayout *DSL = (*PI[0].I[0].D)[h];
+            int DSLsize = DSL->Bindings.size();
+
+            for (int l = 0; l < DSLsize; l++) {
+                if (DSL->Bindings[l].type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER) {
+                    uniformBlocksInPool += 1;
+                } else {
+                    texturesInPool += 1;
+                }
+            }
+        }
+        InstanceCount++;
+        // TODO: define the other instances: cursor, buttons
+
+        // Request xInPool
+        BP->requestSetsInPool(setsInPool + 2);
+        BP->requestUniformBlocksInPool(uniformBlocksInPool + 2);
+        BP->requestTexturesInPool(texturesInPool + 2);
+
+        std::cout << "Creating instances\n";
+        I = (Instance **) calloc(InstanceCount, sizeof(Instance *));
+
+        int i = 0;
+        for (int k = 0; k < PipelineInstanceCount; k++) {
+            for (int j = 0; j < PI[k].InstanceCount; j++) {
+                I[i] = &PI[k].I[j];
+                InstanceIds[*I[i]->id] = i;
+                I[i]->Iid = i;
+
+                i++;
+            }
+        }
+
         return 0;
     }
 };
@@ -693,7 +794,8 @@ public:
                 for (ObjectInstance *obj: myMap[getAdjacentCell(playerCoords, playerRot)]) {
                     if (obj->type == SceneObjectType::SO_WALL || obj->type == SceneObjectType::SO_BONFIRE) {
                         canMove = false;
-                        std::cout << "Player CANNOT move to " << getAdjacentCell(playerCoords, playerRot).first << ", " << getAdjacentCell(playerCoords, playerRot).second
+                        std::cout << "Player CANNOT move to " << getAdjacentCell(playerCoords, playerRot).first << ", "
+                                  << getAdjacentCell(playerCoords, playerRot).second
                                   << "\n";
                         break;
                     }
@@ -739,8 +841,7 @@ public:
                             else
                                 nextScene = SceneId::SCENE_LEVEL_1;
                             scene->BP->changeScene(nextScene);
-                        }
-                        else {
+                        } else {
                             // TODO: tell player to light all torches
                             std::cout << "Light all torches: " << numLitTorches << "/" << numTorches << "\n";
                         }
@@ -770,7 +871,8 @@ public:
             if (!isPlayerMoving && !isPlayerRotating && !debounce) {
                 debounce = true;
                 std::cout << "Fire\n";
-                std::cout << "Objects in cell: " << getAdjacentCell(playerCoords, playerRot).first << ", " << getAdjacentCell(playerCoords, playerRot).second << "\n";
+                std::cout << "Objects in cell: " << getAdjacentCell(playerCoords, playerRot).first << ", "
+                          << getAdjacentCell(playerCoords, playerRot).second << "\n";
                 for (ObjectInstance *obj: myMap[getAdjacentCell(playerCoords, playerRot)]) {
                     std::cout << "Found object of type " << sceneObjectTypes[obj->type] << "\n";
                     if (obj->type == SceneObjectType::SO_TORCH) {
@@ -891,7 +993,7 @@ public:
     }
 
     void addObjectToMap(std::pair<int, int> coords, ObjectInstance *obj) override {
-
+        throw std::runtime_error("MainMenuSceneController::addObjectToMap not implemented");
     }
 
     void localCleanup() override {
@@ -913,8 +1015,7 @@ static Scene *getNewSceneById(SceneId sceneId) {
             return mms;
         }
         case SceneId::SCENE_LEVEL_1:
-        case SceneId::SCENE_LEVEL_2:
-        {
+        case SceneId::SCENE_LEVEL_2: {
             auto ls = new LevelScene();
             auto lsc = new LevelSceneController();
             ls->setSceneController(lsc);

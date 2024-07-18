@@ -20,7 +20,7 @@ typedef std::unordered_map<SceneId, std::string> SceneIdMap_t;
 
 // TODO: Add the scene files
 const SceneIdMap_t sceneFiles = {
-//        {SCENE_MAIN_MENU, "../scenes/main-menu.json"},
+        {SceneId::SCENE_MAIN_MENU, ""},
         {SceneId::SCENE_LEVEL_1, "../scenes/level-01.json"},
         {SceneId::SCENE_LEVEL_2, "../scenes/level-02.json"}
         // Future expansion

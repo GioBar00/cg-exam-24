@@ -4,12 +4,6 @@
 #include "modules/TextMaker.hpp"
 
 
-struct MenuVertex {
-    glm::vec2 pos;
-    glm::vec2 UV;
-};
-
-
 class App : public BaseProject {
 protected:
 
@@ -23,12 +17,6 @@ protected:
 
     /* Pipelines. */
     Pipeline ToonP, PhongP, SourceP, MenuP;
-
-
-    /* Models and textures. */
-    Model MenuM;
-    Texture MenuT;
-    DescriptorSet MenuDS;
 
 
     /* Texts. */
@@ -115,52 +103,40 @@ protected:
         PhongP.init(this, &ObjectVD, "shaders/Shader.vert.spv", "shaders/Phong.frag.spv", {&LightDSL, &ObjectDSL});
         SourceP.init(this, &SourceVD, "shaders/Emission.vert.spv", "shaders/Emission.frag.spv", {&SourceDSL});
         MenuP.init(this, &MenuVD, "shaders/Menu.vert.spv", "shaders/Menu.frag.spv", {&MenuDSL});
-
+        MenuP.setAdvancedFeatures(VK_COMPARE_OP_LESS_OR_EQUAL, VK_POLYGON_MODE_FILL, VK_CULL_MODE_NONE, true);
 
         txt.init(this, &out);
 
-        int mainStride = MenuVD.Bindings[0].stride;
-        std::vector<unsigned char> vertex(mainStride, 0);
-        MenuVertex* myVertex = (MenuVertex*)(&vertex[0]);
-        for (int i = -1; i <= +1; i += 2) {
-            for (int j = -1; j <= +1; j += 2) {
-                myVertex->pos = { i, j };
-                myVertex->UV = { (float)(i + 1) / 2, (float)(j + 1) / 2 };
-                MenuM.vertices.insert(MenuM.vertices.end(), vertex.begin(), vertex.end());
-            }
-        }
-        MenuM.indices = {
-            0, 1, 2,
-            // 2, 1, 3 // Back-face culling.
-            1, 2, 3
-        };
-        MenuP.setAdvancedFeatures(VK_COMPARE_OP_LESS_OR_EQUAL, VK_POLYGON_MODE_FILL, VK_CULL_MODE_NONE, true);
-        MenuM.initMesh(this, &MenuVD);
-        MenuT.init(this, "textures/deep-fold.png"); // Credits: https://deep-fold.itch.io/space-background-generator
-
 
         // Define vertex descriptor references per scene.
-        VertexDescriptorRef ObjectVDR{}, SourceVDR{};
+        VertexDescriptorRef ObjectVDR{}, SourceVDR{}, MenuVDR{};
         ObjectVDR.init("object", &ObjectVD);
         SourceVDR.init("source", &SourceVD);
-        std::vector<VertexDescriptorRef> SL1VDRs = { ObjectVDR, SourceVDR };
+        std::vector<VertexDescriptorRef> LevelSceneVDRs = {ObjectVDR, SourceVDR };
+
+        MenuVDR.init("menu", &MenuVD);
+        std::vector<VertexDescriptorRef> MenuVDRs = { MenuVDR };
 
         // Define pipeline references per scene.
-        PipelineRef ToonPR{}, PhongPR{}, SourcePR{};
+        PipelineRef ToonPR{}, PhongPR{}, SourcePR{}, MenuPR{};
         ToonPR.init("toon", &ToonP);
         PhongPR.init("phong", &PhongP);
         SourcePR.init("emission", &SourceP);
-        std::vector<PipelineRef> SL1PRs = { ToonPR, PhongPR, SourcePR };
+        std::vector<PipelineRef> LevelScenePRs = {ToonPR, PhongPR, SourcePR };
 
-        // TODO: Add all SceneVDRs and ScenePRs to the maps
-        SceneVDRs[SceneId::SCENE_LEVEL_1] = SL1VDRs;
-        ScenePRs[SceneId::SCENE_LEVEL_1] = SL1PRs;
-        SceneVDRs[SceneId::SCENE_LEVEL_2] = SL1VDRs;
-        ScenePRs[SceneId::SCENE_LEVEL_2] = SL1PRs;
+        MenuPR.init("menu", &MenuP);
+        std::vector<PipelineRef> MenuPRs = { MenuPR };
+
+        SceneVDRs[SceneId::SCENE_MAIN_MENU] = MenuVDRs;
+        ScenePRs[SceneId::SCENE_MAIN_MENU] = MenuPRs;
+        SceneVDRs[SceneId::SCENE_LEVEL_1] = LevelSceneVDRs;
+        ScenePRs[SceneId::SCENE_LEVEL_1] = LevelScenePRs;
+        SceneVDRs[SceneId::SCENE_LEVEL_2] = LevelSceneVDRs;
+        ScenePRs[SceneId::SCENE_LEVEL_2] = LevelScenePRs;
 
 
         // Set the first scene
-        currSceneId = SceneId::SCENE_LEVEL_1;
+        currSceneId = SceneId::SCENE_MAIN_MENU;
         changeScene(currSceneId);
     }
 
@@ -170,7 +146,6 @@ protected:
         SourceP.create();
         txt.pipelinesAndDescriptorSetsInit();
         MenuP.create();
-        MenuDS.init(this, &MenuDSL, {&MenuT});
         scenes[currSceneId]->pipelinesAndDescriptorSetsInit();
     }
 
@@ -180,7 +155,6 @@ protected:
         SourceP.cleanup();
         txt.pipelinesAndDescriptorSetsCleanup();
         MenuP.cleanup();
-        MenuDS.cleanup();
         scenes[currSceneId]->pipelinesAndDescriptorSetsCleanup();
     }
 
@@ -191,9 +165,6 @@ protected:
                 free(scenes[sceneId]);
             }
         }
-
-        MenuM.cleanup();
-        MenuT.cleanup();
 
         ObjectDSL.cleanup();
         SourceDSL.cleanup();
@@ -211,9 +182,6 @@ protected:
     void populateCommandBuffer(VkCommandBuffer commandBuffer, int currentImage) override {
         txt.populateCommandBuffer(commandBuffer, currentImage);
         MenuP.bind(commandBuffer);
-        MenuM.bind(commandBuffer);
-        MenuDS.bind(commandBuffer, MenuP, 0, currentImage);
-        vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(MenuM.indices.size()), 1, 0, 0, 0);
         scenes[currSceneId]->populateCommandBuffer(commandBuffer, currentImage);
     }
 

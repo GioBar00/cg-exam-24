@@ -401,9 +401,9 @@ public:
             }
 
             // Request xInPool
-            BP->requestSetsInPool(setsInPool + 1);
+            BP->requestSetsInPool(setsInPool);
             BP->requestUniformBlocksInPool(uniformBlocksInPool);
-            BP->requestTexturesInPool(texturesInPool + 1);
+            BP->requestTexturesInPool(texturesInPool);
 
             std::cout << "Creating instances\n";
             I = (Instance **) calloc(InstanceCount, sizeof(Instance *));

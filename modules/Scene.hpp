@@ -638,6 +638,17 @@ class LevelSceneController : public SceneController {
     const float playerRotDuration = 0.3f;
     const float playerMoveDuration = 0.7f;
     const float infoTextDuration = 2.0f;
+    const float lightAnimDuration = 2.0f;
+
+    const std::vector<float> lightPowerFactors = {0.98388396, 1.0, 0.95574312, 0.99519388, 1.0, 0.95416783,
+                                                  0.8682897, 0.87481262, 0.81050954, 0.80937744, 0.77343848, 0.82695713,
+                                                  0.66616717, 0.69873853, 0.6585406, 0.54951153, 0.45523082, 0.35786886,
+                                                  0.32044533, 0.34603382, 0.41441178, 0.32246676, 0.20454984, 0.3260673,
+                                                  0.33473255, 0.25629076, 0.2117025, 0.2153345, 0.25836897, 0.31951483,
+                                                  0.45665922, 0.45528789, 0.45256237, 0.5325252, 0.61331565, 0.54669085,
+                                                  0.58938167, 0.66561135, 0.711229, 0.81901834, 0.89610162, 0.89591209,
+                                                  0.9023654, 0.98870873, 1.0, 0.9455553, 0.88902501, 0.94445556,
+                                                  0.9399914, 1.0};
 
     const float playerFloatSpeed = 1.5f;
     const float torchRotationSpeed = 0.5f;
@@ -677,6 +688,9 @@ class LevelSceneController : public SceneController {
     std::chrono::high_resolution_clock::time_point infoTextStartTime = std::chrono::high_resolution_clock::now();
     bool infoTextActive = false;
 
+    std::chrono::high_resolution_clock::time_point lightAnimStartTime = std::chrono::high_resolution_clock::now();
+    bool animatingLights = false;
+
     static void updateObjectBuffer(uint32_t currentImage, Instance *I, glm::mat4 ViewPrj, glm::mat4 baseTr,
                                    const std::vector<void *> &gubos, bool spec) {
         ObjectUniform oubo{};
@@ -711,7 +725,7 @@ class LevelSceneController : public SceneController {
     }
 
     static void updateLightBuffer(uint32_t currentImage, ObjectInstance *obj,
-                                  glm::vec3 lPosition, LightUniform *gubo, int idx) {
+                                  glm::vec3 lPosition, LightUniform *gubo, int idx, float powerFactor) {
         if (obj->lType == "DIRECT")
             gubo->TYPE[idx] = glm::vec3(1, 0, 0);
         else if (obj->lType == "POINT")
@@ -721,7 +735,7 @@ class LevelSceneController : public SceneController {
         gubo->lightPos[idx] = lPosition;
         gubo->lightDir[idx] = glm::vec3(obj->lDirection);
         gubo->lightCol[idx] = obj->lColor;
-        gubo->lightPow[idx] = glm::vec3(obj->lPower);
+        gubo->lightPow[idx] = glm::vec3(obj->lPower * powerFactor);
         gubo->NUMBER = idx + 1;
     }
 
@@ -990,6 +1004,29 @@ public:
             }
         }
 
+        // check light animation
+        float currPowerFactor = 1.0f;
+        if (animatingLights) {
+            auto currTime = std::chrono::high_resolution_clock::now();
+            float elapsed = std::chrono::duration<float>(currTime - lightAnimStartTime).count();
+            if (elapsed > lightAnimDuration) {
+                animatingLights = false;
+                lightAnimStartTime = std::chrono::high_resolution_clock::now();
+                std::cout << "Light animation ENDED\n";
+            } else {
+                currPowerFactor = lightPowerFactors[(int) (elapsed / lightAnimDuration * lightPowerFactors.size())];
+            }
+        } else {
+            auto currTime = std::chrono::high_resolution_clock::now();
+            float elapsed = std::chrono::duration<float>(currTime - lightAnimStartTime).count();
+            // randomly animate lights with probability 0.01 after 5 seconds
+            if (static_cast <float> (rand()) / static_cast <float> (RAND_MAX) < 0.001 && elapsed > 5.0f) {
+                animatingLights = true;
+                lightAnimStartTime = std::chrono::high_resolution_clock::now();
+                std::cout << "Light animation STARTED\n";
+            }
+        }
+
         // make camera follow player
         glm::mat4 playerPosTr = glm::translate(glm::mat4(1.0f), currPlayerPos);
         ViewPrj = ViewPrj * glm::inverse(playerPosTr);
@@ -1026,7 +1063,7 @@ public:
                     lPosition = glm::vec3(torchPlTr * glm::vec4(obj->lPosition, 1.0f));
                 else
                     lPosition = obj->lPosition;
-                updateLightBuffer(currentImage, obj, lPosition, &lubo, idx);
+                updateLightBuffer(currentImage, obj, lPosition, &lubo, idx, obj->type == SceneObjectType::SO_LIGHT ? 1.0f : currPowerFactor);
                 idx++;
             }
         }

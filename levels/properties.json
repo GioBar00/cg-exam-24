@@ -29,7 +29,7 @@
             "model": "prop.009_Mesh.970",
             "transform": [
                 { "translate": [ 0.6666, 0.0, 0.6666 ] },
-                { "scale": [ 2.0, 2.0, 2.0 ] }
+                { "scale": [ 2.005, 2.005, 2.005 ] }
             ]
         },
         "WALL_LINE": {

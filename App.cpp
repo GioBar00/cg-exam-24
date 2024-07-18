@@ -45,7 +45,7 @@ protected:
         windowHeight = 900;
         windowTitle = "CG24 @ PoliMi";
         windowResizable = GLFW_FALSE;
-        initialBackgroundColor = {0.05f, 0.05f, 0.05f, 1.0f};
+        initialBackgroundColor = {0.1f, 0.1f, 0.1f, 1.0f};
 
         Ar = (float) windowWidth / (float) windowHeight;
     }
@@ -147,7 +147,7 @@ protected:
 
 
         // Set the first scene
-        currSceneId = SceneId::SCENE_LEVEL_1;
+        currSceneId = SceneId::SCENE_MAIN_MENU;
         changeScene(currSceneId);
         changingScene = false;
     }

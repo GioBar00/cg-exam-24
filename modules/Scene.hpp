@@ -134,13 +134,10 @@ protected:
     void addModel(const std::string &id, const std::string &vid, std::vector<unsigned char> vertices, std::vector<unsigned int> indices) {
         MeshIds[id] = ModelCount;
         M[ModelCount] = new Model();
-        int mainStride = VDIds[vid]->Bindings[0].stride;
         M[ModelCount]->vertices = std::move(vertices);
         M[ModelCount]->indices = std::move(indices);
         M[ModelCount]->initMesh(BP, VDIds[vid]);
         ModelCount++;
-        vertices.clear();
-        indices.clear();
     }
 
     void addTexture(const std::string &id, const std::string &path) {
@@ -394,7 +391,7 @@ public:
             }
 
             // Skybox texture
-            addTexture("skybox", "textures/deep-fold.png"); // Credits: https://deep-fold.itch.io/space-background-generator
+            addTexture("skybox-tex", "textures/menu/deep-fold.png"); // Credits: https://deep-fold.itch.io/space-background-generator
 
             // INSTANCES
             nlohmann::json pis = js["instances"];
@@ -473,13 +470,13 @@ public:
                 }
             }
 
-            // Skybox pipeline instance + instance
+            // Skybox pipeline instance + object instance
             PI[PipelineInstanceCount].P = PipelineIds["skybox"];
             PI[PipelineInstanceCount].InstanceCount = 0;
             PI[PipelineInstanceCount].I = (Instance *) calloc(1, sizeof(Instance));
 
-            // background instance 1
-            addInstance("skybox-ist1", "skybox", "skybox", setsInPool, uniformBlocksInPool, texturesInPool);
+            // background instance
+            addInstance("skybox-obj", "skybox", "skybox", setsInPool, uniformBlocksInPool, texturesInPool);
             PipelineInstanceCount++;
 
             // Request xInPool
@@ -536,7 +533,12 @@ public:
 };
 
 class MainMenuScene : public Scene {
+    bool isMenu = true;
 public:
+    void setIsMenu(bool _isMenu) {
+        isMenu = _isMenu;
+    }
+
     int init(BaseProject *bp, std::vector<VertexDescriptorRef> &VDRs,
              std::vector<PipelineRef> &PRs, const std::string &file) override {
         BP = bp;
@@ -550,12 +552,11 @@ public:
 
         // MODELS
         ModelCount = 0;
-        M = (Model **) calloc(1, sizeof(Model *)); // TODO: change to correct number
+        M = (Model **) calloc(3, sizeof(Model *));
         std::vector<unsigned char> vertices{};
         std::vector<unsigned int> indices{};
-
-        // background model
         int mainStride = VDIds["menu"]->Bindings[0].stride;
+        // background model
         std::vector<unsigned char> vertex(mainStride, 0);
         auto myVertex = (MenuVertex *) (&vertex[0]);
         for (int i = -1; i <= +1; i += 2) {
@@ -570,14 +571,46 @@ public:
                 1, 2, 3
         };
         addModel("background", "menu", vertices, indices);
-        // TODO: define the other models: button, cursor
+        // TODO: Add helper function.
+        // other models: cursor
+        vertices = {};
+        vertex = std::vector<unsigned char>(mainStride, 0);
+        myVertex = (MenuVertex*)(&vertex[0]);
+        float w = 28.0f, h = 28.0f, ar = w / h, factor = 16.0f;
+        for (int i = -1; i <= +1; i += 2) {
+            for (int j = -1; j <= +1; j += 2) {
+                myVertex->pos = { i / factor, j / ((ar / BP->getAr()) * factor) };
+                myVertex->UV = { (float)(i + 1) / 2, (float)(j + 1) / 2 };
+                vertices.insert(vertices.end(), vertex.begin(), vertex.end());
+            }
+        }
+        addModel("cursor", "menu", vertices, indices);
+        // other models: buttons
+        vertices = {};
+        vertex = std::vector<unsigned char>(mainStride, 0);
+        myVertex = (MenuVertex*)(&vertex[0]);
+        w = 590.0f, h = 260.0f, ar = w / h, factor = 4.0f;
+        for (int i = -1; i <= +1; i += 2) {
+            for (int j = -1; j <= +1; j += 2) {
+                myVertex->pos = { i / factor, j / ((ar / BP->getAr()) * factor) };
+                myVertex->UV = { (float)(i + 1) / 2, (float)(j + 1) / 2 };
+                vertices.insert(vertices.end(), vertex.begin(), vertex.end());
+            }
+        }
+        addModel("button", "menu", vertices, indices);
 
         // TEXTURES
         TextureCount = 0;
-        T = (Texture **) calloc(1, sizeof(Texture *)); // TODO: change to correct number
+        T = (Texture **) calloc(3, sizeof(Texture *));
         // background texture
-        addTexture("background", "textures/deep-fold.png"); // Credits: https://deep-fold.itch.io/space-background-generator
-        // TODO: define the other textures: button, cursor
+        addTexture("background-tex", "textures/menu/deep-fold.png"); // Credits: https://deep-fold.itch.io/space-background-generator
+        // other textures: cursor, buttons
+        addTexture("cursor-tex", "textures/menu/cursor.png"); // Credits: https://leo-red.itch.io/lucid-icon-pack
+        if (isMenu)
+            addTexture("play-tex", "textures/menu/play-btn.png"); // Credits: https://npkuu.itch.io/pixelgui
+        else
+            addTexture("exit-tex", "textures/menu/exit-btn.png"); // Credits: https://npkuu.itch.io/pixelgui
+        // Alternative: https://mounirtohami.itch.io/pixel-art-gui-elements
 
         // INSTANCES
         PipelineInstanceCount = 0;
@@ -589,11 +622,13 @@ public:
         // background instance
         PI[PipelineInstanceCount].P = PipelineIds["menu"];
         PI[PipelineInstanceCount].InstanceCount = 0;
-        PI[PipelineInstanceCount].I = (Instance *) calloc(1, sizeof(Instance)); // TODO: calculate the number of instances: 1 background, 1 cursor, 2 buttons => 4 instances
+        PI[PipelineInstanceCount].I = (Instance *) calloc(3, sizeof(Instance)); // calculate the number of instances: 1 background, 1 cursor, 2 buttons (one active at each scene)
 
-        // background instance 1
-        addInstance("background-ist1", "background", "background", setsInPool, uniformBlocksInPool, texturesInPool);
-        // TODO: define the other instances: cursor, buttons
+        // background instance
+        addInstance("background-obj", "background", "background-tex", setsInPool, uniformBlocksInPool, texturesInPool);
+        // define the other instances: cursor, buttons
+        addInstance("btn-obj", "button", isMenu ? "play-tex" : "exit-tex", setsInPool, uniformBlocksInPool, texturesInPool);
+        addInstance("cursor-obj", "cursor", "cursor-tex", setsInPool, uniformBlocksInPool, texturesInPool);
 
         PipelineInstanceCount++;
 

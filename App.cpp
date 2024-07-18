@@ -4,13 +4,10 @@
 #include "modules/TextMaker.hpp"
 
 
-const uint32_t w = 1200, h = 900;
-
-
 struct MenuVertex {
     glm::vec2 pos;
     glm::vec2 UV;
-}; // TODO: Uniform containing w/h at frag?
+};
 
 
 class App : public BaseProject {
@@ -53,8 +50,8 @@ protected:
     bool changingScene = false;
 
     void setWindowParameters() override {
-        windowWidth = w;
-        windowHeight = h;
+        windowWidth = 1200;
+        windowHeight = 900;
         windowTitle = "CG24 @ PoliMi";
         windowResizable = GLFW_FALSE;
         initialBackgroundColor = {0.05f, 0.05f, 0.05f, 1.0f};
@@ -128,16 +125,18 @@ protected:
         for (int i = -1; i <= +1; i += 2) {
             for (int j = -1; j <= +1; j += 2) {
                 myVertex->pos = { i, j };
-                myVertex->UV = { 0, 0 }; // TODO.
+                myVertex->UV = { (float)(i + 1) / 2, (float)(j + 1) / 2 };
                 MenuM.vertices.insert(MenuM.vertices.end(), vertex.begin(), vertex.end());
             }
         }
         MenuM.indices = {
             0, 1, 2,
-            2, 1, 3
+            // 2, 1, 3 // Back-face culling.
+            1, 2, 3
         };
+        MenuP.setAdvancedFeatures(VK_COMPARE_OP_LESS_OR_EQUAL, VK_POLYGON_MODE_FILL, VK_CULL_MODE_NONE, true);
         MenuM.initMesh(this, &MenuVD);
-        MenuT.init(this, "textures/dungeon/Textures_Dungeon.png"); // TODO.
+        MenuT.init(this, "textures/deep-fold.png"); // Credits: https://deep-fold.itch.io/space-background-generator
 
 
         // Define vertex descriptor references per scene.

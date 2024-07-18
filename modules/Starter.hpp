@@ -378,6 +378,8 @@ struct PoolSizes {
     int setsInPool = 0;
 };
 
+enum class SceneId;
+
 // MAIN !
 class BaseProject {
     friend class VertexDescriptor;
@@ -393,6 +395,9 @@ class BaseProject {
     friend class DescriptorSet;
 
 public:
+
+    SceneId currSceneId;
+
     virtual void setWindowParameters() = 0;
 
     void run() {
@@ -426,6 +431,8 @@ public:
     float getAr() {
         return Ar;
     }
+
+    virtual void changeScene(SceneId newSceneId) = 0;
 
 protected:
     uint32_t windowWidth;
@@ -1759,7 +1766,7 @@ protected:
 
     virtual void localCleanup() = 0;
 
-    void recreateSwapChain() {
+    virtual void recreateSwapChain() {
         int width = 0, height = 0;
         glfwGetFramebufferSize(window, &width, &height);
 
@@ -1785,7 +1792,7 @@ protected:
         createCommandBuffers();
     }
 
-    void cleanupSwapChain() {
+    virtual void cleanupSwapChain() {
         vkDestroyImageView(device, colorImageView, nullptr);
         vkDestroyImage(device, colorImage, nullptr);
         vkFreeMemory(device, colorImageMemory, nullptr);

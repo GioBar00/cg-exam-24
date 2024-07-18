@@ -32,7 +32,9 @@ protected:
 
 
     // Application config.
-    SceneId currSceneId;
+    SceneId newSceneId;
+
+    bool changingScene = false;
 
     void setWindowParameters() override {
         windowWidth = 1200;
@@ -109,8 +111,8 @@ protected:
         // TODO: Add all SceneVDRs and ScenePRs to the maps
         SceneVDRs[SceneId::SCENE_LEVEL_1] = SL1VDRs;
         ScenePRs[SceneId::SCENE_LEVEL_1] = SL1PRs;
-//        SceneVDRs[SceneId::SCENE_LEVEL_2] = SL2VDRs;
-//        ScenePRs[SceneId::SCENE_LEVEL_2] = SL2PRs;
+        SceneVDRs[SceneId::SCENE_LEVEL_2] = SL1VDRs;
+        ScenePRs[SceneId::SCENE_LEVEL_2] = SL1PRs;
 
 
         // Set the first scene
@@ -168,17 +170,50 @@ protected:
         scenes[currSceneId]->SC->updateUniformBuffer(currentImage, deltaT, m, r, fire);
     }
 
-    void changeScene(SceneId newSceneId) {
+    void changeScene(SceneId _newSceneId) override {
+        changingScene = true;
         if (scenes[currSceneId] != nullptr) {
-            scenes[currSceneId]->pipelinesAndDescriptorSetsCleanup();
+            framebufferResized = true;
+        }
+        scenes[_newSceneId] = getNewSceneById(_newSceneId);
+        scenes[_newSceneId]->init(this, SceneVDRs.find(_newSceneId)->second, ScenePRs.find(_newSceneId)->second,
+                                  sceneFiles.find(_newSceneId)->second);
+        newSceneId = _newSceneId;
+    }
+
+protected:
+    void recreateSwapChain() override {
+        int width = 0, height = 0;
+        glfwGetFramebufferSize(window, &width, &height);
+
+        while (width == 0 || height == 0) {
+            glfwGetFramebufferSize(window, &width, &height);
+            glfwWaitEvents();
         }
 
-        if (scenes[newSceneId] == nullptr) {
-            scenes[newSceneId] = getNewSceneById(newSceneId);
-            scenes[newSceneId]->init(this, SceneVDRs.find(newSceneId)->second, ScenePRs.find(newSceneId)->second,
-                                     sceneFiles.find(newSceneId)->second);
+        vkDeviceWaitIdle(device);
+
+        cleanupSwapChain();
+
+        if (changingScene) {
+            scenes[currSceneId]->localCleanup();
+            free(scenes[currSceneId]);
+            scenes[currSceneId] = nullptr;
+            currSceneId = newSceneId;
+            changingScene = false;
         }
-        currSceneId = newSceneId;
+
+        createSwapChain();
+        createImageViews();
+        createRenderPass();
+        createColorResources();
+        createDepthResources();
+        createFramebuffers();
+        createDescriptorPool();
+
+        pipelinesAndDescriptorSetsInit();
+
+        createCommandBuffers();
     }
 
 };

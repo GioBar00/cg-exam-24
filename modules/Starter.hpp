@@ -379,6 +379,7 @@ struct PoolSizes {
 };
 
 enum class SceneId;
+struct SingleText;
 
 // MAIN !
 class BaseProject {
@@ -413,6 +414,8 @@ public:
     void requestSetsInPool(int n) {
         if (DPSZs.setsInPool < n) {
             DPSZs.setsInPool = n;
+            // compensate for text
+            DPSZs.setsInPool++;
         }
     }
 
@@ -425,6 +428,8 @@ public:
     void requestTexturesInPool(int n) {
         if (DPSZs.texturesInPool < n) {
             DPSZs.texturesInPool = n;
+            // compensate for text
+            DPSZs.texturesInPool++;
         }
     }
 
@@ -433,6 +438,7 @@ public:
     }
 
     virtual void changeScene(SceneId newSceneId) = 0;
+    virtual void changeText(std::string newText, int line) = 0;
 
 protected:
     uint32_t windowWidth;

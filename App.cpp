@@ -3,6 +3,8 @@
 #include "modules/TextMaker.hpp"
 #include "modules/Scene.hpp"
 
+#define HIDE_TEXT false
+
 
 class App : public BaseProject {
 protected:
@@ -93,7 +95,7 @@ protected:
         PhongP.init(this, &ObjectVD, "shaders/Shader.vert.spv", "shaders/Phong.frag.spv", {&LightDSL, &ObjectDSL});
         SourceP.init(this, &SourceVD, "shaders/Emission.vert.spv", "shaders/Emission.frag.spv", {&SourceDSL});
 
-        std::string s = "Hello world!";
+        std::string s = " ";
         out[0].l[0] = (char *) malloc(s.size() + 1);
         strcpy(out[0].l[0], s.c_str());
         out[0].usedLines = 1;
@@ -187,6 +189,8 @@ protected:
     }
 
     void changeText(std::string newText, int line) override {
+        if (HIDE_TEXT)
+            return;
         if (line >= 4 || line < 0)
             throw std::runtime_error("Line number out of bounds.");
         if (newText.empty()) {

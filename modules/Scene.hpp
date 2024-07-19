@@ -152,13 +152,17 @@ protected:
         TextureCount++;
     }
 
-    void addInstance(const std::string &id, const std::string &mid, const std::string &tid, int &setsInPool, int &uniformBlocksInPool, int &texturesInPool) {
+    void addInstance(const std::string &id, const std::string &mid, const std::vector<std::string> &tids, int &setsInPool, int &uniformBlocksInPool, int &texturesInPool) {
         int instanceIdx = PI[PipelineInstanceCount].InstanceCount;
         PI[PipelineInstanceCount].I[instanceIdx].id = new std::string(id);
         PI[PipelineInstanceCount].I[instanceIdx].Mid = MeshIds[mid];
-        PI[PipelineInstanceCount].I[instanceIdx].NTx = 1;
-        PI[PipelineInstanceCount].I[instanceIdx].Tid = (int *) calloc(PI[0].I[instanceIdx].NTx, sizeof(int));
-        PI[PipelineInstanceCount].I[instanceIdx].Tid[0] = TextureIds[tid];
+        PI[PipelineInstanceCount].I[instanceIdx].NTx = tids.size();
+        PI[PipelineInstanceCount].I[instanceIdx].Tid = (int *) calloc(PI[PipelineInstanceCount].I[instanceIdx].NTx, sizeof(int));
+
+        for (int h = 0; h < PI[PipelineInstanceCount].I[instanceIdx].NTx; h++) {
+            PI[PipelineInstanceCount].I[instanceIdx].Tid[h] = TextureIds[tids[h]];
+        }
+
         PI[PipelineInstanceCount].I[instanceIdx].Wm = glm::mat4(1.0f);
         PI[PipelineInstanceCount].I[instanceIdx].PI = &PI[PipelineInstanceCount];
         PI[PipelineInstanceCount].I[instanceIdx].D = &PI[PipelineInstanceCount].P->P->D;
@@ -358,7 +362,7 @@ public:
             std::vector<unsigned int> indices{};
 
             // background model
-            int mainStride = VDIds["skybox"]->Bindings[0].stride;
+            int mainStride = VDIds["background"]->Bindings[0].stride;
             std::vector<unsigned char> vertex(mainStride, 0);
             auto myVertex = (MenuVertex *) (&vertex[0]);
             for (int i = -1; i <= +1; i += 2) {
@@ -372,7 +376,7 @@ public:
                     0, 1, 2,
                     1, 2, 3
             };
-            addModel("skybox", "skybox", vertices, indices);
+            addModel("skybox", "background", vertices, indices);
 
             // TEXTURES
             nlohmann::json ts = js["textures"];
@@ -421,7 +425,6 @@ public:
                     auto *oi = new ObjectInstance();
                     oi->I_id = is[j]["id"];
                     oi->type = static_cast<SceneObjectType>(str2enum[is[j]["label"]]);
-                    // TODO: Load SO_LIGHT maybe (?)
                     if (oi->type == SceneObjectType::SO_TORCH || oi->type == SceneObjectType::SO_LAMP ||
                         oi->type == SceneObjectType::SO_BONFIRE) {
                         oi->lType = is[j]["type"];
@@ -476,12 +479,12 @@ public:
             }
 
             // Skybox pipeline instance + object instance
-            PI[PipelineInstanceCount].P = PipelineIds["skybox"];
+            PI[PipelineInstanceCount].P = PipelineIds["background"];
             PI[PipelineInstanceCount].InstanceCount = 0;
             PI[PipelineInstanceCount].I = (Instance *) calloc(1, sizeof(Instance));
 
             // background instance
-            addInstance("skybox-obj", "skybox", "skybox", setsInPool, uniformBlocksInPool, texturesInPool);
+            addInstance("skybox-obj", "skybox", { "skybox-tex" }, setsInPool, uniformBlocksInPool, texturesInPool);
             PipelineInstanceCount++;
 
             // Request xInPool
@@ -537,7 +540,7 @@ public:
     }
 };
 
-class MainMenuScene : public Scene {
+class ScreenScene : public Scene {
     bool isMenu = true;
 public:
     void setIsMenu(bool _isMenu) {
@@ -575,13 +578,13 @@ public:
                 0, 1, 2,
                 1, 2, 3
         };
-        addModel("background", "menu", vertices, indices);
+        addModel("background", "background", vertices, indices);
         // TODO: Add helper function.
         // other models: cursor
         vertices = {};
         vertex = std::vector<unsigned char>(mainStride, 0);
         myVertex = (MenuVertex*)(&vertex[0]);
-        float w = 28.0f, h = 28.0f, ar = w / h, factor = 16.0f;
+        float w = 28.0f, h = 28.0f, ar = w / h, factor = 32.0f;
         for (int i = -1; i <= +1; i += 2) {
             for (int j = -1; j <= +1; j += 2) {
                 myVertex->pos = { i / factor, j / ((ar / BP->getAr()) * factor) };
@@ -624,21 +627,33 @@ public:
 
         // INSTANCES
         PipelineInstanceCount = 0;
-        PI = (PipelineInstances *) calloc(1, sizeof(PipelineInstances));
+        PI = (PipelineInstances *) calloc(2, sizeof(PipelineInstances));
         InstanceCount = 0;
         int setsInPool = 0;
         int uniformBlocksInPool = 0;
         int texturesInPool = 0;
+        // background pipeline
+        PI[PipelineInstanceCount].P = PipelineIds["background"];
+        PI[PipelineInstanceCount].InstanceCount = 0;
+        PI[PipelineInstanceCount].I = (Instance *) calloc(1, sizeof(Instance)); // calculate the number of instances: 1 background, 1 cursor, 2 buttons (one active at each scene)
         // background instance
+        addInstance("background-obj", "background", { "background-tex" }, setsInPool, uniformBlocksInPool, texturesInPool);
+
+        PipelineInstanceCount++;
+
+        // menu pipeline
         PI[PipelineInstanceCount].P = PipelineIds["menu"];
         PI[PipelineInstanceCount].InstanceCount = 0;
-        PI[PipelineInstanceCount].I = (Instance *) calloc(3, sizeof(Instance)); // calculate the number of instances: 1 background, 1 cursor, 2 buttons (one active at each scene)
+        PI[PipelineInstanceCount].I = (Instance *) calloc(2, sizeof(Instance)); // calculate the number of instances: 1 background, 1 cursor, 2 buttons (one active at each scene)
 
-        // background instance
-        addInstance("background-obj", "background", "background-tex", setsInPool, uniformBlocksInPool, texturesInPool);
         // define the other instances: cursor, buttons
-        addInstance("btn-obj", "button", isMenu ? "play-tex-before" : "exit-tex-before", setsInPool, uniformBlocksInPool, texturesInPool);
-        addInstance("cursor-obj", "cursor", "cursor-tex", setsInPool, uniformBlocksInPool, texturesInPool);
+        std::vector<std::string> texIds;
+        if (isMenu)
+            texIds = { "play-tex-before", "play-tex-after" };
+        else
+            texIds = { "exit-tex-before", "exit-tex-after" };
+        addInstance("btn-obj", "button", texIds, setsInPool, uniformBlocksInPool, texturesInPool);
+        addInstance("cursor-obj", "cursor", { "cursor-tex" }, setsInPool, uniformBlocksInPool, texturesInPool);
 
         PipelineInstanceCount++;
 
@@ -1117,16 +1132,16 @@ public:
     }
 };
 
-class MainMenuSceneController : public SceneController {
+class ScreenSceneController : public SceneController {
 protected:
-    MainMenuScene *scene{};
+    ScreenScene *scene{};
 public:
-    void setScene(MainMenuScene *sc) {
+    void setScene(ScreenScene *sc) {
         scene = sc;
     }
 
     void addObjectToMap(std::pair<int, int> coords, ObjectInstance *obj) override {
-        throw std::runtime_error("MainMenuSceneController::addObjectToMap not implemented");
+        throw std::runtime_error("ScreenSceneController::addObjectToMap not implemented");
     }
 
     void init() override {
@@ -1138,15 +1153,15 @@ public:
     }
 
     void updateUniformBuffer(uint32_t currentImage, float deltaT, glm::vec3 m, glm::vec3 r, bool fire) override {
-        // TODO: Implement the MainMenuSceneController
+        // TODO: Implement the ScreenSceneController
     }
 };
 
 static Scene *getNewSceneById(SceneId sceneId) {
     switch (sceneId) {
         case SceneId::SCENE_MAIN_MENU: {
-            auto mms = new MainMenuScene();
-            auto mmsc = new MainMenuSceneController();
+            auto mms = new ScreenScene();
+            auto mmsc = new ScreenSceneController();
             mms->setSceneController(mmsc);
             mmsc->setScene(mms);
             return mms;

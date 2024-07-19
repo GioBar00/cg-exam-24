@@ -18,7 +18,7 @@ protected:
 
 
     /* Pipelines. */
-    Pipeline ToonP, PhongP, SourceP, MenuP, SkyboxP;
+    Pipeline ToonP, PhongP, SourceP, MenuP, BackgroundP;
 
 
     /* Texts. */
@@ -111,8 +111,8 @@ protected:
         ToonP.init(this, &ObjectVD, "shaders/Shader.vert.spv", "shaders/Toon.frag.spv", {&LightDSL, &ObjectDSL});
         PhongP.init(this, &ObjectVD, "shaders/Shader.vert.spv", "shaders/Phong.frag.spv", {&LightDSL, &ObjectDSL});
         SourceP.init(this, &SourceVD, "shaders/Emission.vert.spv", "shaders/Emission.frag.spv", {&SourceDSL});
-        SkyboxP.init(this, &BackgroundVD, "shaders/Skybox.vert.spv", "shaders/Skybox.frag.spv", {&ArtDSL});
-        SkyboxP.setAdvancedFeatures(VK_COMPARE_OP_LESS_OR_EQUAL, VK_POLYGON_MODE_FILL, VK_CULL_MODE_NONE, true);
+        BackgroundP.init(this, &BackgroundVD, "shaders/Background.vert.spv", "shaders/Background.frag.spv", {&ArtDSL});
+        BackgroundP.setAdvancedFeatures(VK_COMPARE_OP_LESS_OR_EQUAL, VK_POLYGON_MODE_FILL, VK_CULL_MODE_NONE, true);
         MenuP.init(this, &BackgroundVD, "shaders/Menu.vert.spv", "shaders/Menu.frag.spv", {&UserInterfaceDSL});
         MenuP.setAdvancedFeatures(VK_COMPARE_OP_LESS_OR_EQUAL, VK_POLYGON_MODE_FILL, VK_CULL_MODE_NONE, true);
 
@@ -124,25 +124,25 @@ protected:
         txt.init(this, &out);
 
         // Define vertex descriptor references per scene.
-        VertexDescriptorRef ObjectVDR{}, SourceVDR{}, MenuVDR{}, SkyboxVDR{};
+        VertexDescriptorRef ObjectVDR{}, SourceVDR{}, MenuVDR{}, BackgroundVDR{};
         ObjectVDR.init("object", &ObjectVD);
         SourceVDR.init("source", &SourceVD);
-        SkyboxVDR.init("skybox", &BackgroundVD);
-        std::vector<VertexDescriptorRef> LevelSceneVDRs = { ObjectVDR, SourceVDR, SkyboxVDR };
+        BackgroundVDR.init("background", &BackgroundVD);
+        std::vector<VertexDescriptorRef> LevelSceneVDRs = {ObjectVDR, SourceVDR, BackgroundVDR };
 
         MenuVDR.init("menu", &BackgroundVD);
-        std::vector<VertexDescriptorRef> MenuVDRs = { MenuVDR };
+        std::vector<VertexDescriptorRef> MenuVDRs = { MenuVDR, BackgroundVDR };
 
         // Define pipeline references per scene.
-        PipelineRef ToonPR{}, PhongPR{}, SourcePR{}, MenuPR{}, SkyboxPR{};
+        PipelineRef ToonPR{}, PhongPR{}, SourcePR{}, MenuPR{}, BackgroundPR{};
         ToonPR.init("toon", &ToonP);
         PhongPR.init("phong", &PhongP);
         SourcePR.init("emission", &SourceP);
-        SkyboxPR.init("skybox", &SkyboxP);
-        std::vector<PipelineRef> LevelScenePRs = { ToonPR, PhongPR, SourcePR, SkyboxPR };
+        BackgroundPR.init("background", &BackgroundP);
+        std::vector<PipelineRef> LevelScenePRs = {ToonPR, PhongPR, SourcePR, BackgroundPR };
 
         MenuPR.init("menu", &MenuP);
-        std::vector<PipelineRef> MenuPRs = { MenuPR };
+        std::vector<PipelineRef> MenuPRs = { MenuPR, BackgroundPR };
 
         SceneVDRs[SceneId::SCENE_MAIN_MENU] = MenuVDRs;
         ScenePRs[SceneId::SCENE_MAIN_MENU] = MenuPRs;
@@ -164,7 +164,7 @@ protected:
         SourceP.create();
         txt.pipelinesAndDescriptorSetsInit();
         MenuP.create();
-        SkyboxP.create();
+        BackgroundP.create();
         scenes[currSceneId]->pipelinesAndDescriptorSetsInit();
     }
 
@@ -174,7 +174,7 @@ protected:
         SourceP.cleanup();
         txt.pipelinesAndDescriptorSetsCleanup();
         MenuP.cleanup();
-        SkyboxP.cleanup();
+        BackgroundP.cleanup();
         scenes[currSceneId]->pipelinesAndDescriptorSetsCleanup();
     }
 
@@ -196,7 +196,7 @@ protected:
         PhongP.destroy();
         SourceP.destroy();
         MenuP.destroy();
-        SkyboxP.destroy();
+        BackgroundP.destroy();
 
         txt.localCleanup();
     }

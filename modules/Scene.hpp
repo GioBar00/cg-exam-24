@@ -706,7 +706,9 @@ class LevelSceneController : public SceneController {
 
     const float camRotDuration = 1.f;
     const float playerRotDuration = 0.3f;
-    const float playerMoveDuration = 0.7f;
+    const float playerMoveDuration = 0.5f;
+    const float playerMoveEaseInDuration = playerMoveDuration;
+    const float playerMoveEaseOutDuration = playerMoveDuration;
     const float infoTextDuration = 2.0f;
     const float lightAnimDuration = 4.0f;
 
@@ -739,6 +741,8 @@ class LevelSceneController : public SceneController {
     bool isCameraRotating = false;
     bool isPlayerRotating = false;
     bool isPlayerMoving = false;
+    bool isPlayerMovingEaseIn = false;
+    bool isPlayerMovingEaseOut = false;
     bool debounce = false;
 
     float zoom = 0.2f;
@@ -819,9 +823,17 @@ class LevelSceneController : public SceneController {
         gubo->NUMBER = idx + 1;
     }
 
-    static auto interpolate(auto start, auto target, float timeI) {
+    static auto ease_in_ease_out(auto start, auto target, float timeI) {
         timeI = (3.0f * timeI * timeI) - (2.0f * timeI * timeI * timeI);
         return glm::mix(start, target, timeI);
+    }
+
+    static auto ease_in(auto start, auto target, float timeI) {
+        return glm::mix(start, target, timeI * timeI);
+    }
+
+    static auto ease_out(auto start, auto target, float timeI) {
+        return glm::mix(start, target, 1 - (1 - timeI) * (1 - timeI));
     }
 
 public:
@@ -849,10 +861,11 @@ public:
         }
     }
 
-    static bool updatePlayerRotPos(glm::vec3 m, float projRot, float &playerRot, glm::vec3 &playerPos) {
+    static float updatePlayerRot(glm::vec3 m, float projRot, float playerRot) {
         // rotate m by projRot
         glm::vec4 rotatedM = glm::rotate(glm::mat4(1.f), glm::radians(-90 * projRot),
                                          glm::vec3(0, 1, 0)) * glm::vec4(m, 1);
+
         // choose m.x or m.z movement
         glm::vec2 input = glm::normalize(glm::vec2(rotatedM.x, rotatedM.z));
         float newPlayerRot = -1;
@@ -872,23 +885,54 @@ public:
             newPlayerRot = glm::pi<float>() / 2;
         }
 
-        if (newPlayerRot != playerRot) {
-            playerRot = newPlayerRot;
-            return true;
-        }
+        return newPlayerRot;
+    }
 
+    static glm::vec3 updatePlayerPos(float playerRot, glm::vec3 playerPos, bool half = false) {
         float move = UNIT / 1.5f;
-
-        if (input.y > 0.5f) {
-            playerPos.z += move;
-        } else if (input.y < -0.5f) {
-            playerPos.z -= move;
-        } else if (input.x > 0.5f) {
-            playerPos.x += move;
-        } else if (input.x < -0.5f) {
-            playerPos.x -= move;
+        if (half) {
+            move /= 2;
         }
-        return false;
+
+        if (playerRot == 0) {
+            playerPos.z -= move;
+        } else if (playerRot == glm::pi<float>() / 2) {
+            playerPos.x -= move;
+        } else if (playerRot == glm::pi<float>()) {
+            playerPos.z += move;
+        } else if (playerRot == 3 * glm::pi<float>() / 2) {
+            playerPos.x += move;
+        }
+
+        return playerPos;
+    }
+
+    bool willPlayerContinueMoving(glm::vec3 m) {
+        if (glm::length(glm::vec2(m.x, m.z)) < 0.5f) {
+            return false;
+        }
+
+        float newPlayerRot = updatePlayerRot(m, projRot, playerRot);
+        if (newPlayerRot != playerRot) {
+            return false;
+        }
+
+        if (!canPlayerMove()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    bool canPlayerMove() {
+        for (ObjectInstance *obj: myMap[getAdjacentCell(playerCoords, playerRot)]) {
+            if (obj->type == SceneObjectType::SO_WALL || obj->type == SceneObjectType::SO_BONFIRE) {
+                std::cout << "Player CANNOT move to " << getAdjacentCell(playerCoords, playerRot).first << ", "
+                          << getAdjacentCell(playerCoords, playerRot).second << "\n";
+                return false;
+            }
+        }
+        return true;
     }
 
     static std::pair<int, int> getAdjacentCell(std::pair<int, int> playerCoords, float playerRot) {
@@ -939,7 +983,7 @@ public:
                 isCameraRotating = false;
                 std::cout << "Camera ENDED rotating to " << projRot << "\n";
             } else {
-                currProjRot = interpolate(projRot_old, projRot, elapsed / camRotDuration);
+                currProjRot = ease_in_ease_out(projRot_old, projRot, elapsed / camRotDuration);
                 //std::cout << "Camera still rotating\n";
             }
         }
@@ -953,75 +997,29 @@ public:
 
 
         if (!isPlayerMoving && !isPlayerRotating && !isCameraRotating && glm::length(glm::vec2(m.x, m.z)) > 0.5f) {
-            if (updatePlayerRotPos(m, projRot, playerRot, playerPos)) {
+            float newPlayerRot = updatePlayerRot(m, projRot, playerRot);
+            if (newPlayerRot != playerRot) {
                 // player needs to rotate first
                 isPlayerRotating = true;
+                playerRot_old = playerRot;
+                playerRot = newPlayerRot;
                 playerStartTime = std::chrono::high_resolution_clock::now();
                 std::cout << "Player STARTED rotating to " << playerRot << "\n";
             } else {
-                bool canMove = true;
-                for (ObjectInstance *obj: myMap[getAdjacentCell(playerCoords, playerRot)]) {
-                    if (obj->type == SceneObjectType::SO_WALL || obj->type == SceneObjectType::SO_BONFIRE) {
-                        canMove = false;
-                        std::cout << "Player CANNOT move to " << getAdjacentCell(playerCoords, playerRot).first << ", "
-                                  << getAdjacentCell(playerCoords, playerRot).second << "\n";
-                        break;
-                    }
-                }
-                if (canMove) {
+                if (canPlayerMove()) {
                     // player needs to move
                     isPlayerMoving = true;
+                    playerPos = updatePlayerPos(playerRot, playerPos, true);
                     playerStartTime = std::chrono::high_resolution_clock::now();
                     playerCoords = getAdjacentCell(playerCoords, playerRot);
-                    std::cout << "Player STARTED moving to " << playerCoords.first << ", " << playerCoords.second
-                              << "\n";
-                } else {
-                    // reset player position
-                    playerPos = currPlayerPos;
-                    playerRot = currPlayerRot;
+                    std::cout << "Player STARTED moving.\n";
+                    isPlayerMovingEaseIn = true;
                 }
             }
         } else if (isPlayerMoving || isPlayerRotating) {
             auto currTime = std::chrono::high_resolution_clock::now();
             float elapsed = std::chrono::duration<float>(currTime - playerStartTime).count();
-            if (isPlayerMoving) {
-                if (elapsed > playerMoveDuration) {
-                    //player stopped moving to next cell
-                    currPlayerPos = playerPos_old = playerPos;
-                    isPlayerMoving = false;
-                    std::cout << "Player ENDED moving to " << playerCoords.first << ", " << playerCoords.second << "\n";
-                    // Check end of level
-                    bool changeLevel = false;
-                    for (ObjectInstance *obj: myMap[playerCoords]) {
-                        if (obj->type == SceneObjectType::SO_TRAPDOOR) {
-                            changeLevel = true;
-                            break;
-                        }
-                    }
-                    if (changeLevel) {
-                        // Check if all torches are lit
-                        if (numLitTorches == numTorches) {
-                            std::cout << "Changing level\n";
-                            scene->BP->changeText(" ", 0);
-                            SceneId nextScene;
-                            if (scene->BP->currSceneId == SceneId::SCENE_LEVEL_1)
-                                nextScene = SceneId::SCENE_LEVEL_2;
-                            else
-                                nextScene = SceneId::SCENE_GAME_OVER;
-                            scene->BP->changeScene(nextScene);
-                        } else {
-                            std::cout << "Light all torches: " << numLitTorches << "/" << numTorches << "\n";
-                            scene->BP->changeText("Light all torches!", 1);
-                            infoTextStartTime = std::chrono::high_resolution_clock::now();
-                            infoTextActive = true;
-                        }
-                    }
-                } else {
-                    // moving to the next cell
-                    currPlayerPos = interpolate(playerPos_old, playerPos, elapsed / playerMoveDuration);
-                    //std::cout << "Player still moving to next cell\n";
-                }
-            } else if (isPlayerRotating) {
+            if (isPlayerRotating) {
                 if (elapsed > playerRotDuration) {
                     // player stopped rotating
                     // mod playerRot to 0-2pi
@@ -1031,8 +1029,86 @@ public:
                     std::cout << "Player ENDED rotating to " << playerRot << "\n";
                 } else {
                     // player rotating
-                    currPlayerRot = interpolate(playerRot_old, playerRot, elapsed / playerRotDuration);
+                    currPlayerRot = ease_in_ease_out(playerRot_old, playerRot, elapsed / playerRotDuration);
                     //std::cout << "Player still rotating\n";
+                }
+            } else if (isPlayerMoving) {
+                if (isPlayerMovingEaseIn) {
+                    if (elapsed >= playerMoveEaseInDuration) {
+                        std::cout << "Player EASE IN ENDED\n";
+                        isPlayerMovingEaseIn = false;
+                        playerPos_old = playerPos;
+                        playerStartTime = std::chrono::high_resolution_clock::now();
+                        if (!willPlayerContinueMoving(m)) {
+                            isPlayerMovingEaseOut = true;
+                            playerPos = updatePlayerPos(playerRot, playerPos, true);
+                            std::cout << "Player EASE OUT STARTED\n";
+                        } else {
+                            playerPos = updatePlayerPos(playerRot, playerPos);
+                            playerCoords = getAdjacentCell(playerCoords, playerRot);
+                            std::cout << "Player CONTINUED moving to " << playerCoords.first << ", "
+                                      << playerCoords.second << "\n";
+                        }
+                    } else {
+                        // easing in
+                        currPlayerPos = ease_in(playerPos_old, playerPos, elapsed / playerMoveEaseInDuration);
+                    }
+                } else if (isPlayerMovingEaseOut) {
+                    if (elapsed >= playerMoveEaseOutDuration) {
+                        std::cout << "Player EASE OUT ENDED\n";
+                        isPlayerMovingEaseOut = false;
+                        playerPos_old = playerPos;
+                        isPlayerMoving = false;
+                        std::cout << "Player ENDED moving to " << playerCoords.first << ", " << playerCoords.second
+                                  << "\n";
+                        // Check end of level
+                        bool changeLevel = false;
+                        for (ObjectInstance *obj: myMap[playerCoords]) {
+                            if (obj->type == SceneObjectType::SO_TRAPDOOR) {
+                                changeLevel = true;
+                                break;
+                            }
+                        }
+                        if (changeLevel) {
+                            // Check if all torches are lit
+                            if (numLitTorches == numTorches) {
+                                std::cout << "Changing level\n";
+                                scene->BP->changeText(" ", 0);
+                                SceneId nextScene;
+                                if (scene->BP->currSceneId == SceneId::SCENE_LEVEL_1)
+                                    nextScene = SceneId::SCENE_LEVEL_2;
+                                else
+                                    nextScene = SceneId::SCENE_GAME_OVER;
+                                scene->BP->changeScene(nextScene);
+                            } else {
+                                std::cout << "Light all torches: " << numLitTorches << "/" << numTorches << "\n";
+                                scene->BP->changeText("Light all torches!", 1);
+                                infoTextStartTime = std::chrono::high_resolution_clock::now();
+                                infoTextActive = true;
+                            }
+                        }
+                    } else {
+                        // easing out
+                        currPlayerPos = ease_out(playerPos_old, playerPos, elapsed / playerMoveEaseOutDuration);
+                    }
+                } else {
+                    if (elapsed >= playerMoveDuration) {
+                        playerPos_old = playerPos;
+                        playerStartTime = std::chrono::high_resolution_clock::now();
+                        if (!willPlayerContinueMoving(m)) {
+                            isPlayerMovingEaseOut = true;
+                            playerPos = updatePlayerPos(playerRot, playerPos, true);
+                            std::cout << "Player EASE OUT STARTED\n";
+                        } else {
+                            playerPos = updatePlayerPos(playerRot, playerPos);
+                            playerCoords = getAdjacentCell(playerCoords, playerRot);
+                            std::cout << "Player CONTINUED moving to " << playerCoords.first << ", "
+                                      << playerCoords.second << "\n";
+                        }
+                    } else {
+                        // player moving
+                        currPlayerPos = glm::mix(playerPos_old, playerPos, elapsed / playerMoveDuration);
+                    }
                 }
             }
         }

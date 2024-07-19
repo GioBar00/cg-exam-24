@@ -55,7 +55,7 @@ struct SourceVertex {
 };
 
 struct ScreenVertex {
-    glm::vec2 pos;
+    glm::vec3 pos;
     glm::vec2 UV;
 };
 
@@ -190,17 +190,19 @@ protected:
         InstanceCount++;
     }
 
-    void addVertices(std::vector<unsigned char> &vertices, int stride, float factor = 0.0f, float ar = 0.0f) const {
-        std::vector<unsigned char> vertex(stride, 0);
-        auto myVertex = (ScreenVertex *) (&vertex[0]);
+    void addVertices(std::vector<unsigned char>& vertices, int stride, float factor = 0.0f, float ar = 0.0f) const {
+        int old_size = vertices.size();
+        vertices.resize(old_size + stride * 4);
+        auto myVertices = (ScreenVertex*)(&vertices[old_size]);
+        int idx = 0;
         for (int i = -1; i <= +1; i += 2) {
             for (int j = -1; j <= +1; j += 2) {
                 if (factor == 0.0f)
-                    myVertex->pos = {i, j};
+                    myVertices[idx].pos = { i, j, 0 };
                 else
-                    myVertex->pos = {i / factor, j / ((ar / BP->getAr()) * factor)};
-                myVertex->UV = {(float) (i + 1) / 2, (float) (j + 1) / 2};
-                vertices.insert(vertices.end(), vertex.begin(), vertex.end());
+                    myVertices[idx].pos = { i / factor, j / ((ar / BP->getAr()) * factor), 0 };
+                myVertices[idx].UV = { (float)(i + 1) / 2, (float)(j + 1) / 2 };
+                idx++;
             }
         }
     }
@@ -273,20 +275,21 @@ public:
     }
 
     void localCleanup() const {
-        // Cleanup textures
+        std::cout << "Cleanup textures." << std::endl;
         for (int i = 0; i < TextureCount; i++) {
             T[i]->cleanup();
             delete T[i];
         }
         free(T);
 
-        // Cleanup models
+        std::cout << "Cleanup models" << std::endl;
         for (int i = 0; i < ModelCount; i++) {
             M[i]->cleanup();
             delete M[i];
         }
         free(M);
 
+        std::cout << "Cleanup instances" << std::endl;
         for (int i = 0; i < InstanceCount; i++) {
             delete I[i]->id;
             free(I[i]->Tid);
@@ -294,10 +297,12 @@ public:
         free(I);
 
         // To add: delete  also the datastructures relative to the pipeline
+        std::cout << "Cleanup pipelines" << std::endl;
         for (int i = 0; i < PipelineInstanceCount; i++) {
             free(PI[i].I);
         }
         free(PI);
+        std::cout << "Cleanup scene controller" << std::endl;
         SC->localCleanup();
         free(SC);
     }
@@ -378,7 +383,7 @@ public:
             }
 
             // Skybox model
-            int mainStride = VDIds["background"]->Bindings[0].stride;
+            int mainStride = VDIds["skybox"]->Bindings[0].stride;
             std::vector<unsigned char> vertices{};
             std::vector<unsigned int> indices{};
             addVertices(vertices, mainStride);
@@ -386,7 +391,7 @@ public:
                     0, 1, 2,
                     1, 2, 3
             };
-            addModel("skybox", "background", vertices, indices);
+            addModel("skybox-m", "skybox", vertices, indices);
 
             // TEXTURES
             nlohmann::json ts = js["textures"];
@@ -491,12 +496,12 @@ public:
             }
 
             // Skybox pipeline instance + object instance
-            PI[PipelineInstanceCount].P = PipelineIds["background"];
+            PI[PipelineInstanceCount].P = PipelineIds["skybox"];
             PI[PipelineInstanceCount].InstanceCount = 0;
             PI[PipelineInstanceCount].I = (Instance *) calloc(1, sizeof(Instance));
 
             // background instance
-            addInstance("skybox-obj", "skybox", {"skybox-tex"}, setsInPool, uniformBlocksInPool, texturesInPool);
+            addInstance("skybox-obj", "skybox-m", {"skybox-tex"}, setsInPool, uniformBlocksInPool, texturesInPool);
             PipelineInstanceCount++;
 
             // Request xInPool
@@ -577,7 +582,7 @@ public:
         // MODELS
         ModelCount = 0;
         M = (Model **) calloc(3, sizeof(Model *));
-        int mainStride = VDIds["menu"]->Bindings[0].stride;
+        int mainStride = VDIds["skybox"]->Bindings[0].stride;
         std::vector<unsigned char> vertices{};
         std::vector<unsigned int> indices{};
         // background model
@@ -586,24 +591,25 @@ public:
                 0, 1, 2,
                 1, 2, 3
         };
-        addModel("background", "background", vertices, indices);
+        addModel("bg-m", "skybox", vertices, indices);
         // other models: cursor
+        mainStride = VDIds["menu"]->Bindings[0].stride;
         vertices = {};
         float w = 28.0f, h = 28.0f, ar = w / h, factor = 32.0f;
         addVertices(vertices, mainStride, factor, ar);
-        addModel("cursor", "menu", vertices, indices);
+        addModel("cursor-m", "menu", vertices, indices);
         // other models: buttons
         vertices = {};
         w = 590.0f, h = 260.0f, ar = w / h, factor = 4.0f;
         addVertices(vertices, mainStride, factor, ar);
-        addModel("button", "menu", vertices, indices);
+        addModel("button-m", "menu", vertices, indices);
 
         // TEXTURES
         TextureCount = 0;
-        T = (Texture **) calloc(3, sizeof(Texture *));
+        T = (Texture **) calloc(4, sizeof(Texture *));
         // background texture
-        addTexture("background-tex", isMenu ? "textures/menu/menu-a.png"
-                                            : "textures/menu/menu-b.png"); // Credits: https://deep-fold.itch.io/space-background-generator
+        addTexture("bg-tex", isMenu ? "textures/menu/menu-a.png"
+                                    : "textures/menu/menu-b.png"); // Credits: https://deep-fold.itch.io/space-background-generator
         // other textures: cursor, buttons
         addTexture("cursor-tex", "textures/menu/cursor.png"); // Credits: https://leo-red.itch.io/lucid-icon-pack
         if (isMenu) {
@@ -624,12 +630,12 @@ public:
         int uniformBlocksInPool = 0;
         int texturesInPool = 0;
         // background pipeline
-        PI[PipelineInstanceCount].P = PipelineIds["background"];
+        PI[PipelineInstanceCount].P = PipelineIds["skybox"];
         PI[PipelineInstanceCount].InstanceCount = 0;
         PI[PipelineInstanceCount].I = (Instance *) calloc(1,
                                                           sizeof(Instance)); // calculate the number of instances: 1 background, 1 cursor, 2 buttons (one active at each scene)
         // background instance
-        addInstance("background-obj", "background", {"background-tex"}, setsInPool, uniformBlocksInPool,
+        addInstance("bg-obj", "bg-m", {"bg-tex"}, setsInPool, uniformBlocksInPool,
                     texturesInPool);
 
         PipelineInstanceCount++;
@@ -645,14 +651,14 @@ public:
             texIds = {"play-tex-before", "play-tex-after"};
         else
             texIds = {"exit-tex-before", "exit-tex-after"};
-        addInstance("btn-obj", "button", texIds, setsInPool, uniformBlocksInPool, texturesInPool);
+        addInstance("button-obj", "button-m", texIds, setsInPool, uniformBlocksInPool, texturesInPool);
         auto oi = new ObjectInstance();
-        oi->I_id = "btn-obj";
+        oi->I_id = "button-obj";
         oi->type = SceneObjectType::SO_BUTTON;
         oi->isOn = false;
         SC->addObjectToMap({0, 0}, oi);
 
-        addInstance("cursor-obj", "cursor", {"cursor-tex", "cursor-tex"}, setsInPool, uniformBlocksInPool,
+        addInstance("cursor-obj", "cursor-m", {"cursor-tex", "cursor-tex"}, setsInPool, uniformBlocksInPool,
                     texturesInPool);
         oi = new ObjectInstance();
         oi->I_id = "cursor-obj";

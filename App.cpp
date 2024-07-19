@@ -18,7 +18,7 @@ protected:
 
 
     /* Pipelines. */
-    Pipeline ToonP, PhongP, SourceP, MenuP, BackgroundP;
+    Pipeline ToonP, PhongP, SourceP, MenuP, SkyboxP;
 
 
     /* Texts. */
@@ -103,16 +103,16 @@ protected:
         BackgroundVD.init(this, {
                 {0, sizeof(ScreenVertex), VK_VERTEX_INPUT_RATE_VERTEX}
             }, {
-                {0, 0, VK_FORMAT_R32G32_SFLOAT, offsetof(ScreenVertex, pos), sizeof(glm::vec2), POSITION},
-                {0, 1, VK_FORMAT_R32G32_SFLOAT, offsetof(ScreenVertex, UV),  sizeof(glm::vec2), UV}
+                {0, 0, VK_FORMAT_R32G32B32_SFLOAT,  offsetof(ScreenVertex, pos),    sizeof(glm::vec3), POSITION},
+                {0, 1, VK_FORMAT_R32G32_SFLOAT,     offsetof(ScreenVertex, UV),     sizeof(glm::vec2), UV}
             }
         );
 
         ToonP.init(this, &ObjectVD, "shaders/Shader.vert.spv", "shaders/Toon.frag.spv", {&LightDSL, &ObjectDSL});
         PhongP.init(this, &ObjectVD, "shaders/Shader.vert.spv", "shaders/Phong.frag.spv", {&LightDSL, &ObjectDSL});
         SourceP.init(this, &SourceVD, "shaders/Emission.vert.spv", "shaders/Emission.frag.spv", {&SourceDSL});
-        BackgroundP.init(this, &BackgroundVD, "shaders/Background.vert.spv", "shaders/Background.frag.spv", {&ArtDSL});
-        BackgroundP.setAdvancedFeatures(VK_COMPARE_OP_LESS_OR_EQUAL, VK_POLYGON_MODE_FILL, VK_CULL_MODE_NONE, true);
+        SkyboxP.init(this, &BackgroundVD, "shaders/Skybox.vert.spv", "shaders/Skybox.frag.spv", {&ArtDSL});
+        SkyboxP.setAdvancedFeatures(VK_COMPARE_OP_LESS_OR_EQUAL, VK_POLYGON_MODE_FILL, VK_CULL_MODE_NONE, true);
         MenuP.init(this, &BackgroundVD, "shaders/Menu.vert.spv", "shaders/Menu.frag.spv", {&UserInterfaceDSL});
         MenuP.setAdvancedFeatures(VK_COMPARE_OP_LESS_OR_EQUAL, VK_POLYGON_MODE_FILL, VK_CULL_MODE_NONE, true);
 
@@ -127,8 +127,8 @@ protected:
         VertexDescriptorRef ObjectVDR{}, SourceVDR{}, MenuVDR{}, BackgroundVDR{};
         ObjectVDR.init("object", &ObjectVD);
         SourceVDR.init("source", &SourceVD);
-        BackgroundVDR.init("background", &BackgroundVD);
-        std::vector<VertexDescriptorRef> LevelSceneVDRs = {ObjectVDR, SourceVDR, BackgroundVDR };
+        BackgroundVDR.init("skybox", &BackgroundVD);
+        std::vector<VertexDescriptorRef> LevelSceneVDRs = { ObjectVDR, SourceVDR, BackgroundVDR };
 
         MenuVDR.init("menu", &BackgroundVD);
         std::vector<VertexDescriptorRef> MenuVDRs = { MenuVDR, BackgroundVDR };
@@ -138,7 +138,7 @@ protected:
         ToonPR.init("toon", &ToonP);
         PhongPR.init("phong", &PhongP);
         SourcePR.init("emission", &SourceP);
-        BackgroundPR.init("background", &BackgroundP);
+        BackgroundPR.init("skybox", &SkyboxP);
         std::vector<PipelineRef> LevelScenePRs = {ToonPR, PhongPR, SourcePR, BackgroundPR };
 
         MenuPR.init("menu", &MenuP);
@@ -166,7 +166,7 @@ protected:
         SourceP.create();
         txt.pipelinesAndDescriptorSetsInit();
         MenuP.create();
-        BackgroundP.create();
+        SkyboxP.create();
         scenes[currSceneId]->pipelinesAndDescriptorSetsInit();
     }
 
@@ -176,7 +176,7 @@ protected:
         SourceP.cleanup();
         txt.pipelinesAndDescriptorSetsCleanup();
         MenuP.cleanup();
-        BackgroundP.cleanup();
+        SkyboxP.cleanup();
         scenes[currSceneId]->pipelinesAndDescriptorSetsCleanup();
     }
 
@@ -198,7 +198,7 @@ protected:
         PhongP.destroy();
         SourceP.destroy();
         MenuP.destroy();
-        BackgroundP.destroy();
+        SkyboxP.destroy();
 
         txt.localCleanup();
     }
@@ -290,14 +290,17 @@ protected:
         cleanupSwapChain();
 
         if (changingScene) {
+            std::cout << "Starting scene change." << std::endl;
             scenes[currSceneId]->localCleanup();
             free(scenes[currSceneId]);
+            std::cout << "Cleaned old scene." << std::endl;
             scenes[currSceneId] = nullptr;
             currSceneId = newSceneId;
             changingScene = false;
         }
 
         if (updateText) {
+            std::cout << "Updating text." << std::endl;
             txt.updateTexts();
             updateText = false;
         }

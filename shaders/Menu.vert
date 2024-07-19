@@ -13,7 +13,8 @@ layout(location = 1) in vec2 inUV;
 
 layout(location = 0) out vec2 fragUV;
 
-void main() {
+
+void main() {
 	gl_Position = mat4(1.0) * vec4(inPos.x + pubo.x, inPos.y + pubo.y, 0.0, 1.0);
 
 	fragUV = inUV;

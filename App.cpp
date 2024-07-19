@@ -82,7 +82,7 @@ protected:
             {0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,  VK_SHADER_STAGE_FRAGMENT_BIT,   0,                      1},
             {1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,          VK_SHADER_STAGE_VERTEX_BIT,     sizeof(UIUniform),      1},
             {2, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,          VK_SHADER_STAGE_FRAGMENT_BIT,   sizeof(BooleanUniform), 1},
-            {3, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,  VK_SHADER_STAGE_FRAGMENT_BIT,   0,                      1}
+            {3, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,  VK_SHADER_STAGE_FRAGMENT_BIT,   1,                      1}
         });
 
         ObjectVD.init(this, {
@@ -101,10 +101,10 @@ protected:
             }
         );
         BackgroundVD.init(this, {
-                {0, sizeof(MenuVertex), VK_VERTEX_INPUT_RATE_VERTEX}
+                {0, sizeof(ScreenVertex), VK_VERTEX_INPUT_RATE_VERTEX}
             }, {
-                {0, 0, VK_FORMAT_R32G32_SFLOAT, offsetof(MenuVertex, pos),  sizeof(glm::vec2),  POSITION},
-                {0, 1, VK_FORMAT_R32G32_SFLOAT, offsetof(MenuVertex, UV),   sizeof(glm::vec2),  UV}
+                {0, 0, VK_FORMAT_R32G32_SFLOAT, offsetof(ScreenVertex, pos), sizeof(glm::vec2), POSITION},
+                {0, 1, VK_FORMAT_R32G32_SFLOAT, offsetof(ScreenVertex, UV),  sizeof(glm::vec2), UV}
             }
         );
 
@@ -150,6 +150,8 @@ protected:
         ScenePRs[SceneId::SCENE_LEVEL_1] = LevelScenePRs;
         SceneVDRs[SceneId::SCENE_LEVEL_2] = LevelSceneVDRs;
         ScenePRs[SceneId::SCENE_LEVEL_2] = LevelScenePRs;
+        SceneVDRs[SceneId::SCENE_GAME_OVER] = MenuVDRs;
+        ScenePRs[SceneId::SCENE_GAME_OVER] = MenuPRs;
 
 
         // Set the first scene
@@ -210,10 +212,19 @@ protected:
         float deltaT;
         auto m = glm::vec3(0.0f), r = glm::vec3(0.0f);
         bool fire;
+        double cursorX, cursorY;
 
         getSixAxis(deltaT, m, r, fire);
+        fire = fire || glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
 
-        scenes[currSceneId]->SC->updateUniformBuffer(currentImage, deltaT, m, r, fire);
+        glfwGetCursorPos(window, &cursorX, &cursorY);
+
+        cursorX = cursorX / windowWidth;
+        cursorY = cursorY / windowHeight;
+        cursorX = cursorX * 2 - 1;
+        cursorY = cursorY * 2 - 1;
+
+        scenes[currSceneId]->SC->updateUniformBuffer(currentImage, deltaT, m, r, fire, cursorX, cursorY);
     }
 
     void changeScene(SceneId _newSceneId) override {

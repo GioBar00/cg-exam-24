@@ -437,6 +437,10 @@ public:
         return Ar;
     }
 
+    void closeWindow() {
+        glfwSetWindowShouldClose(window, GL_TRUE);
+    }
+
     virtual void changeScene(SceneId newSceneId) = 0;
     virtual void changeText(std::string newText, int line) = 0;
 

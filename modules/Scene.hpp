@@ -54,7 +54,7 @@ struct SourceVertex {
     glm::vec2 UV;
 };
 
-struct MenuVertex {
+struct ScreenVertex {
     glm::vec2 pos;
     glm::vec2 UV;
 };
@@ -106,7 +106,7 @@ struct PipelineInstances {
 struct ObjectInstance {
     std::string I_id;
     SceneObjectType type;
-    bool isOnFire = false;
+    bool isOn = false;
 
     std::string lType;
     glm::vec4 lColor;
@@ -131,12 +131,14 @@ public:
 
     virtual void localCleanup() = 0;
 
-    virtual void updateUniformBuffer(uint32_t currentImage, float deltaT, glm::vec3 m, glm::vec3 r, bool fire) = 0;
+    virtual void updateUniformBuffer(uint32_t currentImage, float deltaT, glm::vec3 m, glm::vec3 r, bool fire,
+                                     double cursorX, double cursorY) = 0;
 };
 
 class Scene {
 protected:
-    void addModel(const std::string &id, const std::string &vid, std::vector<unsigned char> vertices, std::vector<unsigned int> indices) {
+    void addModel(const std::string &id, const std::string &vid, std::vector<unsigned char> vertices,
+                  std::vector<unsigned int> indices) {
         MeshIds[id] = ModelCount;
         M[ModelCount] = new Model();
         M[ModelCount]->vertices = std::move(vertices);
@@ -152,12 +154,14 @@ protected:
         TextureCount++;
     }
 
-    void addInstance(const std::string &id, const std::string &mid, const std::vector<std::string> &tids, int &setsInPool, int &uniformBlocksInPool, int &texturesInPool) {
+    void addInstance(const std::string &id, const std::string &mid, const std::vector<std::string> &tids,
+                     int &setsInPool, int &uniformBlocksInPool, int &texturesInPool) {
         int instanceIdx = PI[PipelineInstanceCount].InstanceCount;
         PI[PipelineInstanceCount].I[instanceIdx].id = new std::string(id);
         PI[PipelineInstanceCount].I[instanceIdx].Mid = MeshIds[mid];
         PI[PipelineInstanceCount].I[instanceIdx].NTx = tids.size();
-        PI[PipelineInstanceCount].I[instanceIdx].Tid = (int *) calloc(PI[PipelineInstanceCount].I[instanceIdx].NTx, sizeof(int));
+        PI[PipelineInstanceCount].I[instanceIdx].Tid = (int *) calloc(PI[PipelineInstanceCount].I[instanceIdx].NTx,
+                                                                      sizeof(int));
 
         for (int h = 0; h < PI[PipelineInstanceCount].I[instanceIdx].NTx; h++) {
             PI[PipelineInstanceCount].I[instanceIdx].Tid[h] = TextureIds[tids[h]];
@@ -185,6 +189,22 @@ protected:
         PI[PipelineInstanceCount].InstanceCount++;
         InstanceCount++;
     }
+    
+    void addVertices(std::vector<unsigned char> &vertices, int stride, float factor = 0.0f, float ar = 0.0f) const {
+        std::vector<unsigned char> vertex(stride, 0);
+        auto myVertex = (ScreenVertex *) (&vertex[0]);
+        for (int i = -1; i <= +1; i += 2) {
+            for (int j = -1; j <= +1; j += 2) {
+                if (factor == 0.0f)
+                    myVertex->pos = {i, j};
+                else
+                    myVertex->pos = {i / factor, j / ((ar / BP->getAr()) * factor)};
+                myVertex->UV = {(float) (i + 1) / 2, (float) (j + 1) / 2};
+                vertices.insert(vertices.end(), vertex.begin(), vertex.end());
+            }
+        }
+    }
+
 public:
 
     BaseProject *BP{};
@@ -358,20 +378,10 @@ public:
             }
 
             // Skybox model
+            int mainStride = VDIds["background"]->Bindings[0].stride;
             std::vector<unsigned char> vertices{};
             std::vector<unsigned int> indices{};
-
-            // background model
-            int mainStride = VDIds["background"]->Bindings[0].stride;
-            std::vector<unsigned char> vertex(mainStride, 0);
-            auto myVertex = (MenuVertex *) (&vertex[0]);
-            for (int i = -1; i <= +1; i += 2) {
-                for (int j = -1; j <= +1; j += 2) {
-                    myVertex->pos = {i, j};
-                    myVertex->UV = {(float) (i + 1) / 2, (float) (j + 1) / 2};
-                    vertices.insert(vertices.end(), vertex.begin(), vertex.end());
-                }
-            }
+            addVertices(vertices, mainStride);
             indices = {
                     0, 1, 2,
                     1, 2, 3
@@ -400,13 +410,15 @@ public:
             }
 
             // Skybox texture
-            addTexture("skybox-tex", "textures/menu/deep-fold.png"); // Credits: https://deep-fold.itch.io/space-background-generator
+            addTexture("skybox-tex",
+                       "textures/menu/deep-fold.png"); // Credits: https://deep-fold.itch.io/space-background-generator
 
             // INSTANCES
             nlohmann::json pis = js["instances"];
             PipelineInstanceCount = pis.size();
             std::cout << "Pipeline Instances count: " << PipelineInstanceCount << "\n";
-            PI = (PipelineInstances *) calloc(PipelineInstanceCount + 1, sizeof(PipelineInstances)); // +1 for the skybox
+            PI = (PipelineInstances *) calloc(PipelineInstanceCount + 1,
+                                              sizeof(PipelineInstances)); // +1 for the skybox
             InstanceCount = 0;
             int setsInPool = 0;
             int uniformBlocksInPool = 0;
@@ -433,9 +445,9 @@ public:
                         oi->lPosition = glm::vec3(is[j]["where"][0], is[j]["where"][1], is[j]["where"][2]);
                     }
                     if (oi->type == SceneObjectType::SO_TORCH)
-                        oi->isOnFire = false;
+                        oi->isOn = false;
                     if (oi->type == SceneObjectType::SO_LAMP || oi->type == SceneObjectType::SO_BONFIRE)
-                        oi->isOnFire = true;
+                        oi->isOn = true;
                     std::pair<int, int> coords = {is[j]["coordinates"][0], is[j]["coordinates"][1]};
                     SC->addObjectToMap(coords, oi);
                     std::cout << k << "." << j << "\t" << is[j]["id"] << ", " << is[j]["model"] << "("
@@ -484,7 +496,7 @@ public:
             PI[PipelineInstanceCount].I = (Instance *) calloc(1, sizeof(Instance));
 
             // background instance
-            addInstance("skybox-obj", "skybox", { "skybox-tex" }, setsInPool, uniformBlocksInPool, texturesInPool);
+            addInstance("skybox-obj", "skybox", {"skybox-tex"}, setsInPool, uniformBlocksInPool, texturesInPool);
             PipelineInstanceCount++;
 
             // Request xInPool
@@ -547,6 +559,10 @@ public:
         isMenu = _isMenu;
     }
 
+    bool getIsMenu() {
+        return isMenu;
+    }
+
     int init(BaseProject *bp, std::vector<VertexDescriptorRef> &VDRs,
              std::vector<PipelineRef> &PRs, const std::string &file) override {
         BP = bp;
@@ -561,65 +577,40 @@ public:
         // MODELS
         ModelCount = 0;
         M = (Model **) calloc(3, sizeof(Model *));
+        int mainStride = VDIds["menu"]->Bindings[0].stride;
         std::vector<unsigned char> vertices{};
         std::vector<unsigned int> indices{};
-        int mainStride = VDIds["menu"]->Bindings[0].stride;
         // background model
-        std::vector<unsigned char> vertex(mainStride, 0);
-        auto myVertex = (MenuVertex *) (&vertex[0]);
-        for (int i = -1; i <= +1; i += 2) {
-            for (int j = -1; j <= +1; j += 2) {
-                myVertex->pos = {i, j};
-                myVertex->UV = {(float) (i + 1) / 2, (float) (j + 1) / 2};
-                vertices.insert(vertices.end(), vertex.begin(), vertex.end());
-            }
-        }
+        addVertices(vertices, mainStride);
         indices = {
                 0, 1, 2,
                 1, 2, 3
         };
         addModel("background", "background", vertices, indices);
-        // TODO: Add helper function.
         // other models: cursor
         vertices = {};
-        vertex = std::vector<unsigned char>(mainStride, 0);
-        myVertex = (MenuVertex*)(&vertex[0]);
         float w = 28.0f, h = 28.0f, ar = w / h, factor = 32.0f;
-        for (int i = -1; i <= +1; i += 2) {
-            for (int j = -1; j <= +1; j += 2) {
-                myVertex->pos = { i / factor, j / ((ar / BP->getAr()) * factor) };
-                myVertex->UV = { (float)(i + 1) / 2, (float)(j + 1) / 2 };
-                vertices.insert(vertices.end(), vertex.begin(), vertex.end());
-            }
-        }
+        addVertices(vertices, mainStride, factor, ar);
         addModel("cursor", "menu", vertices, indices);
         // other models: buttons
         vertices = {};
-        vertex = std::vector<unsigned char>(mainStride, 0);
-        myVertex = (MenuVertex*)(&vertex[0]);
         w = 590.0f, h = 260.0f, ar = w / h, factor = 4.0f;
-        for (int i = -1; i <= +1; i += 2) {
-            for (int j = -1; j <= +1; j += 2) {
-                myVertex->pos = { i / factor, j / ((ar / BP->getAr()) * factor) };
-                myVertex->UV = { (float)(i + 1) / 2, (float)(j + 1) / 2 };
-                vertices.insert(vertices.end(), vertex.begin(), vertex.end());
-            }
-        }
+        addVertices(vertices, mainStride, factor, ar);
         addModel("button", "menu", vertices, indices);
 
         // TEXTURES
         TextureCount = 0;
         T = (Texture **) calloc(3, sizeof(Texture *));
         // background texture
-        addTexture("background-tex", isMenu ? "textures/menu/menu-a.png" : "textures/menu/menu-b.png"); // Credits: https://deep-fold.itch.io/space-background-generator
+        addTexture("background-tex", isMenu ? "textures/menu/menu-a.png"
+                                            : "textures/menu/menu-b.png"); // Credits: https://deep-fold.itch.io/space-background-generator
         // other textures: cursor, buttons
         addTexture("cursor-tex", "textures/menu/cursor.png"); // Credits: https://leo-red.itch.io/lucid-icon-pack
         if (isMenu) {
             addTexture("play-tex-before", "textures/menu/play-btn-before.png");
             addTexture("play-tex-after", "textures/menu/play-btn-after.png");
             // Credits: https://npkuu.itch.io/pixelgui
-        }
-        else {
+        } else {
             addTexture("exit-tex-before", "textures/menu/exit-btn-before.png");
             addTexture("exit-tex-after", "textures/menu/exit-btn-after.png");
         }
@@ -635,25 +626,39 @@ public:
         // background pipeline
         PI[PipelineInstanceCount].P = PipelineIds["background"];
         PI[PipelineInstanceCount].InstanceCount = 0;
-        PI[PipelineInstanceCount].I = (Instance *) calloc(1, sizeof(Instance)); // calculate the number of instances: 1 background, 1 cursor, 2 buttons (one active at each scene)
+        PI[PipelineInstanceCount].I = (Instance *) calloc(1,
+                                                          sizeof(Instance)); // calculate the number of instances: 1 background, 1 cursor, 2 buttons (one active at each scene)
         // background instance
-        addInstance("background-obj", "background", { "background-tex" }, setsInPool, uniformBlocksInPool, texturesInPool);
+        addInstance("background-obj", "background", {"background-tex"}, setsInPool, uniformBlocksInPool,
+                    texturesInPool);
 
         PipelineInstanceCount++;
 
         // menu pipeline
         PI[PipelineInstanceCount].P = PipelineIds["menu"];
         PI[PipelineInstanceCount].InstanceCount = 0;
-        PI[PipelineInstanceCount].I = (Instance *) calloc(2, sizeof(Instance)); // calculate the number of instances: 1 background, 1 cursor, 2 buttons (one active at each scene)
+        PI[PipelineInstanceCount].I = (Instance *) calloc(2,
+                                                          sizeof(Instance)); // calculate the number of instances: 1 background, 1 cursor, 2 buttons (one active at each scene)
 
         // define the other instances: cursor, buttons
         std::vector<std::string> texIds;
         if (isMenu)
-            texIds = { "play-tex-before", "play-tex-after" };
+            texIds = {"play-tex-before", "play-tex-after"};
         else
-            texIds = { "exit-tex-before", "exit-tex-after" };
+            texIds = {"exit-tex-before", "exit-tex-after"};
         addInstance("btn-obj", "button", texIds, setsInPool, uniformBlocksInPool, texturesInPool);
-        addInstance("cursor-obj", "cursor", { "cursor-tex" }, setsInPool, uniformBlocksInPool, texturesInPool);
+        auto oi = new ObjectInstance();
+        oi->I_id = "btn-obj";
+        oi->type = SceneObjectType::SO_BUTTON;
+        oi->isOn = false;
+        SC->addObjectToMap({0, 0}, oi);
+
+        addInstance("cursor-obj", "cursor", {"cursor-tex", "cursor-tex"}, setsInPool, uniformBlocksInPool,
+                    texturesInPool);
+        oi = new ObjectInstance();
+        oi->I_id = "cursor-obj";
+        oi->type = SceneObjectType::SO_CURSOR;
+        SC->addObjectToMap({0, 0}, oi);
 
         PipelineInstanceCount++;
 
@@ -764,7 +769,7 @@ class LevelSceneController : public SceneController {
 
         BooleanUniform pubo{};
 
-        pubo.isOn = obj->isOnFire;
+        pubo.isOn = obj->isOn;
 
         I->DS[0]->map(currentImage, &ubo, 0);
         I->DS[0]->map(currentImage, &pubo, 2);
@@ -872,7 +877,8 @@ public:
         return {x, z};
     }
 
-    void updateUniformBuffer(uint32_t currentImage, float deltaT, glm::vec3 m, glm::vec3 r, bool fire) override {
+    void updateUniformBuffer(uint32_t currentImage, float deltaT, glm::vec3 m, glm::vec3 r, bool fire, double cursorX,
+                             double cursorY) override {
         // Calculate Orthogonal Projection Matrix
         if (glm::abs(m.y) > 1e-5) {
             zoom = glm::clamp(zoom + m.y * zoom_speed * deltaT, 0.0f, 1.0f);
@@ -967,12 +973,12 @@ public:
                         // Check if all torches are lit
                         if (numLitTorches == numTorches) {
                             std::cout << "Changing level\n";
-                            // FIXME: change to end screen if level 2
+                            scene->BP->changeText(" ", 0);
                             SceneId nextScene;
                             if (scene->BP->currSceneId == SceneId::SCENE_LEVEL_1)
                                 nextScene = SceneId::SCENE_LEVEL_2;
                             else
-                                nextScene = SceneId::SCENE_LEVEL_1;
+                                nextScene = SceneId::SCENE_GAME_OVER;
                             scene->BP->changeScene(nextScene);
                         } else {
                             std::cout << "Light all torches: " << numLitTorches << "/" << numTorches << "\n";
@@ -1009,28 +1015,32 @@ public:
                 std::cout << "Objects in cell: " << getAdjacentCell(playerCoords, playerRot).first << ", "
                           << getAdjacentCell(playerCoords, playerRot).second << "\n";
                 for (ObjectInstance *obj: myMap[getAdjacentCell(playerCoords, playerRot)]) {
-                    std::cout << "Found object of type " << sceneObjectTypes[obj->type] << "\n";
+                    std::cout << "Found object of type " << levelSceneObjectTypes[obj->type] << "\n";
                     if (obj->type == SceneObjectType::SO_TORCH) {
                         if (!bringingTorch) {
                             bringingTorch = true;
                             std::cout << "Bringing torch\n";
                             torchWithPlayer = obj;
-                        } else if (torchWithPlayer->isOnFire && !obj->isOnFire) {
-                            obj->isOnFire = true;
+                        } else if (torchWithPlayer->isOn && !obj->isOn) {
+                            obj->isOn = true;
                             std::cout << "Lighting torch on wall\n";
                             numLitTorches++;
                             std::cout << "Lit torches: " << numLitTorches << "/" << numTorches << "\n";
-                            scene->BP->changeText("Lit Torches: " + std::to_string(numLitTorches) + "/" + std::to_string(numTorches), 0);
+                            scene->BP->changeText(
+                                    "Lit Torches: " + std::to_string(numLitTorches) + "/" + std::to_string(numTorches),
+                                    0);
 
                         }
                         break;
                     } else if (obj->type == SceneObjectType::SO_BONFIRE) {
-                        if (bringingTorch && !torchWithPlayer->isOnFire) {
-                            torchWithPlayer->isOnFire = true;
+                        if (bringingTorch && !torchWithPlayer->isOn) {
+                            torchWithPlayer->isOn = true;
                             std::cout << "Lighting torch from bonfire\n";
                             numLitTorches++;
                             std::cout << "Lit torches: " << numLitTorches << "/" << numTorches << "\n";
-                            scene->BP->changeText("Lit Torches: " + std::to_string(numLitTorches) + "/" + std::to_string(numTorches), 0);
+                            scene->BP->changeText(
+                                    "Lit Torches: " + std::to_string(numLitTorches) + "/" + std::to_string(numTorches),
+                                    0);
                         }
                     }
                 }
@@ -1073,12 +1083,13 @@ public:
         for (auto &pair: myMap) {
             for (auto &obj: pair.second) {
                 if (obj->type != SceneObjectType::SO_LIGHT &&
-                    !(obj->type == SceneObjectType::SO_TORCH && obj->isOnFire) &&
+                    !(obj->type == SceneObjectType::SO_TORCH && obj->isOn) &&
                     obj->type != SceneObjectType::SO_LAMP && obj->type != SceneObjectType::SO_BONFIRE)
                     continue;
                 if (obj->type == SceneObjectType::SO_TORCH || obj->type == SceneObjectType::SO_LAMP ||
                     obj->type == SceneObjectType::SO_BONFIRE) {
-                    if (obj->lType != "DIRECT" && obj != torchWithPlayer && glm::distance(currPlayerPos, obj->lPosition) > lightRenderDistance)
+                    if (obj->lType != "DIRECT" && obj != torchWithPlayer &&
+                        glm::distance(currPlayerPos, obj->lPosition) > lightRenderDistance)
                         continue;
                 }
                 glm::vec3 lPosition;
@@ -1135,13 +1146,27 @@ public:
 class ScreenSceneController : public SceneController {
 protected:
     ScreenScene *scene{};
+    ObjectInstance *cursor = nullptr;
+    ObjectInstance *btn = nullptr;
+
+    bool isInsideBtn(double cursorX, double cursorY) {
+        auto vertex = scene->M[scene->I[scene->InstanceIds[btn->I_id]]->Mid]->vertices;
+        auto myVertexes = (ScreenVertex *) (&vertex[0]);
+        return cursorX >= myVertexes[0].pos.x && cursorX <= myVertexes[2].pos.x &&
+               cursorY >= myVertexes[0].pos.y && cursorY <= myVertexes[1].pos.y;
+    }
+
 public:
     void setScene(ScreenScene *sc) {
         scene = sc;
     }
 
     void addObjectToMap(std::pair<int, int> coords, ObjectInstance *obj) override {
-        throw std::runtime_error("ScreenSceneController::addObjectToMap not implemented");
+        if (obj->type == SceneObjectType::SO_CURSOR) {
+            cursor = obj;
+        } else if (obj->type == SceneObjectType::SO_BUTTON) {
+            btn = obj;
+        }
     }
 
     void init() override {
@@ -1149,21 +1174,76 @@ public:
     }
 
     void localCleanup() override {
-
+        delete cursor;
+        delete btn;
     }
 
-    void updateUniformBuffer(uint32_t currentImage, float deltaT, glm::vec3 m, glm::vec3 r, bool fire) override {
-        // TODO: Implement the ScreenSceneController
+    void updateUniformBuffer(uint32_t currentImage, float deltaT, glm::vec3 m, glm::vec3 r, bool fire, double cursorX,
+                             double cursorY) override {
+        static bool debounce = false;
+        static bool isClicked = false;
+
+        if (fire) {
+            if (!debounce) {
+                debounce = true;
+                std::cout << "Fire\n";
+                if (isInsideBtn(cursorX, cursorY)) {
+                    std::cout << "Button Clicked\n";
+                    isClicked = true;
+                }
+            } else if (!isInsideBtn(cursorX, cursorY)) {
+                if (isClicked) {
+                    std::cout << "Button Released\n";
+                    isClicked = false;
+                }
+            }
+        } else if (debounce) {
+            debounce = false;
+            std::cout << "Debounce\n";
+            if (isInsideBtn(cursorX, cursorY)) {
+                if (isClicked) {
+                    std::cout << "Button Released\n";
+                    isClicked = false;
+                    std::cout << "Changing scene\n";
+                    SceneId nextScene;
+                    if (scene->getIsMenu()) {
+                        nextScene = SceneId::SCENE_LEVEL_1;
+                        scene->BP->changeScene(nextScene);
+                    } else
+                        scene->BP->closeWindow();
+                }
+            }
+        }
+
+        UIUniform ubo{};
+        ubo.x = cursorX;
+        ubo.y = cursorY;
+        BooleanUniform pubo{};
+        pubo.isOn = false;
+
+        scene->I[scene->InstanceIds[cursor->I_id]]->DS[0]->map(currentImage, &ubo, 1);
+        scene->I[scene->InstanceIds[cursor->I_id]]->DS[0]->map(currentImage, &pubo, 2);
+
+        ubo.x = 0.0f;
+        ubo.y = 0.0f;
+        pubo.isOn = isClicked;
+
+        scene->I[scene->InstanceIds[btn->I_id]]->DS[0]->map(currentImage, &ubo, 1);
+        scene->I[scene->InstanceIds[btn->I_id]]->DS[0]->map(currentImage, &pubo, 2);
     }
 };
 
 static Scene *getNewSceneById(SceneId sceneId) {
+    bool isMenu = true;
     switch (sceneId) {
+        case SceneId::SCENE_GAME_OVER:
+            isMenu = false;
         case SceneId::SCENE_MAIN_MENU: {
             auto mms = new ScreenScene();
             auto mmsc = new ScreenSceneController();
             mms->setSceneController(mmsc);
             mmsc->setScene(mms);
+            mms->setIsMenu(isMenu);
             return mms;
         }
         case SceneId::SCENE_LEVEL_1:

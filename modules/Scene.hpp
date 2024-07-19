@@ -603,13 +603,18 @@ public:
         TextureCount = 0;
         T = (Texture **) calloc(3, sizeof(Texture *));
         // background texture
-        addTexture("background-tex", "textures/menu/deep-fold.png"); // Credits: https://deep-fold.itch.io/space-background-generator
+        addTexture("background-tex", isMenu ? "textures/menu/menu-a.png" : "textures/menu/menu-b.png"); // Credits: https://deep-fold.itch.io/space-background-generator
         // other textures: cursor, buttons
         addTexture("cursor-tex", "textures/menu/cursor.png"); // Credits: https://leo-red.itch.io/lucid-icon-pack
-        if (isMenu)
-            addTexture("play-tex", "textures/menu/play-btn.png"); // Credits: https://npkuu.itch.io/pixelgui
-        else
-            addTexture("exit-tex", "textures/menu/exit-btn.png"); // Credits: https://npkuu.itch.io/pixelgui
+        if (isMenu) {
+            addTexture("play-tex-before", "textures/menu/play-btn-before.png");
+            addTexture("play-tex-after", "textures/menu/play-btn-after.png");
+            // Credits: https://npkuu.itch.io/pixelgui
+        }
+        else {
+            addTexture("exit-tex-before", "textures/menu/exit-btn-before.png");
+            addTexture("exit-tex-after", "textures/menu/exit-btn-after.png");
+        }
         // Alternative: https://mounirtohami.itch.io/pixel-art-gui-elements
 
         // INSTANCES
@@ -627,7 +632,7 @@ public:
         // background instance
         addInstance("background-obj", "background", "background-tex", setsInPool, uniformBlocksInPool, texturesInPool);
         // define the other instances: cursor, buttons
-        addInstance("btn-obj", "button", isMenu ? "play-tex" : "exit-tex", setsInPool, uniformBlocksInPool, texturesInPool);
+        addInstance("btn-obj", "button", isMenu ? "play-tex-before" : "exit-tex-before", setsInPool, uniformBlocksInPool, texturesInPool);
         addInstance("cursor-obj", "cursor", "cursor-tex", setsInPool, uniformBlocksInPool, texturesInPool);
 
         PipelineInstanceCount++;

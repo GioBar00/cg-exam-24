@@ -10,7 +10,7 @@ class App : public BaseProject {
 protected:
 
     /* Descriptor set layouts. */
-    DescriptorSetLayout ObjectDSL, SourceDSL, LightDSL, BackgroundDSL;
+    DescriptorSetLayout ObjectDSL, SourceDSL, LightDSL, ArtDSL, UserInterfaceDSL;
 
 
     /* Vertex descriptors. */
@@ -75,8 +75,13 @@ protected:
         LightDSL.init(this, {
             {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,          VK_SHADER_STAGE_FRAGMENT_BIT,   sizeof(LightUniform),   1}
 		});
-        BackgroundDSL.init(this, {
+        ArtDSL.init(this, {
             {0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,  VK_SHADER_STAGE_FRAGMENT_BIT,   0,  1},
+        });
+        UserInterfaceDSL.init(this, {
+            {0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,  VK_SHADER_STAGE_FRAGMENT_BIT,   0,                      1},
+            {1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,          VK_SHADER_STAGE_FRAGMENT_BIT,   sizeof(BooleanUniform), 1},
+            {2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,  VK_SHADER_STAGE_FRAGMENT_BIT,   0,                      1}
         });
 
         ObjectVD.init(this, {
@@ -105,10 +110,10 @@ protected:
         ToonP.init(this, &ObjectVD, "shaders/Shader.vert.spv", "shaders/Toon.frag.spv", {&LightDSL, &ObjectDSL});
         PhongP.init(this, &ObjectVD, "shaders/Shader.vert.spv", "shaders/Phong.frag.spv", {&LightDSL, &ObjectDSL});
         SourceP.init(this, &SourceVD, "shaders/Emission.vert.spv", "shaders/Emission.frag.spv", {&SourceDSL});
-        MenuP.init(this, &BackgroundVD, "shaders/Menu.vert.spv", "shaders/Menu.frag.spv", {&BackgroundDSL});
-        MenuP.setAdvancedFeatures(VK_COMPARE_OP_LESS_OR_EQUAL, VK_POLYGON_MODE_FILL, VK_CULL_MODE_NONE, true);
-        SkyboxP.init(this, &BackgroundVD, "shaders/Background.vert.spv", "shaders/Background.frag.spv", {&BackgroundDSL});
+        SkyboxP.init(this, &BackgroundVD, "shaders/Skybox.vert.spv", "shaders/Skybox.frag.spv", {&ArtDSL});
         SkyboxP.setAdvancedFeatures(VK_COMPARE_OP_LESS_OR_EQUAL, VK_POLYGON_MODE_FILL, VK_CULL_MODE_NONE, true);
+        MenuP.init(this, &BackgroundVD, "shaders/Menu.vert.spv", "shaders/Menu.frag.spv", {&UserInterfaceDSL});
+        MenuP.setAdvancedFeatures(VK_COMPARE_OP_LESS_OR_EQUAL, VK_POLYGON_MODE_FILL, VK_CULL_MODE_NONE, true);
 
 
         std::string s = " ";
@@ -183,7 +188,8 @@ protected:
         ObjectDSL.cleanup();
         SourceDSL.cleanup();
         LightDSL.cleanup();
-        BackgroundDSL.cleanup();
+        ArtDSL.cleanup();
+        UserInterfaceDSL.cleanup();
 
         ToonP.destroy();
         PhongP.destroy();

@@ -1,0 +1,12 @@
+11 15
+WL1 G   G   G   G   G   G   G   G   G   G   G   G   G   WL3 
+WA3 G   G   G   G   G   G   G   G   G   G   G   G   G   WA2 
+.   WL1 G   G   G   G   G   G   G   G   G   G   G   WL3 .   
+.   WL1 G   G   G   G   G   G   G   G   G   G   G   WL3 .   
+.   WL1 G   G   G   G   G   G   G   G   G   G   G   WL3 .   
+.   WL1 G   G   G   G   G   G   G   G   G   G   G   WL3 .   
+.   WA3 WL2 WL2 G   G   G   G   G   G   G   WL2 WL2 WA2 .   
+.   .   .   .   WL1 G   G   G   G   G   WL3 .   .   .   .   
+.   .   .   .   WL1 G   G   S   G   G   WL3 .   .   .   .   
+.   .   .   .   WL1 G   G   G   G   G   WL3 .   .   .   .   
+.   .   .   .   WA3 WL2 WL2 WL2 WL2 WL2 WA2 .   .   .   .   

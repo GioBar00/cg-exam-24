@@ -1,0 +1,222 @@
+{
+    "structure": {
+        "SPAWN": [
+            {
+                "model": "cast_Mesh.6268",
+                "transform": [
+                    { "translate": [ 0.0, 1.0, 0.0 ], "unit": "NONE" },
+                    { "rotate": 180.0 }
+                ]
+            },
+            {
+                "model": "tunnel.003_Mesh.4991",
+                "transform": [
+                    { "translate": [ 0.0, 0.0, 0.0 ] },
+                    { "scale": [ 0.5, 0.5, 0.5 ] }
+                ]
+            }
+        ],
+        "GROUND": {
+            "variant": false,
+            "model": "tunnel.003_Mesh.4991",
+            "transform": [
+                { "translate": [ 0.6666, 0.0, 0.6666 ] },
+                { "scale": [ 0.5, 0.5, 0.5 ] }
+            ]
+        },
+        "TRAPDOOR": {
+            "variant": false,
+            "model": "prop.009_Mesh.970",
+            "transform": [
+                { "translate": [ 0.6666, 0.0, 0.6666 ] },
+                { "scale": [ 2.05, 2.05, 2.05 ] }
+            ]
+        },
+        "WALL_LINE": {
+            "variant": true,
+            "model": "tunnel_Mesh.4672",
+            "transform": [
+                {
+                    "id": 0,
+                    "operations": [
+                        { "translate": [ 0.6666, 0.0, 0.6666 ], "factor": true },
+                        { "translate": [ 0.0, 0.0, 0.6666 ], "factor": false },
+                        { "translate": [ 0.0, 0.0, -1.0 ], "factor": false },
+                        { "rotate": 0.0 },
+                        { "scale": [ 0.5, 1.0, 1.0 ] }
+                    ]
+                },
+                {
+                    "id": 1,
+                    "operations": [
+                        { "translate": [ 0.6666, 0.0, 0.6666 ], "factor": true },
+                        { "translate": [ 0.6666, 0.0, 0.0 ], "factor": false },
+                        { "translate": [ -1.0, 0.0, 0.0 ], "factor": false },
+                        { "rotate": 90.0 },
+                        { "scale": [ 0.5, 1.0, 1.0 ] }
+                    ]
+                },
+                {
+                    "id": 2,
+                    "operations": [
+                        { "translate": [ 0.6666, 0.0, 0.6666 ], "factor": true },
+                        { "translate": [ 0.0, 0.0, -0.6666 ], "factor": false },
+                        { "translate": [ 0.0, 0.0, 1.0 ], "factor": false },
+                        { "rotate": 180.0 },
+                        { "scale": [ 0.5, 1.0, 1.0 ] }
+                    ]
+                },
+                {
+                    "id": 3,
+                    "operations": [
+                        { "translate": [ 0.6666, 0.0, 0.6666 ], "factor": true },
+                        { "translate": [ -0.6666, 0.0, 0.0 ], "factor": false },
+                        { "translate": [ 1.0, 0.0, 0.0 ], "factor": false },
+                        { "rotate": 270.0 },
+                        { "scale": [ 0.5, 1.0, 1.0 ] }
+                    ]
+                }
+            ]
+        },
+        "WALL_ANGLE": {
+            "variant": true,
+            "model": "tunnel.028_Mesh.7989",
+            "transform": [
+                {
+                    "id": 0,
+                    "operations": [
+                        { "translate": [ 0.6666, 0.0, 0.6666 ], "factor": true },
+                        { "translate": [ 0.6666, 0.0, 0.6666 ], "factor": false },
+                        { "translate": [ -1.0, 0.0, -1.0 ], "factor": false },
+                        { "rotate": 0.0 }
+                    ]
+                },
+                {
+                    "id": 1,
+                    "operations": [
+                        { "translate": [ 0.6666, 0.0, 0.6666 ], "factor": true },
+                        { "translate": [ -0.6666, 0.0, 0.6666 ], "factor": false },
+                        { "translate": [ 1.0, 0.0, -1.0 ], "factor": false },
+                        { "rotate": 270.0 }
+                    ]
+                },
+                {
+                    "id": 2,
+                    "operations": [
+                        { "translate": [ 0.6666, 0.0, 0.6666 ], "factor": true },
+                        { "translate": [ -0.6666, 0.0, -0.6666 ], "factor": false },
+                        { "translate": [ 1.0, 0.0, 1.0 ], "factor": false },
+                        { "rotate": 180.0 }
+                    ]
+                },
+                {
+                    "id": 3,
+                    "operations": [
+                        { "translate": [ 0.6666, 0.0, 0.6666 ], "factor": true },
+                        { "translate": [ 0.6666, 0.0, -0.6666 ], "factor": false },
+                        { "translate": [ -1.0, 0.0, 1.0 ], "factor": false },
+                        { "rotate": 90.0 }
+                    ]
+                }
+            ]
+        }
+    },
+    "light": {
+        "TORCH": {
+            "model": "light.002_Mesh.6811",
+            "transform": [
+                { "translate": [ 0.0, 0.5, 0.0 ], "unit": "U", "factor": false },
+                { "translate": [ -5.0, 0.0, 5.0 ], "unit": "ALT", "mask": true }
+            ],
+            "type": "POINT",
+            "color": [ 1.0, 0.5, 0.0 ],
+            "power": 3.0,
+            "lumen-transform": [ -0.45, 0.3, 0.45 ]
+        },
+        "BONFIRE": {
+            "model": "tunnel.002_Mesh.7094",
+            "transform": [
+                { "translate": [ 0.6666, 0.0, 0.6666 ] },
+                { "translate": [ 0.0, 0.2, 0.0 ], "unit": "NONE" },
+                { "rotate": 45.0 },
+                { "scale": [ 0.5, 0.5, 0.5 ] }
+            ],
+            "type": "POINT",
+            "color": [ 1.0, 0.5, 0.0 ],
+            "power": 10.0,
+            "lumen-transform": [ 0.0, 0.0, 0.0 ]
+        },
+        "LAMP_0": {
+            "model": "light.009_Mesh.6851",
+            "transform": [
+                { "translate": [ 0.0, 0.5, 0.0 ], "unit": "U", "factor": false },
+                { "translate": [ -7.75, 0.0, 7.75 ], "unit": "ALT", "mask": true }
+            ],
+            "type": "POINT",
+            "color": [ 0.0, 0.5, 1.0 ],
+            "power": 5.0,
+            "lumen-transform": [ -0.3, -0.4, 0.3 ]
+        },
+        "LAMP_1": {
+            "model": "light.013_Mesh.7136",
+            "transform": [
+                { "translate": [ 0.0, 0.5, 0.0 ], "unit": "U", "factor": false },
+                { "translate": [ -9.0, 0.0, 9.0 ], "unit": "ALT", "mask": true }
+            ],
+            "type": "POINT",
+            "color": [ 0.0, 1.0, 0.0 ],
+            "power": 5.0,
+            "lumen-transform": [ -0.25, -0.2, 0.25 ]
+        }
+    },
+    "addon": {
+        "ROAD": {
+            "variant": false,
+            "model": "stone.011_Mesh.6783",
+            "transform": [
+                { "translate": [ 0.6666, 0.0, 0.6666 ] },
+                { "scale": [ 0.5, 0.5, 0.5 ] },
+                { "random": "ROTATION" }
+            ]
+        },
+        "BARREL": {
+            "model": "barrel.001_Mesh.4453",
+            "transform": [
+                { "translate": [ 0.6666, 0.0, 0.6666 ] },
+                { "translate": [ 0.0, 0.38, 0.0 ], "unit": "NONE" },
+                { "random": "ROTATION" }
+            ]
+        },
+        "CHEST": {
+            "model": "box.006_Mesh.216",
+            "transform": [
+                { "translate": [ 0.6666, 0.0, 0.6666 ] },
+                { "translate": [ 0.0, 0.22, 0.0 ], "unit": "NONE" },
+                { "random": "ROTATION" }
+            ]
+        },
+        "CRYSTAL": {
+            "model": "decoration.011_Mesh.7123",
+            "transform": [
+                { "translate": [ 0.6666, 0.0, 0.6666 ] },
+                { "translate": [ 0.0, 0.3, 0.0 ], "unit": "NONE" },
+                { "random": "ROTATION" }
+            ]
+        },
+        "POT": {
+            "model": "prop_Mesh.8089",
+            "transform": [
+                { "translate": [ 0.6666, 0.0, 0.6666 ] },
+                { "translate": [ 0.0, 0.45, 0.0 ], "unit": "NONE" },
+                { "random": "ROTATION" }
+            ]
+        },
+        "SKULL": {
+            "model": "bones.029_Mesh.5843",
+            "transform": [
+                { "translate": [ 0.6666, 0.0, 0.6666 ] },
+                { "random": "ROTATION" }
+            ]
+        }
+    }
+}

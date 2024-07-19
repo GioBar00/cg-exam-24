@@ -1,0 +1,12 @@
+11 19
+.   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   
+.   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   
+.   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   
+.   .   .   .   .   .   WA0 WL0 WL0 WL0 WL0 WL0 WL0 WL0 WL0 WA1 .   .   .   
+.   .   .   .   .   .   WL1 G   G   G   G   G   G   G   G   WL3 .   .   .   
+.   .   .   WA0 WL0 WL0 G   G   G   G   G   G   G   G   G   WL3 .   .   .   
+.   .   .   WL1 G   G   G   G   G   G   G   WL2 WL2 WL2 WL2 WA2 .   .   .   
+.   .   .   WL1 G   E   G   G   G   G   WL3 .   .   .   .   .   .   .   .   
+.   .   .   WL1 G   G   G   G   G   G   WL3 .   .   .   .   .   .   .   .   
+.   .   .   WA3 WL2 WL2 G   G   G   G   WL3 .   .   .   .   .   .   .   .   
+.   .   .   .   .   .   WL1 G   G   G   WL3 .   .   .   .   .   .   .   .   

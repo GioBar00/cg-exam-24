@@ -600,7 +600,7 @@ public:
         addModel("cursor-m", "menu", vertices, indices);
         // other models: buttons
         vertices = {};
-        w = 590.0f, h = 260.0f, ar = w / h, factor = 4.0f;
+        w = 590.0f, h = 260.0f, ar = w / h, factor = 6.0f;
         addVertices(vertices, mainStride, factor, ar);
         addModel("button-m", "menu", vertices, indices);
 
@@ -608,8 +608,9 @@ public:
         TextureCount = 0;
         T = (Texture **) calloc(4, sizeof(Texture *));
         // background texture
-        addTexture("bg-tex", isMenu ? "textures/menu/menu-a.png"
-                                    : "textures/menu/menu-b.png"); // Credits: https://deep-fold.itch.io/space-background-generator
+        addTexture("bg-tex", isMenu ? "textures/menu/menu-a-game.png"
+                                    : "textures/menu/menu-b-game.png"); // Credits: https://deep-fold.itch.io/space-background-generator
+                                                                        //          https://unfilledflag.itch.io/nicer-nightie
         // other textures: cursor, buttons
         addTexture("cursor-tex", "textures/menu/cursor.png"); // Credits: https://leo-red.itch.io/lucid-icon-pack
         if (isMenu) {

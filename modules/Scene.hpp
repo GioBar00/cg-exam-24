@@ -36,6 +36,11 @@ struct BooleanUniform {
     alignas(4) bool isOn;
 };
 
+struct UIUniform {
+    alignas(4) float x;
+    alignas(4) float y;
+};
+
 
 /* Vertex formats. */
 struct ObjectVertex {

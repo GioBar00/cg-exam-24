@@ -10,7 +10,7 @@ class App : public BaseProject {
 protected:
 
     /* Descriptor set layouts. */
-    DescriptorSetLayout ObjectDSL, SourceDSL, LightDSL, BackgroundDSL;
+    DescriptorSetLayout ObjectDSL, SourceDSL, LightDSL, ArtDSL, UserInterfaceDSL;
 
 
     /* Vertex descriptors. */
@@ -18,7 +18,7 @@ protected:
 
 
     /* Pipelines. */
-    Pipeline ToonP, PhongP, SourceP, MenuP, SkyboxP;
+    Pipeline ToonP, PhongP, SourceP, MenuP, BackgroundP;
 
 
     /* Texts. */
@@ -45,7 +45,7 @@ protected:
         windowHeight = 900;
         windowTitle = "CG24 @ PoliMi";
         windowResizable = GLFW_FALSE;
-        initialBackgroundColor = {0.05f, 0.05f, 0.05f, 1.0f};
+        initialBackgroundColor = {0.1f, 0.1f, 0.1f, 1.0f};
 
         Ar = (float) windowWidth / (float) windowHeight;
     }
@@ -75,8 +75,14 @@ protected:
         LightDSL.init(this, {
             {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,          VK_SHADER_STAGE_FRAGMENT_BIT,   sizeof(LightUniform),   1}
 		});
-        BackgroundDSL.init(this, {
+        ArtDSL.init(this, {
             {0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,  VK_SHADER_STAGE_FRAGMENT_BIT,   0,  1},
+        });
+        UserInterfaceDSL.init(this, {
+            {0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,  VK_SHADER_STAGE_FRAGMENT_BIT,   0,                      1},
+            {1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,          VK_SHADER_STAGE_VERTEX_BIT,     sizeof(UIUniform),      1},
+            {2, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,          VK_SHADER_STAGE_FRAGMENT_BIT,   sizeof(BooleanUniform), 1},
+            {3, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,  VK_SHADER_STAGE_FRAGMENT_BIT,   1,                      1}
         });
 
         ObjectVD.init(this, {
@@ -95,20 +101,20 @@ protected:
             }
         );
         BackgroundVD.init(this, {
-                {0, sizeof(MenuVertex), VK_VERTEX_INPUT_RATE_VERTEX}
+                {0, sizeof(ScreenVertex), VK_VERTEX_INPUT_RATE_VERTEX}
             }, {
-                {0, 0, VK_FORMAT_R32G32_SFLOAT, offsetof(MenuVertex, pos),  sizeof(glm::vec2),  POSITION},
-                {0, 1, VK_FORMAT_R32G32_SFLOAT, offsetof(MenuVertex, UV),   sizeof(glm::vec2),  UV}
+                {0, 0, VK_FORMAT_R32G32_SFLOAT, offsetof(ScreenVertex, pos), sizeof(glm::vec2), POSITION},
+                {0, 1, VK_FORMAT_R32G32_SFLOAT, offsetof(ScreenVertex, UV),  sizeof(glm::vec2), UV}
             }
         );
 
         ToonP.init(this, &ObjectVD, "shaders/Shader.vert.spv", "shaders/Toon.frag.spv", {&LightDSL, &ObjectDSL});
         PhongP.init(this, &ObjectVD, "shaders/Shader.vert.spv", "shaders/Phong.frag.spv", {&LightDSL, &ObjectDSL});
         SourceP.init(this, &SourceVD, "shaders/Emission.vert.spv", "shaders/Emission.frag.spv", {&SourceDSL});
-        MenuP.init(this, &BackgroundVD, "shaders/Menu.vert.spv", "shaders/Menu.frag.spv", {&BackgroundDSL});
+        BackgroundP.init(this, &BackgroundVD, "shaders/Background.vert.spv", "shaders/Background.frag.spv", {&ArtDSL});
+        BackgroundP.setAdvancedFeatures(VK_COMPARE_OP_LESS_OR_EQUAL, VK_POLYGON_MODE_FILL, VK_CULL_MODE_NONE, true);
+        MenuP.init(this, &BackgroundVD, "shaders/Menu.vert.spv", "shaders/Menu.frag.spv", {&UserInterfaceDSL});
         MenuP.setAdvancedFeatures(VK_COMPARE_OP_LESS_OR_EQUAL, VK_POLYGON_MODE_FILL, VK_CULL_MODE_NONE, true);
-        SkyboxP.init(this, &BackgroundVD, "shaders/Background.vert.spv", "shaders/Background.frag.spv", {&BackgroundDSL});
-        SkyboxP.setAdvancedFeatures(VK_COMPARE_OP_LESS_OR_EQUAL, VK_POLYGON_MODE_FILL, VK_CULL_MODE_NONE, true);
 
 
         std::string s = " ";
@@ -118,25 +124,25 @@ protected:
         txt.init(this, &out);
 
         // Define vertex descriptor references per scene.
-        VertexDescriptorRef ObjectVDR{}, SourceVDR{}, MenuVDR{}, SkyboxVDR{};
+        VertexDescriptorRef ObjectVDR{}, SourceVDR{}, MenuVDR{}, BackgroundVDR{};
         ObjectVDR.init("object", &ObjectVD);
         SourceVDR.init("source", &SourceVD);
-        SkyboxVDR.init("skybox", &BackgroundVD);
-        std::vector<VertexDescriptorRef> LevelSceneVDRs = { ObjectVDR, SourceVDR, SkyboxVDR };
+        BackgroundVDR.init("background", &BackgroundVD);
+        std::vector<VertexDescriptorRef> LevelSceneVDRs = {ObjectVDR, SourceVDR, BackgroundVDR };
 
         MenuVDR.init("menu", &BackgroundVD);
-        std::vector<VertexDescriptorRef> MenuVDRs = { MenuVDR };
+        std::vector<VertexDescriptorRef> MenuVDRs = { MenuVDR, BackgroundVDR };
 
         // Define pipeline references per scene.
-        PipelineRef ToonPR{}, PhongPR{}, SourcePR{}, MenuPR{}, SkyboxPR{};
+        PipelineRef ToonPR{}, PhongPR{}, SourcePR{}, MenuPR{}, BackgroundPR{};
         ToonPR.init("toon", &ToonP);
         PhongPR.init("phong", &PhongP);
         SourcePR.init("emission", &SourceP);
-        SkyboxPR.init("skybox", &SkyboxP);
-        std::vector<PipelineRef> LevelScenePRs = { ToonPR, PhongPR, SourcePR, SkyboxPR };
+        BackgroundPR.init("background", &BackgroundP);
+        std::vector<PipelineRef> LevelScenePRs = {ToonPR, PhongPR, SourcePR, BackgroundPR };
 
         MenuPR.init("menu", &MenuP);
-        std::vector<PipelineRef> MenuPRs = { MenuPR };
+        std::vector<PipelineRef> MenuPRs = { MenuPR, BackgroundPR };
 
         SceneVDRs[SceneId::SCENE_MAIN_MENU] = MenuVDRs;
         ScenePRs[SceneId::SCENE_MAIN_MENU] = MenuPRs;
@@ -144,10 +150,12 @@ protected:
         ScenePRs[SceneId::SCENE_LEVEL_1] = LevelScenePRs;
         SceneVDRs[SceneId::SCENE_LEVEL_2] = LevelSceneVDRs;
         ScenePRs[SceneId::SCENE_LEVEL_2] = LevelScenePRs;
+        SceneVDRs[SceneId::SCENE_GAME_OVER] = MenuVDRs;
+        ScenePRs[SceneId::SCENE_GAME_OVER] = MenuPRs;
 
 
         // Set the first scene
-        currSceneId = SceneId::SCENE_LEVEL_1;
+        currSceneId = SceneId::SCENE_MAIN_MENU;
         changeScene(currSceneId);
         changingScene = false;
     }
@@ -158,7 +166,7 @@ protected:
         SourceP.create();
         txt.pipelinesAndDescriptorSetsInit();
         MenuP.create();
-        SkyboxP.create();
+        BackgroundP.create();
         scenes[currSceneId]->pipelinesAndDescriptorSetsInit();
     }
 
@@ -168,7 +176,7 @@ protected:
         SourceP.cleanup();
         txt.pipelinesAndDescriptorSetsCleanup();
         MenuP.cleanup();
-        SkyboxP.cleanup();
+        BackgroundP.cleanup();
         scenes[currSceneId]->pipelinesAndDescriptorSetsCleanup();
     }
 
@@ -183,13 +191,14 @@ protected:
         ObjectDSL.cleanup();
         SourceDSL.cleanup();
         LightDSL.cleanup();
-        BackgroundDSL.cleanup();
+        ArtDSL.cleanup();
+        UserInterfaceDSL.cleanup();
 
         ToonP.destroy();
         PhongP.destroy();
         SourceP.destroy();
         MenuP.destroy();
-        SkyboxP.destroy();
+        BackgroundP.destroy();
 
         txt.localCleanup();
     }
@@ -203,10 +212,19 @@ protected:
         float deltaT;
         auto m = glm::vec3(0.0f), r = glm::vec3(0.0f);
         bool fire;
+        double cursorX, cursorY;
 
         getSixAxis(deltaT, m, r, fire);
+        fire = fire || glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
 
-        scenes[currSceneId]->SC->updateUniformBuffer(currentImage, deltaT, m, r, fire);
+        glfwGetCursorPos(window, &cursorX, &cursorY);
+
+        cursorX = cursorX / windowWidth;
+        cursorY = cursorY / windowHeight;
+        cursorX = cursorX * 2 - 1;
+        cursorY = cursorY * 2 - 1;
+
+        scenes[currSceneId]->SC->updateUniformBuffer(currentImage, deltaT, m, r, fire, cursorX, cursorY);
     }
 
     void changeScene(SceneId _newSceneId) override {

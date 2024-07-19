@@ -189,7 +189,7 @@ protected:
         PI[PipelineInstanceCount].InstanceCount++;
         InstanceCount++;
     }
-    
+
     void addVertices(std::vector<unsigned char> &vertices, int stride, float factor = 0.0f, float ar = 0.0f) const {
         std::vector<unsigned char> vertex(stride, 0);
         auto myVertex = (ScreenVertex *) (&vertex[0]);
@@ -637,8 +637,7 @@ public:
         // menu pipeline
         PI[PipelineInstanceCount].P = PipelineIds["menu"];
         PI[PipelineInstanceCount].InstanceCount = 0;
-        PI[PipelineInstanceCount].I = (Instance *) calloc(2,
-                                                          sizeof(Instance)); // calculate the number of instances: 1 background, 1 cursor, 2 buttons (one active at each scene)
+        PI[PipelineInstanceCount].I = (Instance *) calloc(2, sizeof(Instance)); // calculate the number of instances: 1 background, 1 cursor, 2 buttons (one active at each scene)
 
         // define the other instances: cursor, buttons
         std::vector<std::string> texIds;
@@ -703,6 +702,27 @@ class LevelSceneController : public SceneController {
     const float playerRotDuration = 0.3f;
     const float playerMoveDuration = 0.7f;
     const float infoTextDuration = 2.0f;
+    const float lightAnimDuration = 4.0f;
+
+    const std::vector<float> lightPowerFactors = {0.90349378, 1.0, 0.89005709, 0.83026667, 0.96448817, 0.91940343,
+                                                  0.87150715, 0.79691722, 0.83897976, 0.71733054, 0.78296689,
+                                                  0.73759316, 0.5090553, 0.68889212, 0.54618451, 0.55351021, 0.35401893,
+                                                  0.38169283, 0.29692011, 0.29330835, 0.37485463, 0.37761337,
+                                                  0.20597098, 0.23552444, 0.30538038, 0.25490031, 0.14550135,
+                                                  0.22760572, 0.17034215, 0.31292324, 0.37629342, 0.34939741,
+                                                  0.44170797, 0.48384355, 0.50728683, 0.49999774, 0.58976117,
+                                                  0.57345022, 0.62231734, 0.70364078, 0.81867557, 0.83183688,
+                                                  0.82859017, 0.948519, 0.96955134, 0.86614905, 0.88532677, 0.78713641,
+                                                  0.84083218, 0.95735339, 0.90842888, 0.98662138, 0.72541265,
+                                                  0.97545904, 0.93948324, 0.89309977, 0.86549708, 0.82654344,
+                                                  0.67434097, 0.73970837, 0.75666505, 0.65085962, 0.49935446,
+                                                  0.65700794, 0.55786411, 0.41534514, 0.38588968, 0.33129121,
+                                                  0.21273922, 0.37692862, 0.36292544, 0.25494925, 0.3042671, 0.29094114,
+                                                  0.28025327, 0.0562532, 0.24699983, 0.24301981, 0.21985722, 0.26196244,
+                                                  0.42582341, 0.43435639, 0.36770523, 0.56848837, 0.6095129, 0.48639306,
+                                                  0.62991897, 0.6031358, 0.5060762, 0.83442878, 0.82949084, 0.75172799,
+                                                  0.89596749, 1.0, 0.87537598, 0.88267387, 0.92284276, 0.82195823,
+                                                  0.94065499, 0.96114116};
 
     const float playerFloatSpeed = 1.5f;
     const float torchRotationSpeed = 0.5f;
@@ -742,6 +762,9 @@ class LevelSceneController : public SceneController {
     std::chrono::high_resolution_clock::time_point infoTextStartTime = std::chrono::high_resolution_clock::now();
     bool infoTextActive = false;
 
+    std::chrono::high_resolution_clock::time_point lightAnimStartTime = std::chrono::high_resolution_clock::now();
+    bool animatingLights = false;
+
     static void updateObjectBuffer(uint32_t currentImage, Instance *I, glm::mat4 ViewPrj, glm::mat4 baseTr,
                                    const std::vector<void *> &gubos, bool spec) {
         ObjectUniform oubo{};
@@ -776,7 +799,7 @@ class LevelSceneController : public SceneController {
     }
 
     static void updateLightBuffer(uint32_t currentImage, ObjectInstance *obj,
-                                  glm::vec3 lPosition, LightUniform *gubo, int idx) {
+                                  glm::vec3 lPosition, LightUniform *gubo, int idx, float powerFactor) {
         if (obj->lType == "DIRECT")
             gubo->TYPE[idx] = glm::vec3(1, 0, 0);
         else if (obj->lType == "POINT")
@@ -786,7 +809,7 @@ class LevelSceneController : public SceneController {
         gubo->lightPos[idx] = lPosition;
         gubo->lightDir[idx] = glm::vec3(obj->lDirection);
         gubo->lightCol[idx] = obj->lColor;
-        gubo->lightPow[idx] = glm::vec3(obj->lPower);
+        gubo->lightPow[idx] = glm::vec3(obj->lPower * powerFactor);
         gubo->NUMBER = idx + 1;
     }
 
@@ -1060,6 +1083,29 @@ public:
             }
         }
 
+        // check light animation
+        float currPowerFactor = 1.0f;
+        if (animatingLights) {
+            auto currTime = std::chrono::high_resolution_clock::now();
+            float elapsed = std::chrono::duration<float>(currTime - lightAnimStartTime).count();
+            if (elapsed > lightAnimDuration) {
+                animatingLights = false;
+                lightAnimStartTime = std::chrono::high_resolution_clock::now();
+                std::cout << "Light animation ENDED\n";
+            } else {
+                currPowerFactor = lightPowerFactors[(int) (elapsed / lightAnimDuration * lightPowerFactors.size())];
+            }
+        } else {
+            auto currTime = std::chrono::high_resolution_clock::now();
+            float elapsed = std::chrono::duration<float>(currTime - lightAnimStartTime).count();
+            // randomly animate lights with probability 0.01 after 5 seconds
+            if (static_cast <float> (rand()) / static_cast <float> (RAND_MAX) < 0.001 && elapsed > 5.0f) {
+                animatingLights = true;
+                lightAnimStartTime = std::chrono::high_resolution_clock::now();
+                std::cout << "Light animation STARTED\n";
+            }
+        }
+
         // make camera follow player
         glm::mat4 playerPosTr = glm::translate(glm::mat4(1.0f), currPlayerPos);
         ViewPrj = ViewPrj * glm::inverse(playerPosTr);
@@ -1097,7 +1143,8 @@ public:
                     lPosition = glm::vec3(torchPlTr * glm::vec4(obj->lPosition, 1.0f));
                 else
                     lPosition = obj->lPosition;
-                updateLightBuffer(currentImage, obj, lPosition, &lubo, idx);
+                updateLightBuffer(currentImage, obj, lPosition, &lubo, idx,
+                                  obj->type == SceneObjectType::SO_LIGHT ? 1.0f : currPowerFactor);
                 idx++;
             }
         }

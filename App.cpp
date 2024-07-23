@@ -204,8 +204,8 @@ protected:
     }
 
     void populateCommandBuffer(VkCommandBuffer commandBuffer, int currentImage) override {
-        txt.populateCommandBuffer(commandBuffer, currentImage);
         scenes[currSceneId]->populateCommandBuffer(commandBuffer, currentImage);
+        txt.populateCommandBuffer(commandBuffer, currentImage); // Transparency at the end.
     }
 
     void updateUniformBuffer(uint32_t currentImage) override {
